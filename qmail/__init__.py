@@ -17,12 +17,15 @@ této superpozice.
 from .states import Verdict
 from .quantum import QuantumState
 from .signals import Signal
+from .observatory import Observatory, feature_keys
 from .screen import ScreenResult, screen_email, screen_raw
 
 __all__ = [
     "Verdict",
     "QuantumState",
     "Signal",
+    "Observatory",
+    "feature_keys",
     "ScreenResult",
     "screen_email",
     "screen_raw",

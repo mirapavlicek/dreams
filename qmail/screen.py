@@ -13,11 +13,16 @@ from __future__ import annotations
 import random
 from dataclasses import dataclass, field
 
+from typing import TYPE_CHECKING
+
 from .detectors import run_detectors
 from .parser import ParsedEmail, parse_email
 from .quantum import QuantumState
 from .signals import Signal, amp
 from .states import BASIS, Verdict
+
+if TYPE_CHECKING:  # pragma: no cover
+    from .observatory import Observatory
 
 #: Výchozí prior - systém startuje s důvěrou ve stav |ham>, ale s nenulovou
 #: baseline amplitudou ostatních verdiktů (nikdy nejsme absolutně jistí).
@@ -34,6 +39,7 @@ class ScreenResult:
 
     state: QuantumState
     signals: list[Signal]
+    history_signals: list[Signal] = field(default_factory=list)
     verdict: Verdict = field(init=False)
     probabilities: dict[Verdict, float] = field(init=False)
     uncertainty: float = field(init=False)
@@ -63,6 +69,11 @@ class ScreenResult:
     def is_threat(self) -> bool:
         return self.verdict in (Verdict.SPAM, Verdict.PHISHING)
 
+    @property
+    def influenced_by_history(self) -> bool:
+        """Ovlivnila verdikt kolektivní paměť pozorovatelů?"""
+        return bool(self.history_signals)
+
     def measure(self, rng: random.Random | None = None) -> Verdict:
         """Jedno pravděpodobnostní měření (náhodný kolaps podle |psi|^2)."""
         return self.state.measure(rng)
@@ -83,18 +94,29 @@ class ScreenResult:
             "purity": self.purity,
             "needs_review": self.needs_review,
             "is_threat": self.is_threat,
+            "influenced_by_history": self.influenced_by_history,
             "probabilities": {v.label: p for v, p in self.probabilities.items()},
             "signals": [s.as_dict() for s in self.signals],
+            "history_signals": [s.as_dict() for s in self.history_signals],
         }
 
 
 def screen_email(
     mail: ParsedEmail,
     prior: QuantumState | None = None,
+    observatory: "Observatory | None" = None,
 ) -> ScreenResult:
-    """Provede kvantovou kontrolu nad již rozparsovaným e-mailem."""
+    """Provede kvantovou kontrolu nad již rozparsovaným e-mailem.
+
+    Je-li předána ``observatory``, vstoupí do superpozice i "history" signály
+    z dřívějších měření shodných rysů (role pozorovatele / entanglement).
+    """
     state = prior or DEFAULT_PRIOR
-    signals = run_detectors(mail)
+    content_signals = run_detectors(mail)
+    history_signals = observatory.signals_for(mail) if observatory else []
+    # Historie tvoří prior znalost - dáme ji na začátek, pak obsahové signály.
+    signals = history_signals + content_signals
+
     # 1) Nejprve sečteme všechny amplitudové příspěvky (interference).
     for signal in signals:
         if signal.contributions:
@@ -104,9 +126,17 @@ def screen_email(
     for signal in signals:
         if signal.damping:
             state = state.damp(signal.damping)
-    return ScreenResult(state=state.normalized(), signals=signals)
+    return ScreenResult(
+        state=state.normalized(),
+        signals=signals,
+        history_signals=history_signals,
+    )
 
 
-def screen_raw(raw: str | bytes, prior: QuantumState | None = None) -> ScreenResult:
+def screen_raw(
+    raw: str | bytes,
+    prior: QuantumState | None = None,
+    observatory: "Observatory | None" = None,
+) -> ScreenResult:
     """Provede kvantovou kontrolu nad surovým e-mailem (.eml text/bajty)."""
-    return screen_email(parse_email(raw), prior=prior)
+    return screen_email(parse_email(raw), prior=prior, observatory=observatory)

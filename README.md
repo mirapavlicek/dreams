@@ -28,6 +28,9 @@ jednoho výsledku.
 | Měření / kolaps | `collapse()` → finální verdikt (argmax `|ψ|²`) |
 | Neurčitost polohy | entropie rozdělení (jak je stav „rozmazaný") |
 | Opakované měření (více „shots") | `sample_distribution()` (Monte Carlo) |
+| Role pozorovatele / efekt měření | observatoř: dřívější verdikt ovlivní prior |
+| Provázanost (entanglement) | e-maily sdílející rys jsou korelované |
+| Dekoherence vícenásobným měřením | √N — víc pozorovatelů = jistější verdikt |
 
 Klíčové vlastnosti modelu:
 
@@ -43,6 +46,9 @@ Klíčové vlastnosti modelu:
   rozprostřená přes více verdiktů (vysoká entropie), stav „není dost
   lokalizovaný" a `needs_review` doporučí ruční posouzení — analogie toho, že
   polohu nelze ostře určit, dokud je `ψ` rozmazaná.
+- **Role pozorovatele.** Verdikt nestojí jen na obsahu jednoho e-mailu, ale i
+  na tom, zda byl podobný (stejný odesílatel / odkaz / předmět) už dřív —
+  u mě nebo u někoho jiného — naměřen jako závadný (viz níže).
 
 ## Instalace
 
@@ -102,17 +108,66 @@ print(result.measure())          # Verdict.PHISHING (s pravděp. 0.963)
 print(result.sample_distribution(shots=1000))
 ```
 
+## Role pozorovatele a kolektivní paměť (entanglement)
+
+E-maily se nehodnotí izolovaně. `qmail` má **observatoř** — sdílenou paměť
+minulých měření napříč e-maily i pozorovateli:
+
+- Když nějaký *pozorovatel* změří (zhroutí) e-mail jako závadný, e-maily
+  sdílející stejný rys (**odesílatel**, **Reply-To**, **doména odkazu**,
+  **otisk předmětu**) se s ním stanou **provázané** (entanglement) — jejich
+  prior vlnová funkce se posune k dříve naměřenému výsledku. Měření „jedné
+  částice" tak informuje o korelovaném stavu druhé.
+- **Nezávislé potvrzení** od více pozorovatelů (ať už „u mě dřív", nebo
+  „u někoho jiného") nechá stav rychleji **dekoherovat** do jistého verdiktu —
+  vliv roste s počtem různých pozorovatelů (faktor `√N`).
+
+Tyto „history" signály vstupují do superpozice úplně stejně jako obsahové
+signály — jen nesou kolektivní zkušenost místo obsahu aktuálního e-mailu.
+
+```bash
+# 1) partner nahlásí závadný e-mail do sdílené paměti
+python -m qmail --db obs.json --observer partner-feed --record examples/phishing.eml
+
+# 2) následující e-mail od STEJNÉHO odesílatele (jinak čistý) je teď podezřelý
+python -m qmail --db obs.json novy_mail.eml
+#   -> phishing výrazně vzroste, [history_sender] se objeví mezi signály
+
+# zaznamenat verdikt nahlášený jiným pozorovatelem (ground truth)
+python -m qmail --db obs.json --observer uzivatel --report phishing podvod.eml
+
+# dávka: e-maily se zpracují v pořadí; s --record dřívější ovlivní následující
+python -m qmail --db obs.json --record *.eml
+```
+
+Programově:
+
+```python
+from qmail import Observatory, screen_raw
+from qmail.parser import parse_email
+from qmail.states import Verdict
+
+obs = Observatory.load("obs.json")          # nebo Observatory()
+obs.record(parse_email(bad_raw), Verdict.PHISHING, observer="partner-feed")
+
+result = screen_raw(new_raw, observatory=obs)
+print(result.influenced_by_history)         # True, sdílí-li rys s historií
+print([s.name for s in result.history_signals])
+obs.save("obs.json")
+```
+
 ## Architektura
 
 ```
 qmail/
-  states.py     # bázové stavy (HAM / SPAM / PHISHING)
-  quantum.py    # QuantumState: amplitudy, |psi|^2, kolaps, entropie, útlum
-  signals.py    # Signal: komplexní amplitudové příspěvky + útlum
-  parser.py     # rozbor surového .eml (jen stdlib email/html)
-  detectors.py  # heuristiky -> signály (odkazy, odesílatel, jazyk, autentizace…)
-  screen.py     # prior -> aplikace signálů -> ScreenResult
-  cli.py        # příkazová řádka
+  states.py       # bázové stavy (HAM / SPAM / PHISHING)
+  quantum.py      # QuantumState: amplitudy, |psi|^2, kolaps, entropie, útlum
+  signals.py      # Signal: komplexní amplitudové příspěvky + útlum
+  parser.py       # rozbor surového .eml (jen stdlib email/html)
+  detectors.py    # heuristiky -> signály (odkazy, odesílatel, jazyk, autentizace…)
+  observatory.py  # sdílená paměť pozorovatelů -> history signály (entanglement)
+  screen.py       # prior -> aplikace signálů -> ScreenResult
+  cli.py          # příkazová řádka
 ```
 
 Tok zpracování:
