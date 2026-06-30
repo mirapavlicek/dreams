@@ -1,0 +1,17 @@
+From: Jana Novakova <jana.novakova@example.com>
+To: tym@example.com
+Reply-To: jana.novakova@example.com
+Return-Path: <jana.novakova@example.com>
+Subject: Zapis z porady - ctvrtek
+Authentication-Results: mx.example.com; spf=pass smtp.mailfrom=example.com; dkim=pass header.d=example.com; dmarc=pass
+Content-Type: text/plain; charset="utf-8"
+
+Ahoj,
+
+posilam zapis z dnesni porady. Hlavni body:
+- termin dodani posouvame na pristi patek,
+- Petr pripravi podklady pro klienta,
+- priste se sejdeme ve stejnou dobu.
+
+Pekny den,
+Jana
