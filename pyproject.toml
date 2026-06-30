@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qmail"
+version = "0.1.0"
+description = "Kvantově inspirovaná kontrola e-mailů proti phishingu a spamu (|psi|^2 a kolaps měřením)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+keywords = ["email", "phishing", "spam", "quantum", "security"]
+
+# Žádné běhové závislosti - vše stojí na standardní knihovně.
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+qmail = "qmail.cli:main"
+
+[tool.setuptools]
+packages = ["qmail"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,17 @@
+From: PayPal Security <service@paypa1-secure.com>
+To: customer@example.com
+Reply-To: recovery@account-verify-help.ru
+Return-Path: <bounce@mailer-xyz.ru>
+Subject: Urgent: Your account has been suspended - verify now within 24 hours
+Authentication-Results: mx.example.com; spf=fail smtp.mailfrom=paypa1-secure.com; dkim=fail; dmarc=fail
+Content-Type: text/html; charset="utf-8"
+
+<html><body>
+<p>Dear customer,</p>
+<p>We detected unusual activity. Your account has been suspended.
+You must verify your identity and confirm your password immediately,
+otherwise your account will be permanently closed within 24 hours.</p>
+<p>Please <a href="http://198.51.100.23/paypal/login/verify">login to www.paypal.com</a>
+to restore access and update your billing information.</p>
+<p>PayPal Security Team</p>
+</body></html>

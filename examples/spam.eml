@@ -1,0 +1,18 @@
+From: Mega Deals <promo@deals-newsletter.biz>
+To: user@example.com
+Reply-To: noreply@deals-newsletter.biz
+Subject: CONGRATULATIONS!!! YOU WON A FREE PRIZE - CLICK NOW!!!
+Authentication-Results: mx.example.com; spf=pass smtp.mailfrom=deals-newsletter.biz
+Content-Type: text/html; charset="utf-8"
+
+<html><body>
+<h1>CONGRATULATIONS WINNER!!!</h1>
+<p>You have won a FREE prize! This is a 100% risk free guaranteed offer.
+Buy now and get a huge discount! Limited time only!</p>
+<p>
+<a href="http://promo1.deals-newsletter.biz/win">CLICK HERE</a>
+<a href="http://track.ad-network-xyz.biz/c1">More offers</a>
+<a href="http://shop.cheap-stuff-online.biz/buy">Cheap stuff</a>
+<a href="http://casino.lucky-bonus-now.biz/play">Casino bonus</a>
+</p>
+</body></html>
