@@ -1,0 +1,5 @@
+<resources>
+    <string id="AppName">Ride Dashboard</string>
+    <string id="SettingAssistRange">Dojezd na plnou baterii (km)</string>
+    <string id="SettingUseWeather">Zobrazovat počasí</string>
+</resources>

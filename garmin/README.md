@@ -1,4 +1,52 @@
-# qmail na hodinkách — Garmin Connect IQ dashboard
+# Garmin Connect IQ
+
+Dvě aplikace a společné vývojové prostředí:
+
+- **[RideDashboard](#ridedashboard--palubovka-pro-edge-1050)** — palubovka pro
+  cyklopočítač Edge 1050 (480×800): tachometr s půlkruhem kadence, mapa uprostřed,
+  metriky kolem ní a spodní lišta se stavem baterie, převýšením a počasím.
+- **[QMailDashboard](#qmaildashboard--stav-schránky-na-hodinkách)** — stav
+  poštovní schránky jako hustota pravděpodobnosti `|ψ|²` podle knihovny `qmail`.
+
+---
+
+# RideDashboard — palubovka pro Edge 1050
+
+![Palubovka](docs/preview/ride-edge1050.png)
+
+Rozvržení shora dolů:
+
+| Pásmo | Obsah |
+|---|---|
+| Horní lišta | hodiny, stav GPS, baterie jednotky |
+| Půlkruh 0–200 | kadence; barva se mění podle pásma (pod 50 šedá, do 100 zelená, do 150 oranžová, výš červená) |
+| Střed půlkruhu | digitální tachometr, desetinné místo menším písmem |
+| Pod rychlostí | průměrná a maximální rychlost |
+| Prostřední pás | mapa uprostřed, po stranách kompas a dojezd na elektřinu (vlevo), vzdálenost do cíle a najeté kilometry (vpravo) |
+| Spodní lišta | zbývající energie e-biku, nastoupáno, sestoupáno, teplota a počasí |
+
+Dvě věci, které Connect IQ neumožňuje a jsou proto řešené jinak:
+
+- **Mapa.** Mapové dlaždice se do vlastního rozvržení vykreslit nedají —
+  `MapTrackView` zabírá celou obrazovku. Buňka proto kreslí *drobečkovou mapu*:
+  projetou stopu z GPS bodů, aktuální polohu a měřítko.
+- **Baterie e-biku.** ANT+ profil elektrokol (LEV) v Connect IQ API není, takže
+  dojezd je **odhad**: uživatel v nastavení zadá dojezd na plnou baterii a
+  aplikace ho úměrně krátí podle ujeté vzdálenosti.
+
+Rozvržení je popsané v `RideDashboard/resources/json/layout.json` v pixelech
+návrhového plátna 480×800; při kreslení se přepočítá na skutečný displej, takže
+stejná čísla platí i pro menší jednotky Edge.
+
+```bash
+python3 garmin/tools/preview_ride.py            # náhled do garmin/docs/preview
+./garmin/check.sh RideDashboard                 # překlad bez Garmin účtu
+./garmin/run_simulator.sh edge1050 RideDashboard
+```
+
+---
+
+# QMailDashboard — stav schránky na hodinkách
 
 Hodinková aplikace, která ukazuje stav schránky tak, jak ho počítá `qmail`:
 ne jako „máš 3 spamy“, ale jako **hustotu pravděpodobnosti `|ψ|²`** přes
@@ -40,7 +88,15 @@ garmin/
     source/QMailModel.mc             # data: web request nebo demo hodnoty
     source/DashboardView.mc          # kreslení prstence a středu
     source/GlanceView.mc             # kompaktní řádek
-  tools/preview.py                   # náhled do PNG bez simulátoru
+  RideDashboard/
+    resources/json/layout.json       # rozvržení palubovky v pixelech 480x800
+    resources/settings/              # dojezd na plnou baterii, počasí
+    source/RideApp.mc                # vstupní bod + odběr GPS pozic
+    source/RideLayout.mc             # škálování návrhu na displej, výběr fontů
+    source/RideData.mc               # metriky z Activity, Weather a Position
+    source/RideView.mc               # kreslení celé palubovky
+  tools/preview.py                   # náhled qmail dashboardu do PNG
+  tools/preview_ride.py              # náhled palubovky do PNG
   tools/qmail_server.py              # servíruje reálná data z .eml složky
   tools/make_icon.py                 # launcher ikona z barev tématu
   tools/sync_devices.py              # srovná manifest se staženými zařízeními
@@ -50,8 +106,9 @@ garmin/
   build.sh / run_simulator.sh        # překlad a spuštění v simulátoru
 ```
 
-`theme.json` čte jak hodinková aplikace (`Rez.JsonData.Theme`), tak náhledový
-renderer — barvy i rozvržení se tak mění na jednom místě.
+Konfigurační JSON (`theme.json`, `layout.json`) čte jak hodinková aplikace
+(`Rez.JsonData`), tak náhledový renderer — barvy i rozvržení se tak mění na
+jednom místě.
 
 ## Instalace prostředí
 
@@ -87,19 +144,22 @@ python3 garmin/tools/sync_devices.py    # srovná manifest se staženým
 vlastnoručně napsaný `compiler.json` — žádný stažený device pack:
 
 ```bash
-./garmin/check.sh          # BUILD SUCCESSFUL, když je kód v pořádku
-./garmin/check.sh -l 2     # ukecanější typová analýza
+./garmin/check.sh                     # oba projekty
+./garmin/check.sh RideDashboard       # jen jeden
+./garmin/check.sh RideDashboard -l 2  # ukecanější typová analýza
 ```
 
-Skript si vyrobí náhradní zařízení `qmailstub` (454×454, kulaté) a přeloží
-proti němu dočasnou kopii projektu. Na spuštění v simulátoru to nestačí — ten
-navíc potřebuje Garmin fonty — ale odhalí to všechno, co odmítne překladač.
+Skript si vyrobí náhradní zařízení (`qmailstub` 454×454 kulaté, `ridestub`
+480×800 hranaté) a přeloží proti němu dočasnou kopii projektu. Na spuštění
+v simulátoru to nestačí — ten navíc potřebuje Garmin fonty — ale odhalí to
+všechno, co odmítne překladač.
 
 ## Překlad a spuštění
 
 ```bash
-./garmin/build.sh fenix847mm                 # -> QMailDashboard/bin/*.prg
-./garmin/run_simulator.sh fenix847mm         # překlad + simulátor
+./garmin/build.sh fenix847mm                       # -> QMailDashboard/bin/*.prg
+./garmin/build.sh edge1050 RideDashboard
+./garmin/run_simulator.sh edge1050 RideDashboard   # překlad + simulátor
 ```
 
 Na stroji bez obrazovky si nejdřív pusť X server:

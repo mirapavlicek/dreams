@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+    Seznam <iq:product> se dá přegenerovat podle stažených device packů
+    skriptem garmin/tools/sync_devices.py.
+-->
+<iq:manifest xmlns:iq="http://www.garmin.com/xml/connectiq" version="3">
+    <iq:application entry="RideApp" id="3f7c2a18d94b40e5b6a1c8e2f05d7913" launcherIcon="@Drawables.LauncherIcon" minApiLevel="3.2.0" name="@Strings.AppName" type="watch-app">
+        <iq:products>
+            <iq:product id="edge1030"/>
+            <iq:product id="edge1030plus"/>
+            <iq:product id="edge1040"/>
+            <iq:product id="edge1050"/>
+            <iq:product id="edge540"/>
+            <iq:product id="edge840"/>
+            <iq:product id="edgeexplore2"/>
+        </iq:products>
+        <iq:permissions>
+            <iq:uses-permission id="Positioning"/>
+        </iq:permissions>
+        <iq:languages>
+            <iq:language>eng</iq:language>
+        </iq:languages>
+        <iq:barrels/>
+    </iq:application>
+</iq:manifest>

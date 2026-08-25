@@ -1,0 +1,48 @@
+{
+    "note": "Rozvržení jízdního dashboardu. Souřadnice jsou v pixelech návrhového plátna 480x800 (Edge 1050); při kreslení se škálují poměrem skutečného displeje. Čte to jak aplikace (Rez.JsonData.Layout), tak náhled garmin/tools/preview_ride.py.",
+    "canvas": { "width": 480, "height": 800 },
+    "colors": {
+        "background": 526603,
+        "panel": 921619,
+        "panelEdge": 2830392,
+        "text": 16777215,
+        "textDim": 7897228,
+        "accent": 2282478,
+        "ok": 2278750,
+        "warn": 16096779,
+        "danger": 15680580,
+        "cold": 6333946
+    },
+    "colorsHex": {
+        "background": "#08090B",
+        "panel": "#0E1013",
+        "panelEdge": "#2B3038",
+        "text": "#FFFFFF",
+        "textDim": "#78808C",
+        "accent": "#22D3EE",
+        "ok": "#22C55E",
+        "warn": "#F59E0B",
+        "danger": "#EF4444",
+        "cold": "#60A5FA"
+    },
+    "clock": { "y": 4, "height": 42 },
+    "cadence": {
+        "cx": 240, "cy": 254, "radius": 188, "pen": 16,
+        "max": 200, "ticks": [0, 50, 100, 150, 200],
+        "labelY": 106, "unitY": 134
+    },
+    "speed": { "cy": 196, "unitY": 258 },
+    "speedStats": { "y": 288, "height": 50, "gap": 8, "margin": 8 },
+    "divider": { "y": 348 },
+    "middle": {
+        "top": 354, "bottom": 738,
+        "sideWidth": 112, "margin": 6, "gap": 6
+    },
+    "bottom": { "y": 744, "height": 52, "margin": 6, "gap": 5 },
+    "map": {
+        "trackPen": 4,
+        "routePen": 3,
+        "markerRadius": 7,
+        "padding": 14
+    }
+}

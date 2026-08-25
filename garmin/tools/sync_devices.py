@@ -16,7 +16,7 @@ import pathlib
 import re
 import sys
 
-MANIFEST = pathlib.Path(__file__).resolve().parents[1] / "QMailDashboard" / "manifest.xml"
+GARMIN_DIR = pathlib.Path(__file__).resolve().parents[1]
 DEVICES_DIR = pathlib.Path.home() / ".Garmin" / "ConnectIQ" / "Devices"
 
 
@@ -33,15 +33,18 @@ def manifest_devices(text: str) -> list[str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--check", action="store_true", help="jen porovnat, nezapisovat")
+    parser.add_argument("--project", default="QMailDashboard",
+                        choices=["QMailDashboard", "RideDashboard"])
     args = parser.parse_args()
 
+    manifest = GARMIN_DIR / args.project / "manifest.xml"
     devices = installed_devices()
     if not devices:
         print(f"v {DEVICES_DIR} nejsou žádné device packy - nejdřív je stáhni "
               f"(connect-iq-sdk-manager device download)", file=sys.stderr)
         return 1
 
-    text = MANIFEST.read_text(encoding="utf-8")
+    text = manifest.read_text(encoding="utf-8")
     current = manifest_devices(text)
 
     missing = [device for device in current if device not in devices]
@@ -59,8 +62,8 @@ def main() -> int:
         text,
         flags=re.DOTALL,
     )
-    MANIFEST.write_text(updated, encoding="utf-8")
-    print(f"manifest aktualizován na {len(devices)} zařízení")
+    manifest.write_text(updated, encoding="utf-8")
+    print(f"{args.project}: manifest aktualizován na {len(devices)} zařízení")
     return 0
 
 

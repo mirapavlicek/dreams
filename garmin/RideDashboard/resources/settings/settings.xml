@@ -1,0 +1,8 @@
+<settings>
+    <setting propertyKey="@Properties.assistFullRangeKm" title="@Strings.SettingAssistRange">
+        <settingConfig type="numeric" min="10" max="400"/>
+    </setting>
+    <setting propertyKey="@Properties.showWeather" title="@Strings.SettingUseWeather">
+        <settingConfig type="boolean"/>
+    </setting>
+</settings>
