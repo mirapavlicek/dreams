@@ -1,0 +1,4 @@
+<properties>
+    <property id="apiUrl" type="string"></property>
+    <property id="refreshMinutes" type="number">15</property>
+</properties>

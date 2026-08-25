@@ -1,0 +1,10 @@
+<resources>
+    <string id="AppName">qmail</string>
+    <string id="SettingApiUrl">qmail JSON endpoint</string>
+    <string id="SettingRefresh">Refresh interval (minutes)</string>
+    <string id="LabelUncertainty">uncertainty</string>
+    <string id="LabelReview">review</string>
+    <string id="LabelScanned">scanned</string>
+    <string id="LabelOffline">demo data</string>
+    <string id="LabelLoading">measuring...</string>
+</resources>

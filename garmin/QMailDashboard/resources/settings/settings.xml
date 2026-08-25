@@ -1,0 +1,8 @@
+<settings>
+    <setting propertyKey="@Properties.apiUrl" title="@Strings.SettingApiUrl">
+        <settingConfig type="alphaNumeric" maxLength="160"/>
+    </setting>
+    <setting propertyKey="@Properties.refreshMinutes" title="@Strings.SettingRefresh">
+        <settingConfig type="numeric" min="1" max="240"/>
+    </setting>
+</settings>

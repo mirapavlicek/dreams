@@ -192,6 +192,14 @@ Tok zpracování:
 
 Detektory rozumí anglickým i (přepsaným) českým výrazům.
 
+## Dashboard na hodinkách (Garmin Connect IQ)
+
+Stav schránky se dá nosit na ruce: `garmin/` obsahuje aplikaci pro Connect IQ,
+která ukazuje `|ψ|²` jako barevný prstenec, kolaps ve středu a entropii jako
+proužek neurčitosti — viz [garmin/README.md](garmin/README.md).
+
+![qmail dashboard na hodinkách](garmin/docs/preview/scenarios.png)
+
 ## Testy
 
 ```bash
