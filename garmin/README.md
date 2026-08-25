@@ -44,7 +44,9 @@ garmin/
   tools/qmail_server.py              # servíruje reálná data z .eml složky
   tools/make_icon.py                 # launcher ikona z barev tématu
   tools/sync_devices.py              # srovná manifest se staženými zařízeními
+  tools/stub_device.py               # náhradní definice zařízení pro překlad
   setup_dev_env.sh                   # instalace SDK, závislostí a klíče
+  check.sh                           # překlad bez Garmin účtu (syntaxe a typy)
   build.sh / run_simulator.sh        # překlad a spuštění v simulátoru
 ```
 
@@ -78,6 +80,20 @@ connect-iq-sdk-manager login
 connect-iq-sdk-manager device download --manifest garmin/QMailDashboard/manifest.xml --include-fonts
 python3 garmin/tools/sync_devices.py    # srovná manifest se staženým
 ```
+
+## Kontrola překladu bez Garmin účtu
+
+`monkeyc` vyžaduje cílové zařízení, ale ke kontrole syntaxe a typů stačí
+vlastnoručně napsaný `compiler.json` — žádný stažený device pack:
+
+```bash
+./garmin/check.sh          # BUILD SUCCESSFUL, když je kód v pořádku
+./garmin/check.sh -l 2     # ukecanější typová analýza
+```
+
+Skript si vyrobí náhradní zařízení `qmailstub` (454×454, kulaté) a přeloží
+proti němu dočasnou kopii projektu. Na spuštění v simulátoru to nestačí — ten
+navíc potřebuje Garmin fonty — ale odhalí to všechno, co odmítne překladač.
 
 ## Překlad a spuštění
 
