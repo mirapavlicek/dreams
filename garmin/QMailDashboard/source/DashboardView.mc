@@ -33,7 +33,7 @@ class DashboardView extends WatchUi.View {
         }
     }
 
-    function onRefreshTick() {
+    function onRefreshTick() as Void {
         QMailModel.refresh();
         WatchUi.requestUpdate();
     }

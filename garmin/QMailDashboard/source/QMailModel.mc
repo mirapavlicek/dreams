@@ -1,6 +1,7 @@
 using Toybox.Application;
 using Toybox.Communications;
 using Toybox.Lang;
+using Toybox.PersistedContent;
 using Toybox.WatchUi;
 
 //! Držák dat dashboardu. Když je v nastavení vyplněná adresa qmail endpointu,
@@ -9,10 +10,10 @@ using Toybox.WatchUi;
 (:glance)
 module QMailModel {
 
-    hidden var mTheme = null;
-    hidden var mData = null;
-    hidden var mIsDemo = true;
-    hidden var mPending = false;
+    var mTheme = null;
+    var mData = null;
+    var mIsDemo = true;
+    var mPending = false;
 
     //! Načte téma i data. Volá se opakovaně, druhé a další volání nic nedělá.
     function initialize() {
@@ -32,30 +33,34 @@ module QMailModel {
         refresh();
     }
 
-    function theme() {
+    function theme() as Lang.Dictionary {
         if (mTheme == null) {
             mTheme = Application.loadResource(Rez.JsonData.Theme);
         }
-        return mTheme;
+        return mTheme as Lang.Dictionary;
+    }
+
+    function section(name) as Lang.Dictionary {
+        return theme()[name] as Lang.Dictionary;
     }
 
     function color(name) {
-        return theme()["colors"][name];
+        return section("colors")[name];
     }
 
     function ring(name) {
-        return theme()["ring"][name].toFloat();
+        return (section("ring")[name] as Lang.Number).toFloat();
     }
 
     function layout(name) {
-        return theme()["layout"][name].toFloat();
+        return (section("layout")[name] as Lang.Number).toFloat();
     }
 
-    function data() {
+    function data() as Lang.Dictionary {
         if (mData == null) {
             mData = demoData();
         }
-        return mData;
+        return mData as Lang.Dictionary;
     }
 
     function isDemo() {
@@ -63,8 +68,8 @@ module QMailModel {
     }
 
     //! Pravděpodobnosti v pořadí [ham, spam, phishing]; vždy sečtené na 1.
-    function probabilities() {
-        var p = data()["probabilities"];
+    function probabilities() as Lang.Array<Lang.Float> {
+        var p = data()["probabilities"] as Lang.Dictionary;
         var values = [toFloat(p["ham"], 0.0), toFloat(p["spam"], 0.0), toFloat(p["phishing"], 0.0)];
         var sum = values[0] + values[1] + values[2];
         if (sum <= 0.0) {
@@ -111,7 +116,7 @@ module QMailModel {
         return toNumber(data()["scanned"], 0);
     }
 
-    hidden function toFloat(value, fallback) {
+    function toFloat(value, fallback) {
         if (value instanceof Lang.Number || value instanceof Lang.Float ||
             value instanceof Lang.Long || value instanceof Lang.Double) {
             return value.toFloat();
@@ -119,7 +124,7 @@ module QMailModel {
         return fallback;
     }
 
-    hidden function toNumber(value, fallback) {
+    function toNumber(value, fallback) {
         if (value instanceof Lang.Number || value instanceof Lang.Float ||
             value instanceof Lang.Long || value instanceof Lang.Double) {
             return value.toNumber();
@@ -129,7 +134,7 @@ module QMailModel {
 
     //! Rozbor phishingového vzorku z examples/phishing.eml – slouží jako
     //! výchozí obsah dashboardu, dokud nedorazí data ze serveru.
-    hidden function demoData() {
+    function demoData() {
         return {
             "probabilities" => { "ham" => 0.011, "spam" => 0.027, "phishing" => 0.963 },
             "uncertainty" => 0.165,
@@ -138,7 +143,7 @@ module QMailModel {
         };
     }
 
-    hidden function apiUrl() {
+    function apiUrl() {
         if (!(Application has :Properties)) {
             return null;
         }
@@ -155,18 +160,10 @@ module QMailModel {
             return;
         }
         mPending = true;
-        Communications.makeWebRequest(
-            url,
-            null,
-            {
-                :method => Communications.HTTP_REQUEST_METHOD_GET,
-                :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
-            },
-            method(:onReceive)
-        );
+        new QMailFetcher().start(url);
     }
 
-    function onReceive(responseCode, response) {
+    function onResponse(responseCode, response) {
         mPending = false;
         if (responseCode == 200 && response instanceof Lang.Dictionary &&
             response["probabilities"] instanceof Lang.Dictionary) {
@@ -178,5 +175,34 @@ module QMailModel {
 
     function stopRefresh() {
         mPending = false;
+    }
+}
+
+//! Modul si nemůže vzít referenci na vlastní funkci (`method(:x)` existuje jen
+//! nad instancí), takže odpověď z webu odchytí tahle drobná třída a předá ji
+//! zpátky do QMailModel.
+(:glance)
+class QMailFetcher {
+
+    function initialize() {
+    }
+
+    function start(url) as Void {
+        Communications.makeWebRequest(
+            url,
+            null,
+            {
+                :method => Communications.HTTP_REQUEST_METHOD_GET,
+                :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
+            },
+            method(:onReceive)
+        );
+    }
+
+    function onReceive(
+        responseCode as Lang.Number,
+        data as Null or Lang.Dictionary or Lang.String or PersistedContent.Iterator
+    ) as Void {
+        QMailModel.onResponse(responseCode, data);
     }
 }
