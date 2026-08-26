@@ -30,6 +30,15 @@ module RideLayout {
         return section(sectionName)[key];
     }
 
+    //! Vnořená skupina, třeba layout()["cockpit"]["tape"].
+    function group(sectionName, key) as Lang.Dictionary {
+        return section(sectionName)[key] as Lang.Dictionary;
+    }
+
+    function at(dictionary as Lang.Dictionary, key) {
+        return (dictionary[key] as Lang.Number).toFloat();
+    }
+
     function number(sectionName, key) {
         return (section(sectionName)[key] as Lang.Number).toFloat();
     }
@@ -66,6 +75,17 @@ module RideLayout {
             y(number("middle", "top") + inset).toNumber(),
             x(number("canvas", "width") - left).toNumber(),
             y(number("middle", "bottom") - inset).toNumber()
+        ];
+    }
+
+    //! Ve stylu přístrojového štítu je mapa přes celou obrazovku a zaostřuje se
+    //! na pruh mezi horním a spodním překryvem.
+    function cockpitMapRect() as Lang.Array {
+        return [
+            0,
+            y(at(group("cockpit", "top"), "height")).toNumber(),
+            x(number("canvas", "width")).toNumber() - 1,
+            y(at(group("cockpit", "bottom"), "y")).toNumber()
         ];
     }
 

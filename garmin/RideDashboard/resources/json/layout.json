@@ -45,5 +45,20 @@
         "markerRadius": 7,
         "padding": 14,
         "focusInset": 2
+    },
+    "cockpit": {
+        "note": "Druhý styl: mapa přes celou obrazovku a nad ní dva pruhy jako v přístrojovém štítu auta.",
+        "bandColor": 1250067,
+        "bandAlpha": 224,
+        "tape": { "y": 6, "height": 24, "spacing": 2.6 },
+        "top": { "height": 176, "radius": 20 },
+        "speed": { "cx": 240, "cy": 92, "size": 92, "decimalSize": 40 },
+        "cadence": { "cx": 64, "cy": 92, "radius": 40, "pen": 7, "max": 200 },
+        "clock": { "x": 416, "y": 80, "statusY": 112 },
+        "chips": { "y": 136, "height": 30, "gap": 8, "margin": 66, "radius": 8 },
+        "inset": { "x": 12, "width": 152, "height": 122, "bottomGap": 14, "radius": 12 },
+        "bottom": { "y": 682, "height": 118, "radius": 20, "margin": 14 },
+        "rowA": { "titleY": 702, "valueY": 728 },
+        "rowB": { "y": 762, "barY": 788 }
     }
 }

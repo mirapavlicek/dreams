@@ -70,7 +70,11 @@ class RideView extends WatchUi.View {
     }
 
     function onUpdate(dc) {
-        RideChrome.draw(dc, false);
+        if (RideData.cockpitStyle()) {
+            RideCockpit.draw(dc, false);
+        } else {
+            RideChrome.draw(dc, false);
+        }
     }
 }
 

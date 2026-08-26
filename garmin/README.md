@@ -3,9 +3,9 @@
 Dvě aplikace a společné vývojové prostředí:
 
 - **[RideDashboard](#ridedashboard--palubovka-pro-edge-1050)** — palubovka pro
-  cyklopočítač Edge 1050 (480×800): tachometr s půlkruhem kadence, mapa přístroje
-  uprostřed, metriky kolem ní a spodní lišta se stavem baterie, převýšením
-  a počasím.
+  cyklopočítač Edge 1050 (480×800) ve stylu přístrojového štítu auta: mapa
+  přístroje pod celou obrazovkou, nad ní tachometr, kadence, dojezd e-biku,
+  převýšení a počasí.
 - **[QMailDashboard](#qmaildashboard--stav-schránky-na-hodinkách)** — stav
   poštovní schránky jako hustota pravděpodobnosti `|ψ|²` podle knihovny `qmail`.
 
@@ -13,7 +13,25 @@ Dvě aplikace a společné vývojové prostředí:
 
 # RideDashboard — palubovka pro Edge 1050
 
-![Palubovka](docs/preview/ride-edge1050.png)
+Dva styly, přepínají se v nastavení aplikace.
+
+## Styl „přístrojový štít“ (výchozí)
+
+![Palubovka ve stylu přístrojového štítu](docs/preview/ride-cockpit.png)
+
+Mapa vyplňuje celou obrazovku a přes ni jsou dva pruhy jako v přístrojovém štítu
+auta — nahoře kompasová páska, kruhový budík kadence, digitální tachometr,
+hodiny a chipy s průměrnou a maximální rychlostí; dole dojezd e-biku,
+vzdálenost do cíle s odhadem příjezdu, najeté kilometry a řádek se stavem
+baterie, převýšením a počasím. V rohu mapy je náhled celé projeté trasy, aby
+byl vidět tvar jízdy i při zazoomované mapě.
+
+Pruhy jsou poloprůhledné přes `Graphics.createColor()` (API 4.0 a výš); na
+starších jednotkách vyjdou neprůhledné, jinak se nezmění nic.
+
+## Styl „panely“
+
+![Palubovka s panely](docs/preview/ride-edge1050-map.png)
 
 Rozvržení shora dolů:
 
@@ -26,13 +44,10 @@ Rozvržení shora dolů:
 | Prostřední pás | mapa uprostřed, po stranách kompas a dojezd na elektřinu (vlevo), vzdálenost do cíle a najeté kilometry (vpravo) |
 | Spodní lišta | zbývající energie e-biku, nastoupáno, sestoupáno, teplota a počasí |
 
-## Mapa uprostřed palubovky
+## Jak se mapa dostane do vlastního rozvržení
 
-Uprostřed je **opravdová mapa z paměti přístroje**, ne jen nakreslená stopa:
-
-![Palubovka s mapou](docs/preview/ride-edge1050-map.png)
-
-Trik je v tom, že `setScreenVisibleArea()` mapu neořízne. Mapa se vykreslí pod
+V obou stylech je to **opravdová mapa z paměti přístroje**, ne jen nakreslená
+stopa. Trik je v tom, že `setScreenVisibleArea()` mapu neořízne. Mapa se vykreslí pod
 celou obrazovkou a metoda jen říká, na kterou část se má zaostřit a co ještě
 není zakryté rozhraním aplikace — přesně jak to popisuje vlákno
 [MapView](https://forums.garmin.com/developer/connect-iq/f/discussion/7014/mapview)
@@ -43,8 +58,9 @@ Prakticky to znamená:
 
 - `RideMapView` dědí z `MapTrackView`, takže se mapa sama drží aktuální polohy
   a kreslí navigační šipku; projetá stopa jde nad ni jako `MapPolyline`.
-- `RideChrome` v mapovém režimu nemaže celé plátno (`dc.clear()` by mapu
-  přetřel), ale vyplní jen čtyři pruhy kolem okna.
+- Kreslení nesmí v mapovém režimu zavolat `dc.clear()`, ten by mapu přetřel.
+  `RideChrome` proto vyplní jen čtyři pruhy kolem okna a `RideCockpit` jen dva
+  překryvy nahoře a dole.
 - Mapové view nejde vrátit z `getInitialView()`, dá se jen vystrčit přes
   `pushView()`. Výchozí obrazovka je proto `RideView` a mapa se otevře hned po
   startu.
@@ -65,10 +81,10 @@ návrhového plátna 480×800; při kreslení se přepočítá na skutečný dis
 stejná čísla platí i pro menší jednotky Edge.
 
 ```bash
-python3 garmin/tools/preview_ride.py            # náhled s drobečkovou stopou
-python3 garmin/tools/preview_ride.py --map \
-    --out garmin/docs/preview/ride-edge1050-map.png   # náhled s mapou
-./garmin/check.sh RideDashboard                 # překlad bez Garmin účtu
+python3 garmin/tools/preview_ride.py --cockpit --map    # přístrojový štít
+python3 garmin/tools/preview_ride.py --map              # panely s mapou
+python3 garmin/tools/preview_ride.py                    # panely bez mapy
+./garmin/check.sh RideDashboard                         # překlad bez Garmin účtu
 ./garmin/run_simulator.sh edge1050 RideDashboard
 ```
 
@@ -125,9 +141,10 @@ garmin/
     source/RideApp.mc                # vstupní bod + odběr GPS pozic
     source/RideLayout.mc             # škálování návrhu na displej, výběr fontů
     source/RideData.mc               # metriky z Activity, Weather a Position
-    source/RideChrome.mc             # kreslení palubovky (sdílí obě obrazovky)
-    source/RideView.mc               # varianta s drobečkovou stopou
-    source/RideMapView.mc            # varianta s mapou z paměti přístroje
+    source/RideChrome.mc             # kreslení stylu s panely
+    source/RideCockpit.mc            # kreslení stylu přístrojového štítu
+    source/RideView.mc               # obrazovka s drobečkovou stopou
+    source/RideMapView.mc            # obrazovka s mapou z paměti přístroje
   tools/preview.py                   # náhled qmail dashboardu do PNG
   tools/preview_ride.py              # náhled palubovky do PNG
   tools/qmail_server.py              # servíruje reálná data z .eml složky

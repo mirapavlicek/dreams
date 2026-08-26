@@ -27,14 +27,17 @@ class RideMapView extends WatchUi.MapTrackView {
         setMapMode(WatchUi.MAP_MODE_PREVIEW);
     }
 
-    //! Zaostří mapu do okna uprostřed palubovky.
+    //! Zaostří mapu tam, kde ji nepřekrývá palubovka.
     function applyWindow() as Void {
-        var rect = RideLayout.mapRect() as Lang.Array;
+        var rect = (RideData.cockpitStyle() ? RideLayout.cockpitMapRect() : RideLayout.mapRect())
+            as Lang.Array;
         setScreenVisibleArea(rect[0] as Lang.Number, rect[1] as Lang.Number,
             rect[2] as Lang.Number, rect[3] as Lang.Number);
     }
 
     function onShow() {
+        // Styl se mohl mezitím změnit v nastavení, tak okno přepočítáme.
+        applyWindow();
         mTimer = new Timer.Timer();
         mTimer.start(method(:onTick), 1000, true);
     }
@@ -95,7 +98,12 @@ class RideMapView extends WatchUi.MapTrackView {
     function onUpdate(dc) {
         // Nejdřív mapa, pak naše rozhraní přes ni.
         MapView.onUpdate(dc);
-        if (!isBrowsing()) {
+        if (isBrowsing()) {
+            return;
+        }
+        if (RideData.cockpitStyle()) {
+            RideCockpit.draw(dc, true);
+        } else {
             RideChrome.draw(dc, true);
         }
     }

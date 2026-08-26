@@ -16,6 +16,7 @@ module RideData {
     var mFullRangeKm = 90.0;
     var mShowWeather = true;
     var mUseMap = true;
+    var mCockpitStyle = true;
     var mTrack = null;
     var mLatitudeScale = 1.0;
 
@@ -42,11 +43,20 @@ module RideData {
         if (useMap instanceof Lang.Boolean) {
             mUseMap = useMap;
         }
+        var style = Application.Properties.getValue("layoutStyle");
+        if (style instanceof Lang.Number) {
+            mCockpitStyle = style == 0;
+        }
     }
 
     //! Chce uživatel mapu z paměti přístroje, nebo mu stačí drobečková stopa?
     function mapEnabled() as Lang.Boolean {
         return mUseMap;
+    }
+
+    //! Styl přístrojového štítu (mapa přes celou obrazovku) místo panelů.
+    function cockpitStyle() as Lang.Boolean {
+        return mCockpitStyle;
     }
 
     function info() {

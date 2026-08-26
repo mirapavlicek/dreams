@@ -392,25 +392,42 @@ MOCK_ROADS = [
 
 MOCK_BLOCKS = [(18, 210, 30, 26), (56, 214, 26, 22), (112, 300, 34, 24), (180, 200, 28, 30)]
 
+#: Rozměr, ve kterém jsou body ilustrační mapy nakreslené.
+MOCK_SIZE = (228.0, 384.0)
+
 
 def draw_device_map(p: Painter, data: dict, box) -> None:
     """Mapové okno tak, jak ho vykreslí MapTrackView, s palubovkou nad ním."""
+    x, y, width, height = box
+    draw_device_map_area(p, data, box)
+
+    strip = 18
+    p.rectangle(x + 1, y + height - strip, width - 2, strip - 1, "panel")
+    p.text(x + width / 2, y + height - strip / 2, "MAPA · výběr = přes celou obrazovku", 11,
+           "regular", "textDim")
+    p.frame(x, y, width, height, "panelEdge", 2)
+
+
+def draw_device_map_area(p: Painter, data: dict, box) -> None:
+    """Ilustrace kartografie i s projetou stopou, bez rámečku a popisků."""
     x, y, width, height = box
     scale = p.scale
     tile = Image.new("RGB", (round(width * scale), round(height * scale)), MOCK_MAP["land"])
     pen = ImageDraw.Draw(tile)
 
-    pen.ellipse(
-        (-30 * scale, 250 * scale, 90 * scale, 400 * scale),
-        fill=MOCK_MAP["forest"],
-    )
+    # Ilustrace je nakreslená pro okno 228x384, roztáhneme ji na skutečnou plochu.
+    sx = width * scale / MOCK_SIZE[0]
+    sy = height * scale / MOCK_SIZE[1]
+    road_scale = min(sx, sy)
+
+    pen.ellipse((-30 * sx, 250 * sy, 90 * sx, 400 * sy), fill=MOCK_MAP["forest"])
     for bx, by, bw, bh in MOCK_BLOCKS:
-        pen.rectangle((bx * scale, by * scale, (bx + bw) * scale, (by + bh) * scale), fill=MOCK_MAP["block"])
+        pen.rectangle((bx * sx, by * sy, (bx + bw) * sx, (by + bh) * sy), fill=MOCK_MAP["block"])
     for color, road_width, points in MOCK_ROADS:
         pen.line(
-            [(px * scale, py * scale) for px, py in points],
+            [(px * sx, py * sy) for px, py in points],
             fill=MOCK_MAP[color],
-            width=max(1, round(road_width * scale)),
+            width=max(1, round(road_width * road_scale)),
             joint="curve",
         )
     p.image.paste(tile, (round(x * scale), round(y * scale)))
@@ -447,12 +464,6 @@ def draw_device_map(p: Painter, data: dict, box) -> None:
         ],
         "text",
     )
-
-    strip = 18
-    p.rectangle(x + 1, y + height - strip, width - 2, strip - 1, "panel")
-    p.text(x + width / 2, y + height - strip / 2, "MAPA · výběr = přes celou obrazovku", 11,
-           "regular", "textDim")
-    p.frame(x, y, width, height, "panelEdge", 2)
 
 
 def demo_route():
@@ -509,6 +520,195 @@ def draw_weather_icon(p: Painter, cx, cy, weather) -> None:
     p.circle(cx + 3, cy + 1, 6, fill="textDim")
 
 
+def draw_band(p: Painter, x, y, width, height, radius) -> None:
+    """Poloprůhledný pruh nad mapou - na přístroji Graphics.createColor()."""
+    spec = p.layout["cockpit"]
+    band = rgb(spec["bandColor"]) + (spec["bandAlpha"],)
+    overlay = Image.new("RGBA", p.image.size, (0, 0, 0, 0))
+    ImageDraw.Draw(overlay).rounded_rectangle(
+        (p.s(x), p.s(y), p.s(x + width), p.s(y + height)),
+        radius=p.s(radius),
+        fill=band,
+    )
+    p.image.paste(Image.alpha_composite(p.image.convert("RGBA"), overlay).convert("RGB"), (0, 0))
+    p.draw = ImageDraw.Draw(p.image)
+
+
+def draw_heading_tape(p: Painter, data: dict) -> None:
+    """Kompasová páska přes celou šířku - v autě tady jsou názvy ulic."""
+    spec = p.layout["cockpit"]["tape"]
+    heading = float(data["heading"])
+    y = spec["y"] + spec["height"] / 2
+    spacing = spec["spacing"]
+
+    first = int((heading - 70) // 10) * 10
+    for step in range(first, int(heading + 71), 10):
+        bearing = step % 360
+        x = 240 + (step - heading) * spacing
+        if bearing % 45 == 0:
+            p.text(x, y, CARDINALS[bearing // 45], 13, "bold", "text")
+        elif bearing % 30 == 0:
+            p.text(x, y, str(bearing), 11, "regular", "textDim")
+        else:
+            p.line(x, y - 4, x, y + 4, "textDim", 1)
+
+    p.polygon([(240, y + 11), (235, y + 17), (245, y + 17)], "accent")
+
+
+def draw_cadence_badge(p: Painter, data: dict) -> None:
+    """Kadence jako kruhový budík vlevo - obdoba značky s limitem v autě."""
+    spec = p.layout["cockpit"]["cadence"]
+    cx, cy, radius, pen = spec["cx"], spec["cy"], spec["radius"], spec["pen"]
+    cadence = int(data["cadence"])
+    color = cadence_color(cadence, spec["max"])
+
+    p.circle(cx, cy, radius, outline="panelEdge", width=pen)
+    sweep = 360.0 * min(max(cadence / float(spec["max"]), 0.0), 1.0)
+    if sweep > 1:
+        p.arc(cx, cy, radius, -90, -90 + sweep, color, pen)
+    p.text(cx, cy - 4, str(cadence), 30, "mono", color)
+    p.text(cx, cy + 20, "rpm", 11, "regular", "textDim")
+
+
+def draw_cockpit_top(p: Painter, data: dict) -> None:
+    spec = p.layout["cockpit"]
+    draw_band(p, -spec["top"]["radius"], -spec["top"]["radius"],
+              480 + 2 * spec["top"]["radius"],
+              spec["top"]["height"] + spec["top"]["radius"], spec["top"]["radius"])
+
+    draw_heading_tape(p, data)
+    draw_cadence_badge(p, data)
+
+    speed = spec["speed"]
+    whole, _, decimal = f"{data['speed']:.1f}".partition(".")
+    whole_width = p.text_width(whole, speed["size"], "mono")
+    decimal_width = p.text_width("." + decimal, speed["decimalSize"], "mono")
+    left = speed["cx"] - (whole_width + decimal_width) / 2
+    p.text(left, speed["cy"], whole, speed["size"], "mono", "text", anchor="lm")
+    p.text(left + whole_width, speed["cy"] + 18, "." + decimal, speed["decimalSize"], "mono", "text",
+           anchor="lm")
+    p.text(left + whole_width + decimal_width + 6, speed["cy"] + 22, "km/h", 15, "regular", "textDim",
+           anchor="lm")
+
+    clock = spec["clock"]
+    p.text(clock["x"], clock["y"], data["clock"], 26, "mono", "text")
+    p.text(clock["x"] - 26, clock["statusY"], "GPS", 11, "bold", "ok", anchor="lm")
+    p.text(clock["x"] + 30, clock["statusY"], f"{int(data['deviceBattery'])}%", 11, "regular", "textDim",
+           anchor="rm")
+
+    chips = spec["chips"]
+    labels = [("PRŮMĚR", f"{data['avgSpeed']:.1f}", "accent"), ("MAX", f"{data['maxSpeed']:.1f}", "warn")]
+    width = (480 - 2 * chips["margin"] - chips["gap"]) / 2
+    for index, (label, value, color) in enumerate(labels):
+        x = chips["margin"] + index * (width + chips["gap"])
+        p.panel(x, chips["y"], width, chips["height"], radius=chips["radius"])
+        p.text(x + 12, chips["y"] + chips["height"] / 2, label, 11, "regular", "textDim", anchor="lm")
+        p.text(x + width - 38, chips["y"] + chips["height"] / 2, value, 18, "mono", color, anchor="rm")
+        p.text(x + width - 10, chips["y"] + chips["height"] / 2 + 1, "km/h", 10, "regular", "textDim",
+               anchor="rm")
+
+
+def draw_arrow(p: Painter, cx, cy, up, color) -> None:
+    size = 5
+    if up:
+        p.polygon([(cx, cy - size), (cx - size, cy + size), (cx + size, cy + size)], color)
+    else:
+        p.polygon([(cx, cy + size), (cx - size, cy - size), (cx + size, cy - size)], color)
+
+
+def draw_cockpit_bottom(p: Painter, data: dict) -> None:
+    spec = p.layout["cockpit"]
+    bottom = spec["bottom"]
+    draw_band(p, -bottom["radius"], bottom["y"], 480 + 2 * bottom["radius"],
+              bottom["height"] + bottom["radius"], bottom["radius"])
+
+    row_a = spec["rowA"]
+    margin = bottom["margin"]
+    columns = [
+        ("DOJEZD E-BIKE", f"{data['assistRange']:.0f}", "km", "ok"),
+        ("DO CÍLE", f"{data['distanceToDestination']:.1f}", f"km · {data['eta']}", "accent"),
+        ("NAJETO", f"{data['distance']:.1f}", "km", "text"),
+    ]
+    width = (480 - 2 * margin) / 3
+    for index, (label, value, unit, color) in enumerate(columns):
+        cx = margin + width * (index + 0.5)
+        p.text(cx, row_a["titleY"], label, 11, "regular", "textDim")
+        value_width = p.text_width(value, 30, "mono")
+        p.text(cx - value_width / 2, row_a["valueY"], value, 30, "mono", color, anchor="lm")
+        p.text(cx + value_width / 2 + 5, row_a["valueY"] + 5, unit, 11, "regular", "textDim", anchor="lm")
+
+    row_b = spec["rowB"]
+    battery = int(data["assistBattery"])
+    battery_color = "ok" if battery > 30 else "danger"
+    p.text(margin, row_b["y"], "E-BIKE", 11, "regular", "textDim", anchor="lm")
+    p.text(margin + 52, row_b["y"], f"{battery}%", 17, "mono", battery_color, anchor="lm")
+    p.bar(margin, row_b["barY"], 100, 5, battery / 100.0, battery_color)
+
+    # Šipky se kreslí, ne píšou - Garmin fonty znak ↑ nemají.
+    draw_arrow(p, 196, row_b["y"], True, "warn")
+    p.text(206, row_b["y"], f"{int(data['ascent'])} m", 15, "mono", "warn", anchor="lm")
+    p.text(212, row_b["barY"] + 2, "NASTOUPÁNO", 10, "regular", "textDim", anchor="mm")
+    draw_arrow(p, 302, row_b["y"], False, "cold")
+    p.text(312, row_b["y"], f"{int(data['descent'])} m", 15, "mono", "cold", anchor="lm")
+    p.text(318, row_b["barY"] + 2, "SESTOUPÁNO", 10, "regular", "textDim", anchor="mm")
+
+    draw_weather_icon(p, 400, row_b["y"], data["weather"])
+    p.text(480 - margin, row_b["y"], f"{int(data['temperature'])}°C", 19, "mono", "text", anchor="rm")
+    p.text(480 - margin, row_b["barY"] + 2, WEATHER_LABELS.get(data["weather"], "POČASÍ"), 10,
+           "regular", "textDim", anchor="rm")
+
+
+def draw_cockpit_inset(p: Painter, data: dict) -> None:
+    """Přehledová stopa v rohu mapy - jako náhled křižovatky v autě."""
+    spec = p.layout["cockpit"]
+    inset = spec["inset"]
+    y = spec["bottom"]["y"] - inset["bottomGap"] - inset["height"]
+    p.panel(inset["x"], y, inset["width"], inset["height"], radius=inset["radius"])
+
+    route = data.get("route") or demo_route()
+    travelled = data.get("track") or route[: int(len(route) * 0.62)]
+    padding = 12
+    points = route + travelled
+    min_x = min(px for px, _ in points)
+    max_x = max(px for px, _ in points)
+    min_y = min(py for _, py in points)
+    max_y = max(py for _, py in points)
+    span = max(max_x - min_x, max_y - min_y, 1e-6)
+    factor = min(inset["width"] - 2 * padding, inset["height"] - 2 * padding) / span
+    offset_x = inset["x"] + padding + (inset["width"] - 2 * padding - (max_x - min_x) * factor) / 2
+    offset_y = y + padding + (inset["height"] - 2 * padding - (max_y - min_y) * factor) / 2
+
+    def project(point):
+        px, py = point
+        return offset_x + (px - min_x) * factor, offset_y + (max_y - py) * factor
+
+    p.polyline([project(point) for point in route], "panelEdge", 3)
+    p.polyline([project(point) for point in travelled], "accent", 3)
+    here = project(travelled[-1])
+    p.circle(here[0], here[1], 4, fill="text")
+    p.text(inset["x"] + inset["width"] - 8, y + 12, "CELÁ TRASA", 10, "regular", "textDim", anchor="rm")
+
+
+def render_cockpit(data: dict, layout: dict, device_map: bool = True) -> Image.Image:
+    """Styl přístrojového štítu: mapa přes celou obrazovku, pruhy nad ní."""
+    p = Painter(layout)
+    canvas = layout["canvas"]
+    spec = layout["cockpit"]
+    map_top = spec["top"]["height"]
+    map_bottom = spec["bottom"]["y"]
+
+    if device_map:
+        draw_device_map_area(p, data, (0, map_top, canvas["width"], map_bottom - map_top))
+        # Přehledová stopa dává smysl jen nad zazoomovanou mapou.
+        draw_cockpit_inset(p, data)
+    else:
+        draw_map(p, data, (0, map_top, canvas["width"], map_bottom - map_top))
+
+    draw_cockpit_top(p, data)
+    draw_cockpit_bottom(p, data)
+    return p.finish()
+
+
 def render(data: dict, layout: dict, device_map: bool = False) -> Image.Image:
     p = Painter(layout)
 
@@ -559,7 +759,12 @@ def main() -> int:
     parser.add_argument(
         "--map",
         action="store_true",
-        help="režim s mapou z paměti přístroje (RideMapView) místo drobečkové stopy",
+        help="mapa z paměti přístroje (RideMapView) místo drobečkové stopy",
+    )
+    parser.add_argument(
+        "--cockpit",
+        action="store_true",
+        help="styl přístrojového štítu auta: mapa přes celou obrazovku, pruhy nad ní",
     )
     args = parser.parse_args()
 
@@ -567,7 +772,11 @@ def main() -> int:
     if args.json:
         data.update(json.loads(pathlib.Path(args.json).read_text(encoding="utf-8")))
 
-    image = render(data, load_layout(), device_map=args.map)
+    layout = load_layout()
+    if args.cockpit:
+        image = render_cockpit(data, layout, device_map=args.map)
+    else:
+        image = render(data, layout, device_map=args.map)
     out = pathlib.Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     image.save(out)

@@ -4,4 +4,7 @@
     <string id="SettingUseWeather">Zobrazovat počasí</string>
     <string id="SettingUseMap">Mapa z paměti přístroje</string>
     <string id="SettingUseMapPrompt">Vypnuto: uprostřed se kreslí jen drobečková stopa z GPS</string>
+    <string id="SettingStyle">Styl palubovky</string>
+    <string id="StyleCockpit">Přístrojový štít (mapa přes celou obrazovku)</string>
+    <string id="StylePanels">Panely (mapa v okně uprostřed)</string>
 </resources>

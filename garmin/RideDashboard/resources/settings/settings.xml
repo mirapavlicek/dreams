@@ -8,4 +8,10 @@
     <setting propertyKey="@Properties.useMap" title="@Strings.SettingUseMap" prompt="@Strings.SettingUseMapPrompt">
         <settingConfig type="boolean"/>
     </setting>
+    <setting propertyKey="@Properties.layoutStyle" title="@Strings.SettingStyle">
+        <settingConfig type="list">
+            <listEntry value="0">@Strings.StyleCockpit</listEntry>
+            <listEntry value="1">@Strings.StylePanels</listEntry>
+        </settingConfig>
+    </setting>
 </settings>
