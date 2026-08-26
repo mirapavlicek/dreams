@@ -254,16 +254,17 @@ module RideChrome {
         drawCompass(dc, margin, top, side, cellHeight);
 
         drawMetric(dc, margin, top + cellHeight + gap, side, cellHeight,
-            "DOJEZD E-BIKE", RideData.assistRangeKm().format("%.0f"), "km", "ok",
-            RideData.assistNote(), RideData.assistBatteryPercent() / 100.0);
+            ["DOJEZD E-BIKE", RideData.assistRangeKm().format("%.0f"), "km", RideData.assistNote()],
+            "ok", RideData.assistBatteryPercent() / 100.0);
 
         var remaining = RideData.distanceToDestinationKm();
         drawMetric(dc, rightX, top, side, cellHeight,
-            "DO CÍLE", remaining == null ? "--" : remaining.format("%.1f"), "km", "accent",
-            "příjezd " + RideData.etaString(), null);
+            ["DO CÍLE", remaining == null ? "--" : remaining.format("%.1f"), "km",
+                "příjezd " + RideData.etaString()],
+            "accent", null);
 
         drawMetric(dc, rightX, top + cellHeight + gap, side, cellHeight,
-            "NAJETO", RideData.distanceKm().format("%.1f"), "km", "text", null, null);
+            ["NAJETO", RideData.distanceKm().format("%.1f"), "km", null], "text", null);
 
         if (mapBehind) {
             drawMapFrame(dc, mapX, top, mapWidth, bottom - top);
@@ -272,11 +273,16 @@ module RideChrome {
         }
     }
 
-    function drawMetric(dc, x, y, width, height, title, value, unit, colorName, note, ratio) as Void {
+    //! @param texts [titulek, hodnota, jednotka, poznámka]; poznámka smí být null.
+    //!        Sbalené do pole schválně: starší jednotky (Edge 830 a spol.) víc
+    //!        než devět argumentů metodě nepředají.
+    function drawMetric(dc, x, y, width, height, texts as Lang.Array, colorName, ratio) as Void {
+        var note = texts[3];
+
         panel(dc, x, y, width, height, 10);
-        label(dc, x + width / 2.0, y + 16, title, 12, "textDim");
-        number(dc, x + width / 2.0, y + height / 2.0 - 4, value, 34, colorName);
-        label(dc, x + width / 2.0, y + height / 2.0 + 26, unit, 13, "textDim");
+        label(dc, x + width / 2.0, y + 16, texts[0], 12, "textDim");
+        number(dc, x + width / 2.0, y + height / 2.0 - 4, texts[1], 34, colorName);
+        label(dc, x + width / 2.0, y + height / 2.0 + 26, texts[2], 13, "textDim");
         if (ratio != null) {
             bar(dc, x + 16, y + height - 30, width - 32, 6, ratio, colorName);
         }

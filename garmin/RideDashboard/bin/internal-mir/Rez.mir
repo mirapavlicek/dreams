@@ -1,0 +1,1512 @@
+[ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 1; @symbol_importdef<0> = [Toybox,1,7,13]; @symbol_importdef<1> = [Lang,1,14,18]; ]
+import Toybox.Lang;
+[ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 2; @symbol_usingdef<0> = [Toybox,2,6,12]; @symbol_usingdef<1> = [WatchUi,2,13,20]; ]
+using Toybox.WatchUi;
+[ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 3; @symbol_usingdef<0> = [Toybox,3,6,12]; @symbol_usingdef<1> = [WatchUi,3,13,20]; @symbol_usingAlias = [Ui,3,24,26]; ]
+using Toybox.WatchUi as :Ui;
+[ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 4; @symbol_usingdef<0> = [Toybox,4,6,12]; @symbol_usingdef<1> = [Graphics,4,13,21]; ]
+using Toybox.Graphics;
+[ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 5; @symbol_usingdef<0> = [Toybox,5,6,12]; @symbol_usingdef<1> = [Graphics,5,13,21]; @symbol_usingAlias = [Gfx,5,25,28]; ]
+using Toybox.Graphics as :Gfx;
+[ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 7; @symbol_moduledef = [Rez,7,7,10]; ]
+module Rez {
+    [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 7; ]
+    <init> {
+    }
+    [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 8; @symbol_moduledef = [Drawables,8,11,20]; ]
+    module Drawables {
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 8; ]
+        <init> {
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 9; @position = 27; initialized = true; @symbol_vardef = [LauncherIcon,9,27,39]; @symbol_type<0> = [ResourceId,9,43,53]; ]
+        var LauncherIcon as ResourceId;
+    }
+    [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 12; @symbol_moduledef = [JsonData,12,11,19]; ]
+    module JsonData {
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 12; ]
+        <init> {
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 13; @position = 27; initialized = true; @symbol_vardef = [Layout,13,27,33]; @symbol_type<0> = [ResourceId,13,37,47]; ]
+        var Layout as ResourceId;
+    }
+    [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 16; @symbol_moduledef = [Strings,16,11,18]; ]
+    module Strings {
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 16; ]
+        <init> {
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 17; @position = 27; initialized = true; @symbol_vardef = [SettingUseWeather,17,27,44]; @symbol_type<0> = [ResourceId,17,48,58]; ]
+        var SettingUseWeather as ResourceId;
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 18; @position = 27; initialized = true; @symbol_vardef = [StyleCockpit,18,27,39]; @symbol_type<0> = [ResourceId,18,43,53]; ]
+        var StyleCockpit as ResourceId;
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 19; @position = 27; initialized = true; @symbol_vardef = [SettingBleName,19,27,41]; @symbol_type<0> = [ResourceId,19,45,55]; ]
+        var SettingBleName as ResourceId;
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 20; @position = 27; initialized = true; @symbol_vardef = [SettingBatteryWh,20,27,43]; @symbol_type<0> = [ResourceId,20,47,57]; ]
+        var SettingBatteryWh as ResourceId;
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 21; @position = 27; initialized = true; @symbol_vardef = [SettingAssistRange,21,27,45]; @symbol_type<0> = [ResourceId,21,49,59]; ]
+        var SettingAssistRange as ResourceId;
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 22; @position = 27; initialized = true; @symbol_vardef = [SettingBleNamePrompt,22,27,47]; @symbol_type<0> = [ResourceId,22,51,61]; ]
+        var SettingBleNamePrompt as ResourceId;
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 23; @position = 27; initialized = true; @symbol_vardef = [StylePanels,23,27,38]; @symbol_type<0> = [ResourceId,23,42,52]; ]
+        var StylePanels as ResourceId;
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 24; @position = 27; initialized = true; @symbol_vardef = [AppName,24,27,34]; @symbol_type<0> = [ResourceId,24,38,48]; ]
+        var AppName as ResourceId;
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 25; @position = 27; initialized = true; @symbol_vardef = [SettingLevDevicePrompt,25,27,49]; @symbol_type<0> = [ResourceId,25,53,63]; ]
+        var SettingLevDevicePrompt as ResourceId;
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 26; @position = 27; initialized = true; @symbol_vardef = [SettingAssistRangePrompt,26,27,51]; @symbol_type<0> = [ResourceId,26,55,65]; ]
+        var SettingAssistRangePrompt as ResourceId;
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 27; @position = 27; initialized = true; @symbol_vardef = [SettingStyle,27,27,39]; @symbol_type<0> = [ResourceId,27,43,53]; ]
+        var SettingStyle as ResourceId;
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 28; @position = 27; initialized = true; @symbol_vardef = [SettingUseMap,28,27,40]; @symbol_type<0> = [ResourceId,28,44,54]; ]
+        var SettingUseMap as ResourceId;
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 29; @position = 27; initialized = true; @symbol_vardef = [SettingUseMapPrompt,29,27,46]; @symbol_type<0> = [ResourceId,29,50,60]; ]
+        var SettingUseMapPrompt as ResourceId;
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 30; @position = 27; initialized = true; @symbol_vardef = [SettingUseLev,30,27,40]; @symbol_type<0> = [ResourceId,30,44,54]; ]
+        var SettingUseLev as ResourceId;
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 31; @position = 27; initialized = true; @symbol_vardef = [SettingUseLevPrompt,31,27,46]; @symbol_type<0> = [ResourceId,31,50,60]; ]
+        var SettingUseLevPrompt as ResourceId;
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 32; @position = 27; initialized = true; @symbol_vardef = [SettingLevDevice,32,27,43]; @symbol_type<0> = [ResourceId,32,47,57]; ]
+        var SettingLevDevice as ResourceId;
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 33; @position = 27; initialized = true; @symbol_vardef = [SettingBatteryWhPrompt,33,27,49]; @symbol_type<0> = [ResourceId,33,53,63]; ]
+        var SettingBatteryWhPrompt as ResourceId;
+    }
+    [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 36; @symbol_moduledef = [Styles,36,11,17]; ]
+    module Styles {
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 36; ]
+        <init> {
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 37; @symbol_moduledef = [prompt_font_enhanced_readability__body_with_title,37,15,64]; ]
+        module prompt_font_enhanced_readability__body_with_title {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 37; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 38; @position = 18; @symbol_constdef = [exclude,38,18,25]; @symbol_type<0> = [Boolean,38,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 41; @symbol_moduledef = [system_size__menu_header,41,15,39]; ]
+        module system_size__menu_header {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 41; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 42; @position = 18; @symbol_constdef = [height,42,18,24]; @symbol_type<0> = [Number,42,28,34]; ]
+            const height as Number = 0;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 45; @symbol_moduledef = [system_loc__hint_button_left_bottom,45,15,50]; ]
+        module system_loc__hint_button_left_bottom {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 45; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 46; @position = 18; @symbol_constdef = [exclude,46,18,25]; @symbol_type<0> = [Boolean,46,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 49; @symbol_moduledef = [prompt_font_enhanced_readability__body_no_title,49,15,62]; ]
+        module prompt_font_enhanced_readability__body_no_title {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 49; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 50; @position = 18; @symbol_constdef = [exclude,50,18,25]; @symbol_type<0> = [Boolean,50,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 53; @symbol_moduledef = [prompt_loc__body_no_title,53,15,40]; ]
+        module prompt_loc__body_no_title {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 53; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 54; @position = 18; @symbol_constdef = [x,54,18,19]; @symbol_type<0> = [Number,54,23,29]; ]
+            const x as Number = 20;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 55; @position = 18; @symbol_constdef = [y,55,18,19]; @symbol_type<0> = [Number,55,23,29]; ]
+            const y as Number = 20;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 58; @symbol_moduledef = [system_icon_dark__about,58,15,38]; ]
+        module system_icon_dark__about {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 58; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 59; @position = 18; @symbol_constdef = [filename,59,18,26]; @symbol_type<0> = [String,59,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/system_icon_dark__about.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 60; @position = 18; @symbol_constdef = [disableTransparency,60,18,37]; @symbol_type<0> = [Boolean,60,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 61; @position = 18; @symbol_constdef = [dithering,61,18,27]; @symbol_type<0> = [String,61,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 62; @position = 18; @symbol_constdef = [automaticPalette,62,18,34]; @symbol_type<0> = [Boolean,62,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 65; @symbol_moduledef = [system_icon_light__question,65,15,42]; ]
+        module system_icon_light__question {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 65; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 66; @position = 18; @symbol_constdef = [filename,66,18,26]; @symbol_type<0> = [String,66,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/system_icon_light__question.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 67; @position = 18; @symbol_constdef = [disableTransparency,67,18,37]; @symbol_type<0> = [Boolean,67,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 68; @position = 18; @symbol_constdef = [dithering,68,18,27]; @symbol_type<0> = [String,68,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 69; @position = 18; @symbol_constdef = [automaticPalette,69,18,34]; @symbol_type<0> = [Boolean,69,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 72; @symbol_moduledef = [system_loc__hint_button_left_top,72,15,47]; ]
+        module system_loc__hint_button_left_top {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 72; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 73; @position = 18; @symbol_constdef = [exclude,73,18,25]; @symbol_type<0> = [Boolean,73,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 76; @symbol_moduledef = [prompt_font__title,76,15,33]; ]
+        module prompt_font__title {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 76; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 77; @position = 18; @symbol_constdef = [exclude,77,18,25]; @symbol_type<0> = [Boolean,77,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 80; @symbol_moduledef = [system_icon_dark__discard,80,15,40]; ]
+        module system_icon_dark__discard {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 80; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 81; @position = 18; @symbol_constdef = [filename,81,18,26]; @symbol_type<0> = [String,81,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/system_icon_dark__discard.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 82; @position = 18; @symbol_constdef = [disableTransparency,82,18,37]; @symbol_type<0> = [Boolean,82,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 83; @position = 18; @symbol_constdef = [dithering,83,18,27]; @symbol_type<0> = [String,83,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 84; @position = 18; @symbol_constdef = [automaticPalette,84,18,34]; @symbol_type<0> = [Boolean,84,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 87; @symbol_moduledef = [system_size__menu_item,87,15,37]; ]
+        module system_size__menu_item {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 87; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 88; @position = 18; @symbol_constdef = [width,88,18,23]; @symbol_type<0> = [Number,88,27,33]; ]
+            const width as Number = 480;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 89; @position = 18; @symbol_constdef = [height,89,18,24]; @symbol_type<0> = [Number,89,28,34]; ]
+            const height as Number = 102;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 92; @symbol_moduledef = [system_color_dark__text,92,15,38]; ]
+        module system_color_dark__text {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 92; ]
+            <init> {
+[ "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen" 94 18 ]
+                symbol [ Graphics %tmp.1 94 31 39 ];
+                %tmp.1 = getm $.Toybox.Graphics;
+                symbol [ COLOR_TRANSPARENT %tmp.2 94 40 57 ];
+                %tmp.2 = getv %tmp.1 :COLOR_TRANSPARENT;
+                putv self :background %tmp.2;
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 93; @position = 18; @symbol_constdef = [color,93,18,23]; @symbol_type<0> = [Number,93,27,33]; ]
+            const color as Number = 0xFFFFFF;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 94; @position = 18; @symbol_constdef = [background,94,18,28]; ]
+            const background;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 97; @symbol_moduledef = [system_icon_destructive__discard,97,15,47]; ]
+        module system_icon_destructive__discard {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 97; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 98; @position = 18; @symbol_constdef = [filename,98,18,26]; @symbol_type<0> = [String,98,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/system_icon_destructive__discard.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 99; @position = 18; @symbol_constdef = [disableTransparency,99,18,37]; @symbol_type<0> = [Boolean,99,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 100; @position = 18; @symbol_constdef = [dithering,100,18,27]; @symbol_type<0> = [String,100,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 101; @position = 18; @symbol_constdef = [automaticPalette,101,18,34]; @symbol_type<0> = [Boolean,101,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 104; @symbol_moduledef = [system_icon_dark__hint_action_menu,104,15,49]; ]
+        module system_icon_dark__hint_action_menu {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 104; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 105; @position = 18; @symbol_constdef = [exclude,105,18,25]; @symbol_type<0> = [Boolean,105,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 108; @symbol_moduledef = [prompt_size__title,108,15,33]; ]
+        module prompt_size__title {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 108; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 109; @position = 18; @symbol_constdef = [exclude,109,18,25]; @symbol_type<0> = [Boolean,109,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 112; @symbol_moduledef = [confirmation_font__body,112,15,38]; ]
+        module confirmation_font__body {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 112; ]
+            <init> {
+[ "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen" 113 18 ]
+                symbol [ Graphics %tmp.3 113 34 42 ];
+                %tmp.3 = getm $.Toybox.Graphics;
+                symbol [ TEXT_JUSTIFY_CENTER %tmp.4 113 43 62 ];
+                %tmp.4 = getv %tmp.3 :TEXT_JUSTIFY_CENTER;
+                symbol [ Graphics %tmp.5 113 63 71 ];
+                %tmp.5 = getm $.Toybox.Graphics;
+                symbol [ TEXT_JUSTIFY_VCENTER %tmp.6 113 72 92 ];
+                %tmp.6 = getv %tmp.5 :TEXT_JUSTIFY_VCENTER;
+                %tmp.7 = bitor %tmp.4 %tmp.6;
+                putv self :justification %tmp.7;
+[ "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen" 114 18 ]
+                symbol [ Graphics %tmp.8 114 25 33 ];
+                %tmp.8 = getm $.Toybox.Graphics;
+                symbol [ FONT_MEDIUM %tmp.9 114 34 45 ];
+                %tmp.9 = getv %tmp.8 :FONT_MEDIUM;
+                putv self :font %tmp.9;
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 113; @position = 18; @symbol_constdef = [justification,113,18,31]; ]
+            const justification;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 114; @position = 18; @symbol_constdef = [font,114,18,22]; ]
+            const font;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 117; @symbol_moduledef = [system_color_dark__background,117,15,44]; ]
+        module system_color_dark__background {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 117; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 118; @position = 18; @symbol_constdef = [color,118,18,23]; @symbol_type<0> = [Number,118,27,33]; ]
+            const color as Number = 0x17181D;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 119; @position = 18; @symbol_constdef = [background,119,18,28]; @symbol_type<0> = [Number,119,32,38]; ]
+            const background as Number = 0x17181D;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 122; @symbol_moduledef = [system_icon_destructive__hint_button_left_top,122,15,60]; ]
+        module system_icon_destructive__hint_button_left_top {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 122; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 123; @position = 18; @symbol_constdef = [exclude,123,18,25]; @symbol_type<0> = [Boolean,123,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 126; @symbol_moduledef = [system_size__launch_icon,126,15,39]; ]
+        module system_size__launch_icon {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 126; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 127; @position = 18; @symbol_constdef = [scaleX,127,18,24]; @symbol_type<0> = [Number,127,28,34]; ]
+            const scaleX as Number = 68;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 128; @position = 18; @symbol_constdef = [scaleY,128,18,24]; @symbol_type<0> = [Number,128,28,34]; ]
+            const scaleY as Number = 68;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 129; @position = 18; @symbol_constdef = [scaleRelativeTo,129,18,33]; @symbol_type<0> = [String,129,37,43]; ]
+            const scaleRelativeTo as String = "screen";
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 132; @symbol_moduledef = [confirmation_input__confirm,132,15,42]; ]
+        module confirmation_input__confirm {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 132; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 133; @position = 18; @symbol_constdef = [y1,133,18,20]; @symbol_type<0> = [Number,133,24,30]; ]
+            const y1 as Number = 648;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 134; @position = 18; @symbol_constdef = [x1,134,18,20]; @symbol_type<0> = [Number,134,24,30]; ]
+            const x1 as Number = 353;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 135; @position = 18; @symbol_constdef = [y2,135,18,20]; @symbol_type<0> = [Number,135,24,30]; ]
+            const y2 as Number = 716;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 136; @position = 18; @symbol_constdef = [x2,136,18,20]; @symbol_type<0> = [Number,136,24,30]; ]
+            const x2 as Number = 421;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 139; @symbol_moduledef = [prompt_font__body_with_title,139,15,43]; ]
+        module prompt_font__body_with_title {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 139; ]
+            <init> {
+[ "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen" 140 18 ]
+                symbol [ Graphics %tmp.10 140 34 42 ];
+                %tmp.10 = getm $.Toybox.Graphics;
+                symbol [ TEXT_JUSTIFY_CENTER %tmp.11 140 43 62 ];
+                %tmp.11 = getv %tmp.10 :TEXT_JUSTIFY_CENTER;
+                symbol [ Graphics %tmp.12 140 63 71 ];
+                %tmp.12 = getm $.Toybox.Graphics;
+                symbol [ TEXT_JUSTIFY_VCENTER %tmp.13 140 72 92 ];
+                %tmp.13 = getv %tmp.12 :TEXT_JUSTIFY_VCENTER;
+                %tmp.14 = bitor %tmp.11 %tmp.13;
+                putv self :justification %tmp.14;
+[ "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen" 141 18 ]
+                symbol [ Graphics %tmp.15 141 25 33 ];
+                %tmp.15 = getm $.Toybox.Graphics;
+                symbol [ FONT_GLANCE_NUMBER %tmp.16 141 34 52 ];
+                %tmp.16 = getv %tmp.15 :FONT_GLANCE_NUMBER;
+                putv self :font %tmp.16;
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 140; @position = 18; @symbol_constdef = [justification,140,18,31]; ]
+            const justification;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 141; @position = 18; @symbol_constdef = [font,141,18,22]; ]
+            const font;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 144; @symbol_moduledef = [confirmation_loc__body,144,15,37]; ]
+        module confirmation_loc__body {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 144; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 145; @position = 18; @symbol_constdef = [x,145,18,19]; @symbol_type<0> = [Number,145,23,29]; ]
+            const x as Number = 20;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 146; @position = 18; @symbol_constdef = [y,146,18,19]; @symbol_type<0> = [Number,146,23,29]; ]
+            const y as Number = 20;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 149; @symbol_moduledef = [system_icon_destructive__hint_button_left_bottom,149,15,63]; ]
+        module system_icon_destructive__hint_button_left_bottom {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 149; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 150; @position = 18; @symbol_constdef = [exclude,150,18,25]; @symbol_type<0> = [Boolean,150,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 153; @symbol_moduledef = [prompt_color_dark__background,153,15,44]; ]
+        module prompt_color_dark__background {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 153; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 154; @position = 18; @symbol_constdef = [color,154,18,23]; @symbol_type<0> = [Number,154,27,33]; ]
+            const color as Number = 0x191919;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 155; @position = 18; @symbol_constdef = [background,155,18,28]; @symbol_type<0> = [Number,155,32,38]; ]
+            const background as Number = 0x191919;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 158; @symbol_moduledef = [system_icon_destructive__hint_action_menu,158,15,56]; ]
+        module system_icon_destructive__hint_action_menu {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 158; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 159; @position = 18; @symbol_constdef = [exclude,159,18,25]; @symbol_type<0> = [Boolean,159,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 162; @symbol_moduledef = [system_loc__hint_action_menu,162,15,43]; ]
+        module system_loc__hint_action_menu {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 162; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 163; @position = 18; @symbol_constdef = [exclude,163,18,25]; @symbol_type<0> = [Boolean,163,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 166; @symbol_moduledef = [confirmation_icon__hint_confirm,166,15,46]; ]
+        module confirmation_icon__hint_confirm {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 166; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 167; @position = 18; @symbol_constdef = [filename,167,18,26]; @symbol_type<0> = [String,167,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/confirmation_icon_dark__hint_completion.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 168; @position = 18; @symbol_constdef = [disableTransparency,168,18,37]; @symbol_type<0> = [Boolean,168,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 169; @position = 18; @symbol_constdef = [dithering,169,18,27]; @symbol_type<0> = [String,169,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 170; @position = 18; @symbol_constdef = [automaticPalette,170,18,34]; @symbol_type<0> = [Boolean,170,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 173; @symbol_moduledef = [system_loc__hint_button_left_middle,173,15,50]; ]
+        module system_loc__hint_button_left_middle {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 173; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 174; @position = 18; @symbol_constdef = [exclude,174,18,25]; @symbol_type<0> = [Boolean,174,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 177; @symbol_moduledef = [prompt_size__body_no_title,177,15,41]; ]
+        module prompt_size__body_no_title {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 177; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 178; @position = 18; @symbol_constdef = [width,178,18,23]; @symbol_type<0> = [Number,178,27,33]; ]
+            const width as Number = 460;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 179; @position = 18; @symbol_constdef = [height,179,18,24]; @symbol_type<0> = [Number,179,28,34]; ]
+            const height as Number = 671;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 182; @symbol_moduledef = [system_icon_light__hint_button_left_top,182,15,54]; ]
+        module system_icon_light__hint_button_left_top {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 182; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 183; @position = 18; @symbol_constdef = [exclude,183,18,25]; @symbol_type<0> = [Boolean,183,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 186; @symbol_moduledef = [prompt_color_light__background,186,15,45]; ]
+        module prompt_color_light__background {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 186; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 187; @position = 18; @symbol_constdef = [color,187,18,23]; @symbol_type<0> = [Number,187,27,33]; ]
+            const color as Number = 0xDCDCDC;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 188; @position = 18; @symbol_constdef = [background,188,18,28]; @symbol_type<0> = [Number,188,32,38]; ]
+            const background as Number = 0xDCDCDC;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 191; @symbol_moduledef = [confirmation_input__delete,191,15,41]; ]
+        module confirmation_input__delete {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 191; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 192; @position = 18; @symbol_constdef = [y1,192,18,20]; @symbol_type<0> = [Number,192,24,30]; ]
+            const y1 as Number = 648;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 193; @position = 18; @symbol_constdef = [x1,193,18,20]; @symbol_type<0> = [Number,193,24,30]; ]
+            const x1 as Number = 59;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 194; @position = 18; @symbol_constdef = [y2,194,18,20]; @symbol_type<0> = [Number,194,24,30]; ]
+            const y2 as Number = 716;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 195; @position = 18; @symbol_constdef = [x2,195,18,20]; @symbol_type<0> = [Number,195,24,30]; ]
+            const x2 as Number = 127;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 198; @symbol_moduledef = [system_icon_dark__hint_button_left_top,198,15,53]; ]
+        module system_icon_dark__hint_button_left_top {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 198; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 199; @position = 18; @symbol_constdef = [exclude,199,18,25]; @symbol_type<0> = [Boolean,199,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 202; @symbol_moduledef = [system_input__action_menu,202,15,40]; ]
+        module system_input__action_menu {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 202; ]
+            <init> {
+[ "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen" 203 18 ]
+                symbol [ WatchUi %tmp.17 203 27 34 ];
+                %tmp.17 = getm $.Toybox.WatchUi;
+                symbol [ KEY_MENU %tmp.18 203 35 43 ];
+                %tmp.18 = getv %tmp.17 :KEY_MENU;
+                putv self :button %tmp.18;
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 203; @position = 18; @symbol_constdef = [button,203,18,24]; ]
+            const button;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 206; @symbol_moduledef = [system_icon_light__save,206,15,38]; ]
+        module system_icon_light__save {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 206; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 207; @position = 18; @symbol_constdef = [filename,207,18,26]; @symbol_type<0> = [String,207,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/system_icon_light__save.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 208; @position = 18; @symbol_constdef = [disableTransparency,208,18,37]; @symbol_type<0> = [Boolean,208,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 209; @position = 18; @symbol_constdef = [dithering,209,18,27]; @symbol_type<0> = [String,209,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 210; @position = 18; @symbol_constdef = [automaticPalette,210,18,34]; @symbol_type<0> = [Boolean,210,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 213; @symbol_moduledef = [prompt_color_light__body,213,15,39]; ]
+        module prompt_color_light__body {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 213; ]
+            <init> {
+[ "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen" 215 18 ]
+                symbol [ Graphics %tmp.19 215 31 39 ];
+                %tmp.19 = getm $.Toybox.Graphics;
+                symbol [ COLOR_TRANSPARENT %tmp.20 215 40 57 ];
+                %tmp.20 = getv %tmp.19 :COLOR_TRANSPARENT;
+                putv self :background %tmp.20;
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 214; @position = 18; @symbol_constdef = [color,214,18,23]; @symbol_type<0> = [Number,214,27,33]; ]
+            const color as Number = 0x313253;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 215; @position = 18; @symbol_constdef = [background,215,18,28]; ]
+            const background;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 218; @symbol_moduledef = [system_loc__subwindow,218,15,36]; ]
+        module system_loc__subwindow {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 218; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 219; @position = 18; @symbol_constdef = [exclude,219,18,25]; @symbol_type<0> = [Boolean,219,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 222; @symbol_moduledef = [system_icon_light__warning,222,15,41]; ]
+        module system_icon_light__warning {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 222; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 223; @position = 18; @symbol_constdef = [filename,223,18,26]; @symbol_type<0> = [String,223,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/system_icon_light__warning.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 224; @position = 18; @symbol_constdef = [disableTransparency,224,18,37]; @symbol_type<0> = [Boolean,224,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 225; @position = 18; @symbol_constdef = [dithering,225,18,27]; @symbol_type<0> = [String,225,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 226; @position = 18; @symbol_constdef = [automaticPalette,226,18,34]; @symbol_type<0> = [Boolean,226,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 229; @symbol_moduledef = [confirmation_color_light__body,229,15,45]; ]
+        module confirmation_color_light__body {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 229; ]
+            <init> {
+[ "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen" 231 18 ]
+                symbol [ Graphics %tmp.21 231 31 39 ];
+                %tmp.21 = getm $.Toybox.Graphics;
+                symbol [ COLOR_TRANSPARENT %tmp.22 231 40 57 ];
+                %tmp.22 = getv %tmp.21 :COLOR_TRANSPARENT;
+                putv self :background %tmp.22;
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 230; @position = 18; @symbol_constdef = [color,230,18,23]; @symbol_type<0> = [Number,230,27,33]; ]
+            const color as Number = 0x17181D;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 231; @position = 18; @symbol_constdef = [background,231,18,28]; ]
+            const background;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 234; @symbol_moduledef = [confirmation_icon_light__hint_keep,234,15,49]; ]
+        module confirmation_icon_light__hint_keep {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 234; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 235; @position = 18; @symbol_constdef = [filename,235,18,26]; @symbol_type<0> = [String,235,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/confirmation_icon_light__hint_keep.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 236; @position = 18; @symbol_constdef = [disableTransparency,236,18,37]; @symbol_type<0> = [Boolean,236,41,48]; ]
+            const disableTransparency as Boolean = false;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 237; @position = 18; @symbol_constdef = [dithering,237,18,27]; @symbol_type<0> = [String,237,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 238; @position = 18; @symbol_constdef = [automaticPalette,238,18,34]; @symbol_type<0> = [Boolean,238,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 241; @symbol_moduledef = [activity_color_light__background,241,15,47]; ]
+        module activity_color_light__background {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 241; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 242; @position = 18; @symbol_constdef = [color,242,18,23]; @symbol_type<0> = [Number,242,27,33]; ]
+            const color as Number = 0xDCDCDC;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 243; @position = 18; @symbol_constdef = [background,243,18,28]; @symbol_type<0> = [Number,243,32,38]; ]
+            const background as Number = 0xDCDCDC;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 246; @symbol_moduledef = [system_icon_positive__hint_button_right_top,246,15,58]; ]
+        module system_icon_positive__hint_button_right_top {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 246; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 247; @position = 18; @symbol_constdef = [exclude,247,18,25]; @symbol_type<0> = [Boolean,247,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 250; @symbol_moduledef = [system_size__screen,250,15,34]; ]
+        module system_size__screen {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 250; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 251; @position = 18; @symbol_constdef = [width,251,18,23]; @symbol_type<0> = [Number,251,27,33]; ]
+            const width as Number = 480;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 252; @position = 18; @symbol_constdef = [height,252,18,24]; @symbol_type<0> = [Number,252,28,34]; ]
+            const height as Number = 800;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 255; @symbol_moduledef = [system_icon_destructive__hint_button_right_bottom,255,15,64]; ]
+        module system_icon_destructive__hint_button_right_bottom {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 255; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 256; @position = 18; @symbol_constdef = [exclude,256,18,25]; @symbol_type<0> = [Boolean,256,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 259; @symbol_moduledef = [system_color_light__background,259,15,45]; ]
+        module system_color_light__background {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 259; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 260; @position = 18; @symbol_constdef = [color,260,18,23]; @symbol_type<0> = [Number,260,27,33]; ]
+            const color as Number = 0xDCDCDC;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 261; @position = 18; @symbol_constdef = [background,261,18,28]; @symbol_type<0> = [Number,261,32,38]; ]
+            const background as Number = 0xDCDCDC;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 264; @symbol_moduledef = [system_icon_destructive__hint_button_right_top,264,15,61]; ]
+        module system_icon_destructive__hint_button_right_top {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 264; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 265; @position = 18; @symbol_constdef = [exclude,265,18,25]; @symbol_type<0> = [Boolean,265,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 268; @symbol_moduledef = [confirmation_loc__hint_confirm,268,15,45]; ]
+        module confirmation_loc__hint_confirm {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 268; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 269; @position = 18; @symbol_constdef = [x,269,18,19]; @symbol_type<0> = [Number,269,23,29]; ]
+            const x as Number = 387;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 270; @position = 18; @symbol_constdef = [y,270,18,19]; @symbol_type<0> = [Number,270,23,29]; ]
+            const y as Number = 682;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 271; @position = 18; @symbol_constdef = [horizontalJustification,271,18,41]; @symbol_type<0> = [String,271,45,51]; ]
+            const horizontalJustification as String = "center";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 272; @position = 18; @symbol_constdef = [verticalJustification,272,18,39]; @symbol_type<0> = [String,272,43,49]; ]
+            const verticalJustification as String = "center";
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 275; @symbol_moduledef = [activity_color_dark__text,275,15,40]; ]
+        module activity_color_dark__text {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 275; ]
+            <init> {
+[ "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen" 277 18 ]
+                symbol [ Graphics %tmp.23 277 31 39 ];
+                %tmp.23 = getm $.Toybox.Graphics;
+                symbol [ COLOR_TRANSPARENT %tmp.24 277 40 57 ];
+                %tmp.24 = getv %tmp.23 :COLOR_TRANSPARENT;
+                putv self :background %tmp.24;
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 276; @position = 18; @symbol_constdef = [color,276,18,23]; @symbol_type<0> = [Number,276,27,33]; ]
+            const color as Number = 0xFFFFFF;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 277; @position = 18; @symbol_constdef = [background,277,18,28]; ]
+            const background;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 280; @symbol_moduledef = [confirmation_input__keep,280,15,39]; ]
+        module confirmation_input__keep {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 280; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 281; @position = 18; @symbol_constdef = [y1,281,18,20]; @symbol_type<0> = [Number,281,24,30]; ]
+            const y1 as Number = 648;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 282; @position = 18; @symbol_constdef = [x1,282,18,20]; @symbol_type<0> = [Number,282,24,30]; ]
+            const x1 as Number = 353;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 283; @position = 18; @symbol_constdef = [y2,283,18,20]; @symbol_type<0> = [Number,283,24,30]; ]
+            const y2 as Number = 716;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 284; @position = 18; @symbol_constdef = [x2,284,18,20]; @symbol_type<0> = [Number,284,24,30]; ]
+            const x2 as Number = 421;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 287; @symbol_moduledef = [prompt_loc__body_with_title,287,15,42]; ]
+        module prompt_loc__body_with_title {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 287; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 288; @position = 18; @symbol_constdef = [x,288,18,19]; @symbol_type<0> = [Number,288,23,29]; ]
+            const x as Number = 24;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 289; @position = 18; @symbol_constdef = [y,289,18,19]; @symbol_type<0> = [Number,289,23,29]; ]
+            const y as Number = 24;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 292; @symbol_moduledef = [system_icon_dark__search,292,15,39]; ]
+        module system_icon_dark__search {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 292; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 293; @position = 18; @symbol_constdef = [filename,293,18,26]; @symbol_type<0> = [String,293,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/system_icon_dark__search.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 294; @position = 18; @symbol_constdef = [disableTransparency,294,18,37]; @symbol_type<0> = [Boolean,294,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 295; @position = 18; @symbol_constdef = [dithering,295,18,27]; @symbol_type<0> = [String,295,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 296; @position = 18; @symbol_constdef = [automaticPalette,296,18,34]; @symbol_type<0> = [Boolean,296,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 299; @symbol_moduledef = [activity_color_light__text,299,15,41]; ]
+        module activity_color_light__text {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 299; ]
+            <init> {
+[ "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen" 301 18 ]
+                symbol [ Graphics %tmp.25 301 31 39 ];
+                %tmp.25 = getm $.Toybox.Graphics;
+                symbol [ COLOR_TRANSPARENT %tmp.26 301 40 57 ];
+                %tmp.26 = getv %tmp.25 :COLOR_TRANSPARENT;
+                putv self :background %tmp.26;
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 300; @position = 18; @symbol_constdef = [color,300,18,23]; @symbol_type<0> = [Number,300,27,33]; ]
+            const color as Number = 0x313253;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 301; @position = 18; @symbol_constdef = [background,301,18,28]; ]
+            const background;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 304; @symbol_moduledef = [confirmation_icon__hint_keep,304,15,43]; ]
+        module confirmation_icon__hint_keep {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 304; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 305; @position = 18; @symbol_constdef = [filename,305,18,26]; @symbol_type<0> = [String,305,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/confirmation_icon_dark__hint_keep.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 306; @position = 18; @symbol_constdef = [disableTransparency,306,18,37]; @symbol_type<0> = [Boolean,306,41,48]; ]
+            const disableTransparency as Boolean = false;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 307; @position = 18; @symbol_constdef = [dithering,307,18,27]; @symbol_type<0> = [String,307,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 308; @position = 18; @symbol_constdef = [automaticPalette,308,18,34]; @symbol_type<0> = [Boolean,308,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 311; @symbol_moduledef = [system_icon_dark__save,311,15,37]; ]
+        module system_icon_dark__save {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 311; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 312; @position = 18; @symbol_constdef = [filename,312,18,26]; @symbol_type<0> = [String,312,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/system_icon_dark__save.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 313; @position = 18; @symbol_constdef = [disableTransparency,313,18,37]; @symbol_type<0> = [Boolean,313,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 314; @position = 18; @symbol_constdef = [dithering,314,18,27]; @symbol_type<0> = [String,314,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 315; @position = 18; @symbol_constdef = [automaticPalette,315,18,34]; @symbol_type<0> = [Boolean,315,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 318; @symbol_moduledef = [system_icon_destructive__hint_button_left_middle,318,15,63]; ]
+        module system_icon_destructive__hint_button_left_middle {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 318; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 319; @position = 18; @symbol_constdef = [exclude,319,18,25]; @symbol_type<0> = [Boolean,319,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 322; @symbol_moduledef = [system_icon_light__search,322,15,40]; ]
+        module system_icon_light__search {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 322; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 323; @position = 18; @symbol_constdef = [filename,323,18,26]; @symbol_type<0> = [String,323,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/system_icon_light__search.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 324; @position = 18; @symbol_constdef = [disableTransparency,324,18,37]; @symbol_type<0> = [Boolean,324,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 325; @position = 18; @symbol_constdef = [dithering,325,18,27]; @symbol_type<0> = [String,325,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 326; @position = 18; @symbol_constdef = [automaticPalette,326,18,34]; @symbol_type<0> = [Boolean,326,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 329; @symbol_moduledef = [system_icon_dark__hint_button_left_bottom,329,15,56]; ]
+        module system_icon_dark__hint_button_left_bottom {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 329; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 330; @position = 18; @symbol_constdef = [exclude,330,18,25]; @symbol_type<0> = [Boolean,330,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 333; @symbol_moduledef = [system_icon_positive__hint_button_left_top,333,15,57]; ]
+        module system_icon_positive__hint_button_left_top {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 333; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 334; @position = 18; @symbol_constdef = [exclude,334,18,25]; @symbol_type<0> = [Boolean,334,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 337; @symbol_moduledef = [system_loc__hint_button_right_bottom,337,15,51]; ]
+        module system_loc__hint_button_right_bottom {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 337; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 338; @position = 18; @symbol_constdef = [exclude,338,18,25]; @symbol_type<0> = [Boolean,338,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 341; @symbol_moduledef = [confirmation_icon_dark__hint_reject,341,15,50]; ]
+        module confirmation_icon_dark__hint_reject {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 341; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 342; @position = 18; @symbol_constdef = [filename,342,18,26]; @symbol_type<0> = [String,342,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/confirmation_icon_dark__hint_reject.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 343; @position = 18; @symbol_constdef = [disableTransparency,343,18,37]; @symbol_type<0> = [Boolean,343,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 344; @position = 18; @symbol_constdef = [dithering,344,18,27]; @symbol_type<0> = [String,344,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 345; @position = 18; @symbol_constdef = [automaticPalette,345,18,34]; @symbol_type<0> = [Boolean,345,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 348; @symbol_moduledef = [confirmation_color_dark__body,348,15,44]; ]
+        module confirmation_color_dark__body {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 348; ]
+            <init> {
+[ "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen" 350 18 ]
+                symbol [ Graphics %tmp.27 350 31 39 ];
+                %tmp.27 = getm $.Toybox.Graphics;
+                symbol [ COLOR_TRANSPARENT %tmp.28 350 40 57 ];
+                %tmp.28 = getv %tmp.27 :COLOR_TRANSPARENT;
+                putv self :background %tmp.28;
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 349; @position = 18; @symbol_constdef = [color,349,18,23]; @symbol_type<0> = [Number,349,27,33]; ]
+            const color as Number = 0xDCDCDC;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 350; @position = 18; @symbol_constdef = [background,350,18,28]; ]
+            const background;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 353; @symbol_moduledef = [confirmation_icon_light__hint_confirm,353,15,52]; ]
+        module confirmation_icon_light__hint_confirm {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 353; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 354; @position = 18; @symbol_constdef = [filename,354,18,26]; @symbol_type<0> = [String,354,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/confirmation_icon_light__hint_completion.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 355; @position = 18; @symbol_constdef = [disableTransparency,355,18,37]; @symbol_type<0> = [Boolean,355,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 356; @position = 18; @symbol_constdef = [dithering,356,18,27]; @symbol_type<0> = [String,356,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 357; @position = 18; @symbol_constdef = [automaticPalette,357,18,34]; @symbol_type<0> = [Boolean,357,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 360; @symbol_moduledef = [prompt_color_dark__title,360,15,39]; ]
+        module prompt_color_dark__title {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 360; ]
+            <init> {
+[ "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen" 362 18 ]
+                symbol [ Graphics %tmp.29 362 31 39 ];
+                %tmp.29 = getm $.Toybox.Graphics;
+                symbol [ COLOR_TRANSPARENT %tmp.30 362 40 57 ];
+                %tmp.30 = getv %tmp.29 :COLOR_TRANSPARENT;
+                putv self :background %tmp.30;
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 361; @position = 18; @symbol_constdef = [color,361,18,23]; @symbol_type<0> = [Number,361,27,33]; ]
+            const color as Number = 0xFFFFFF;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 362; @position = 18; @symbol_constdef = [background,362,18,28]; ]
+            const background;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 365; @symbol_moduledef = [system_icon_destructive__cancel,365,15,46]; ]
+        module system_icon_destructive__cancel {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 365; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 366; @position = 18; @symbol_constdef = [filename,366,18,26]; @symbol_type<0> = [String,366,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/system_icon_destructive__cancel.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 367; @position = 18; @symbol_constdef = [disableTransparency,367,18,37]; @symbol_type<0> = [Boolean,367,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 368; @position = 18; @symbol_constdef = [dithering,368,18,27]; @symbol_type<0> = [String,368,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 369; @position = 18; @symbol_constdef = [automaticPalette,369,18,34]; @symbol_type<0> = [Boolean,369,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 372; @symbol_moduledef = [system_icon_light__hint_button_right_bottom,372,15,58]; ]
+        module system_icon_light__hint_button_right_bottom {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 372; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 373; @position = 18; @symbol_constdef = [exclude,373,18,25]; @symbol_type<0> = [Boolean,373,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 376; @symbol_moduledef = [prompt_loc__title,376,15,32]; ]
+        module prompt_loc__title {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 376; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 377; @position = 18; @symbol_constdef = [exclude,377,18,25]; @symbol_type<0> = [Boolean,377,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 380; @symbol_moduledef = [confirmation_font_enhanced_readability__body,380,15,59]; ]
+        module confirmation_font_enhanced_readability__body {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 380; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 381; @position = 18; @symbol_constdef = [exclude,381,18,25]; @symbol_type<0> = [Boolean,381,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 384; @symbol_moduledef = [prompt_color_light__title,384,15,40]; ]
+        module prompt_color_light__title {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 384; ]
+            <init> {
+[ "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen" 386 18 ]
+                symbol [ Graphics %tmp.31 386 31 39 ];
+                %tmp.31 = getm $.Toybox.Graphics;
+                symbol [ COLOR_TRANSPARENT %tmp.32 386 40 57 ];
+                %tmp.32 = getv %tmp.31 :COLOR_TRANSPARENT;
+                putv self :background %tmp.32;
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 385; @position = 18; @symbol_constdef = [color,385,18,23]; @symbol_type<0> = [Number,385,27,33]; ]
+            const color as Number = 0x313253;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 386; @position = 18; @symbol_constdef = [background,386,18,28]; ]
+            const background;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 389; @symbol_moduledef = [system_icon_dark__hint_button_right_top,389,15,54]; ]
+        module system_icon_dark__hint_button_right_top {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 389; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 390; @position = 18; @symbol_constdef = [exclude,390,18,25]; @symbol_type<0> = [Boolean,390,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 393; @symbol_moduledef = [system_icon_dark__hint_button_left_middle,393,15,56]; ]
+        module system_icon_dark__hint_button_left_middle {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 393; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 394; @position = 18; @symbol_constdef = [exclude,394,18,25]; @symbol_type<0> = [Boolean,394,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 397; @symbol_moduledef = [confirmation_icon_dark__hint_keep,397,15,48]; ]
+        module confirmation_icon_dark__hint_keep {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 397; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 398; @position = 18; @symbol_constdef = [filename,398,18,26]; @symbol_type<0> = [String,398,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/confirmation_icon_dark__hint_keep.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 399; @position = 18; @symbol_constdef = [disableTransparency,399,18,37]; @symbol_type<0> = [Boolean,399,41,48]; ]
+            const disableTransparency as Boolean = false;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 400; @position = 18; @symbol_constdef = [dithering,400,18,27]; @symbol_type<0> = [String,400,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 401; @position = 18; @symbol_constdef = [automaticPalette,401,18,34]; @symbol_type<0> = [Boolean,401,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 404; @symbol_moduledef = [system_icon_light__cancel,404,15,40]; ]
+        module system_icon_light__cancel {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 404; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 405; @position = 18; @symbol_constdef = [filename,405,18,26]; @symbol_type<0> = [String,405,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/system_icon_light__cancel.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 406; @position = 18; @symbol_constdef = [disableTransparency,406,18,37]; @symbol_type<0> = [Boolean,406,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 407; @position = 18; @symbol_constdef = [dithering,407,18,27]; @symbol_type<0> = [String,407,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 408; @position = 18; @symbol_constdef = [automaticPalette,408,18,34]; @symbol_type<0> = [Boolean,408,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 411; @symbol_moduledef = [confirmation_icon_light__hint_reject,411,15,51]; ]
+        module confirmation_icon_light__hint_reject {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 411; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 412; @position = 18; @symbol_constdef = [filename,412,18,26]; @symbol_type<0> = [String,412,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/confirmation_icon_light__hint_reject.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 413; @position = 18; @symbol_constdef = [disableTransparency,413,18,37]; @symbol_type<0> = [Boolean,413,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 414; @position = 18; @symbol_constdef = [dithering,414,18,27]; @symbol_type<0> = [String,414,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 415; @position = 18; @symbol_constdef = [automaticPalette,415,18,34]; @symbol_type<0> = [Boolean,415,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 418; @symbol_moduledef = [system_icon_light__about,418,15,39]; ]
+        module system_icon_light__about {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 418; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 419; @position = 18; @symbol_constdef = [filename,419,18,26]; @symbol_type<0> = [String,419,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/system_icon_light__about.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 420; @position = 18; @symbol_constdef = [disableTransparency,420,18,37]; @symbol_type<0> = [Boolean,420,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 421; @position = 18; @symbol_constdef = [dithering,421,18,27]; @symbol_type<0> = [String,421,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 422; @position = 18; @symbol_constdef = [automaticPalette,422,18,34]; @symbol_type<0> = [Boolean,422,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 425; @symbol_moduledef = [system_size__toast_icon,425,15,38]; ]
+        module system_size__toast_icon {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 425; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 426; @position = 18; @symbol_constdef = [scaleX,426,18,24]; @symbol_type<0> = [Number,426,28,34]; ]
+            const scaleX as Number = 54;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 427; @position = 18; @symbol_constdef = [scaleRelativeTo,427,18,33]; @symbol_type<0> = [String,427,37,43]; ]
+            const scaleRelativeTo as String = "screen";
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 430; @symbol_moduledef = [system_icon_dark__hint_button_right_middle,430,15,57]; ]
+        module system_icon_dark__hint_button_right_middle {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 430; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 431; @position = 18; @symbol_constdef = [exclude,431,18,25]; @symbol_type<0> = [Boolean,431,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 434; @symbol_moduledef = [confirmation_icon__hint_reject,434,15,45]; ]
+        module confirmation_icon__hint_reject {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 434; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 435; @position = 18; @symbol_constdef = [filename,435,18,26]; @symbol_type<0> = [String,435,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/confirmation_icon_dark__hint_reject.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 436; @position = 18; @symbol_constdef = [disableTransparency,436,18,37]; @symbol_type<0> = [Boolean,436,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 437; @position = 18; @symbol_constdef = [dithering,437,18,27]; @symbol_type<0> = [String,437,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 438; @position = 18; @symbol_constdef = [automaticPalette,438,18,34]; @symbol_type<0> = [Boolean,438,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 441; @symbol_moduledef = [system_icon_light__hint_action_menu,441,15,50]; ]
+        module system_icon_light__hint_action_menu {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 441; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 442; @position = 18; @symbol_constdef = [exclude,442,18,25]; @symbol_type<0> = [Boolean,442,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 445; @symbol_moduledef = [system_icon_light__hint_button_right_middle,445,15,58]; ]
+        module system_icon_light__hint_button_right_middle {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 445; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 446; @position = 18; @symbol_constdef = [exclude,446,18,25]; @symbol_type<0> = [Boolean,446,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 449; @symbol_moduledef = [system_icon_destructive__hint_button_right_middle,449,15,64]; ]
+        module system_icon_destructive__hint_button_right_middle {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 449; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 450; @position = 18; @symbol_constdef = [exclude,450,18,25]; @symbol_type<0> = [Boolean,450,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 453; @symbol_moduledef = [confirmation_loc__hint_reject,453,15,44]; ]
+        module confirmation_loc__hint_reject {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 453; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 454; @position = 18; @symbol_constdef = [x,454,18,19]; @symbol_type<0> = [Number,454,23,29]; ]
+            const x as Number = 93;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 455; @position = 18; @symbol_constdef = [y,455,18,19]; @symbol_type<0> = [Number,455,23,29]; ]
+            const y as Number = 682;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 456; @position = 18; @symbol_constdef = [horizontalJustification,456,18,41]; @symbol_type<0> = [String,456,45,51]; ]
+            const horizontalJustification as String = "center";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 457; @position = 18; @symbol_constdef = [verticalJustification,457,18,39]; @symbol_type<0> = [String,457,43,49]; ]
+            const verticalJustification as String = "center";
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 460; @symbol_moduledef = [confirmation_icon_dark__hint_delete,460,15,50]; ]
+        module confirmation_icon_dark__hint_delete {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 460; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 461; @position = 18; @symbol_constdef = [filename,461,18,26]; @symbol_type<0> = [String,461,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/confirmation_icon_dark__hint_delete.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 462; @position = 18; @symbol_constdef = [disableTransparency,462,18,37]; @symbol_type<0> = [Boolean,462,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 463; @position = 18; @symbol_constdef = [dithering,463,18,27]; @symbol_type<0> = [String,463,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 464; @position = 18; @symbol_constdef = [automaticPalette,464,18,34]; @symbol_type<0> = [Boolean,464,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 467; @symbol_moduledef = [activity_color_dark__background,467,15,46]; ]
+        module activity_color_dark__background {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 467; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 468; @position = 18; @symbol_constdef = [color,468,18,23]; @symbol_type<0> = [Number,468,27,33]; ]
+            const color as Number = 0x17181D;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 469; @position = 18; @symbol_constdef = [background,469,18,28]; @symbol_type<0> = [Number,469,32,38]; ]
+            const background as Number = 0x17181D;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 472; @symbol_moduledef = [system_icon_light__hint_button_left_bottom,472,15,57]; ]
+        module system_icon_light__hint_button_left_bottom {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 472; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 473; @position = 18; @symbol_constdef = [exclude,473,18,25]; @symbol_type<0> = [Boolean,473,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 476; @symbol_moduledef = [system_icon_positive__hint_button_left_middle,476,15,60]; ]
+        module system_icon_positive__hint_button_left_middle {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 476; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 477; @position = 18; @symbol_constdef = [exclude,477,18,25]; @symbol_type<0> = [Boolean,477,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 480; @symbol_moduledef = [system_size__menu_icon,480,15,37]; ]
+        module system_size__menu_icon {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 480; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 481; @position = 18; @symbol_constdef = [scaleX,481,18,24]; @symbol_type<0> = [Number,481,28,34]; ]
+            const scaleX as Number = 58;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 482; @position = 18; @symbol_constdef = [scaleY,482,18,24]; @symbol_type<0> = [Number,482,28,34]; ]
+            const scaleY as Number = 58;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 483; @position = 18; @symbol_constdef = [scaleRelativeTo,483,18,33]; @symbol_type<0> = [String,483,37,43]; ]
+            const scaleRelativeTo as String = "screen";
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 486; @symbol_moduledef = [system_icon_destructive__warning,486,15,47]; ]
+        module system_icon_destructive__warning {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 486; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 487; @position = 18; @symbol_constdef = [filename,487,18,26]; @symbol_type<0> = [String,487,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/system_icon_destructive__warning.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 488; @position = 18; @symbol_constdef = [disableTransparency,488,18,37]; @symbol_type<0> = [Boolean,488,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 489; @position = 18; @symbol_constdef = [dithering,489,18,27]; @symbol_type<0> = [String,489,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 490; @position = 18; @symbol_constdef = [automaticPalette,490,18,34]; @symbol_type<0> = [Boolean,490,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 493; @symbol_moduledef = [system_loc__hint_button_right_middle,493,15,51]; ]
+        module system_loc__hint_button_right_middle {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 493; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 494; @position = 18; @symbol_constdef = [exclude,494,18,25]; @symbol_type<0> = [Boolean,494,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 497; @symbol_moduledef = [system_icon_dark__cancel,497,15,39]; ]
+        module system_icon_dark__cancel {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 497; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 498; @position = 18; @symbol_constdef = [filename,498,18,26]; @symbol_type<0> = [String,498,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/system_icon_dark__cancel.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 499; @position = 18; @symbol_constdef = [disableTransparency,499,18,37]; @symbol_type<0> = [Boolean,499,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 500; @position = 18; @symbol_constdef = [dithering,500,18,27]; @symbol_type<0> = [String,500,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 501; @position = 18; @symbol_constdef = [automaticPalette,501,18,34]; @symbol_type<0> = [Boolean,501,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 504; @symbol_moduledef = [prompt_size__body_with_title,504,15,43]; ]
+        module prompt_size__body_with_title {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 504; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 505; @position = 18; @symbol_constdef = [width,505,18,23]; @symbol_type<0> = [Number,505,27,33]; ]
+            const width as Number = 432;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 506; @position = 18; @symbol_constdef = [height,506,18,24]; @symbol_type<0> = [Number,506,28,34]; ]
+            const height as Number = 548;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 509; @symbol_moduledef = [system_loc__hint_button_right_top,509,15,48]; ]
+        module system_loc__hint_button_right_top {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 509; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 510; @position = 18; @symbol_constdef = [exclude,510,18,25]; @symbol_type<0> = [Boolean,510,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 513; @symbol_moduledef = [system_color_light__text,513,15,39]; ]
+        module system_color_light__text {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 513; ]
+            <init> {
+[ "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen" 515 18 ]
+                symbol [ Graphics %tmp.33 515 31 39 ];
+                %tmp.33 = getm $.Toybox.Graphics;
+                symbol [ COLOR_TRANSPARENT %tmp.34 515 40 57 ];
+                %tmp.34 = getv %tmp.33 :COLOR_TRANSPARENT;
+                putv self :background %tmp.34;
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 514; @position = 18; @symbol_constdef = [color,514,18,23]; @symbol_type<0> = [Number,514,27,33]; ]
+            const color as Number = 0x313253;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 515; @position = 18; @symbol_constdef = [background,515,18,28]; ]
+            const background;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 518; @symbol_moduledef = [system_icon_light__check,518,15,39]; ]
+        module system_icon_light__check {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 518; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 519; @position = 18; @symbol_constdef = [filename,519,18,26]; @symbol_type<0> = [String,519,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/system_icon_light__check.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 520; @position = 18; @symbol_constdef = [disableTransparency,520,18,37]; @symbol_type<0> = [Boolean,520,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 521; @position = 18; @symbol_constdef = [dithering,521,18,27]; @symbol_type<0> = [String,521,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 522; @position = 18; @symbol_constdef = [automaticPalette,522,18,34]; @symbol_type<0> = [Boolean,522,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 525; @symbol_moduledef = [confirmation_input__reject,525,15,41]; ]
+        module confirmation_input__reject {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 525; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 526; @position = 18; @symbol_constdef = [y1,526,18,20]; @symbol_type<0> = [Number,526,24,30]; ]
+            const y1 as Number = 648;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 527; @position = 18; @symbol_constdef = [x1,527,18,20]; @symbol_type<0> = [Number,527,24,30]; ]
+            const x1 as Number = 59;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 528; @position = 18; @symbol_constdef = [y2,528,18,20]; @symbol_type<0> = [Number,528,24,30]; ]
+            const y2 as Number = 716;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 529; @position = 18; @symbol_constdef = [x2,529,18,20]; @symbol_type<0> = [Number,529,24,30]; ]
+            const x2 as Number = 127;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 532; @symbol_moduledef = [system_icon_light__revert,532,15,40]; ]
+        module system_icon_light__revert {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 532; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 533; @position = 18; @symbol_constdef = [filename,533,18,26]; @symbol_type<0> = [String,533,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/system_icon_light__revert.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 534; @position = 18; @symbol_constdef = [disableTransparency,534,18,37]; @symbol_type<0> = [Boolean,534,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 535; @position = 18; @symbol_constdef = [dithering,535,18,27]; @symbol_type<0> = [String,535,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 536; @position = 18; @symbol_constdef = [automaticPalette,536,18,34]; @symbol_type<0> = [Boolean,536,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 539; @symbol_moduledef = [system_size__subwindow,539,15,37]; ]
+        module system_size__subwindow {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 539; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 540; @position = 18; @symbol_constdef = [exclude,540,18,25]; @symbol_type<0> = [Boolean,540,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 543; @symbol_moduledef = [system_icon_positive__hint_button_left_bottom,543,15,60]; ]
+        module system_icon_positive__hint_button_left_bottom {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 543; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 544; @position = 18; @symbol_constdef = [exclude,544,18,25]; @symbol_type<0> = [Boolean,544,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 547; @symbol_moduledef = [system_icon_dark__check,547,15,38]; ]
+        module system_icon_dark__check {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 547; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 548; @position = 18; @symbol_constdef = [filename,548,18,26]; @symbol_type<0> = [String,548,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/system_icon_dark__check.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 549; @position = 18; @symbol_constdef = [disableTransparency,549,18,37]; @symbol_type<0> = [Boolean,549,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 550; @position = 18; @symbol_constdef = [dithering,550,18,27]; @symbol_type<0> = [String,550,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 551; @position = 18; @symbol_constdef = [automaticPalette,551,18,34]; @symbol_type<0> = [Boolean,551,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 554; @symbol_moduledef = [confirmation_loc__hint_keep,554,15,42]; ]
+        module confirmation_loc__hint_keep {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 554; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 555; @position = 18; @symbol_constdef = [x,555,18,19]; @symbol_type<0> = [Number,555,23,29]; ]
+            const x as Number = 387;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 556; @position = 18; @symbol_constdef = [y,556,18,19]; @symbol_type<0> = [Number,556,23,29]; ]
+            const y as Number = 682;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 557; @position = 18; @symbol_constdef = [horizontalJustification,557,18,41]; @symbol_type<0> = [String,557,45,51]; ]
+            const horizontalJustification as String = "center";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 558; @position = 18; @symbol_constdef = [verticalJustification,558,18,39]; @symbol_type<0> = [String,558,43,49]; ]
+            const verticalJustification as String = "center";
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 561; @symbol_moduledef = [confirmation_loc__hint_delete,561,15,44]; ]
+        module confirmation_loc__hint_delete {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 561; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 562; @position = 18; @symbol_constdef = [x,562,18,19]; @symbol_type<0> = [Number,562,23,29]; ]
+            const x as Number = 93;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 563; @position = 18; @symbol_constdef = [y,563,18,19]; @symbol_type<0> = [Number,563,23,29]; ]
+            const y as Number = 682;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 564; @position = 18; @symbol_constdef = [horizontalJustification,564,18,41]; @symbol_type<0> = [String,564,45,51]; ]
+            const horizontalJustification as String = "center";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 565; @position = 18; @symbol_constdef = [verticalJustification,565,18,39]; @symbol_type<0> = [String,565,43,49]; ]
+            const verticalJustification as String = "center";
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 568; @symbol_moduledef = [system_icon_positive__hint_action_menu,568,15,53]; ]
+        module system_icon_positive__hint_action_menu {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 568; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 569; @position = 18; @symbol_constdef = [exclude,569,18,25]; @symbol_type<0> = [Boolean,569,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 572; @symbol_moduledef = [system_icon_positive__hint_button_right_middle,572,15,61]; ]
+        module system_icon_positive__hint_button_right_middle {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 572; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 573; @position = 18; @symbol_constdef = [exclude,573,18,25]; @symbol_type<0> = [Boolean,573,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 576; @symbol_moduledef = [system_icon_light__hint_button_left_middle,576,15,57]; ]
+        module system_icon_light__hint_button_left_middle {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 576; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 577; @position = 18; @symbol_constdef = [exclude,577,18,25]; @symbol_type<0> = [Boolean,577,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 580; @symbol_moduledef = [system_icon_dark__hint_button_right_bottom,580,15,57]; ]
+        module system_icon_dark__hint_button_right_bottom {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 580; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 581; @position = 18; @symbol_constdef = [exclude,581,18,25]; @symbol_type<0> = [Boolean,581,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 584; @symbol_moduledef = [system_icon_positive__hint_button_right_bottom,584,15,61]; ]
+        module system_icon_positive__hint_button_right_bottom {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 584; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 585; @position = 18; @symbol_constdef = [exclude,585,18,25]; @symbol_type<0> = [Boolean,585,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 588; @symbol_moduledef = [system_icon_dark__revert,588,15,39]; ]
+        module system_icon_dark__revert {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 588; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 589; @position = 18; @symbol_constdef = [filename,589,18,26]; @symbol_type<0> = [String,589,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/system_icon_dark__revert.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 590; @position = 18; @symbol_constdef = [disableTransparency,590,18,37]; @symbol_type<0> = [Boolean,590,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 591; @position = 18; @symbol_constdef = [dithering,591,18,27]; @symbol_type<0> = [String,591,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 592; @position = 18; @symbol_constdef = [automaticPalette,592,18,34]; @symbol_type<0> = [Boolean,592,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 595; @symbol_moduledef = [confirmation_icon_light__hint_delete,595,15,51]; ]
+        module confirmation_icon_light__hint_delete {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 595; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 596; @position = 18; @symbol_constdef = [filename,596,18,26]; @symbol_type<0> = [String,596,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/confirmation_icon_light__hint_delete.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 597; @position = 18; @symbol_constdef = [disableTransparency,597,18,37]; @symbol_type<0> = [Boolean,597,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 598; @position = 18; @symbol_constdef = [dithering,598,18,27]; @symbol_type<0> = [String,598,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 599; @position = 18; @symbol_constdef = [automaticPalette,599,18,34]; @symbol_type<0> = [Boolean,599,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 602; @symbol_moduledef = [system_icon_dark__question,602,15,41]; ]
+        module system_icon_dark__question {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 602; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 603; @position = 18; @symbol_constdef = [filename,603,18,26]; @symbol_type<0> = [String,603,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/system_icon_dark__question.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 604; @position = 18; @symbol_constdef = [disableTransparency,604,18,37]; @symbol_type<0> = [Boolean,604,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 605; @position = 18; @symbol_constdef = [dithering,605,18,27]; @symbol_type<0> = [String,605,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 606; @position = 18; @symbol_constdef = [automaticPalette,606,18,34]; @symbol_type<0> = [Boolean,606,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 609; @symbol_moduledef = [system_icon_light__discard,609,15,41]; ]
+        module system_icon_light__discard {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 609; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 610; @position = 18; @symbol_constdef = [filename,610,18,26]; @symbol_type<0> = [String,610,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/system_icon_light__discard.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 611; @position = 18; @symbol_constdef = [disableTransparency,611,18,37]; @symbol_type<0> = [Boolean,611,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 612; @position = 18; @symbol_constdef = [dithering,612,18,27]; @symbol_type<0> = [String,612,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 613; @position = 18; @symbol_constdef = [automaticPalette,613,18,34]; @symbol_type<0> = [Boolean,613,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 616; @symbol_moduledef = [device_info,616,15,26]; ]
+        module device_info {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 616; ]
+            <init> {
+[ "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen" 618 18 ]
+                symbol [ Toybox %tmp.36 618 32 38 ];
+                %tmp.36 = getv ? :Toybox;
+                symbol [ System %tmp.37 618 39 45 ];
+                %tmp.37 = getv %tmp.36 :System;
+                symbol [ SCREEN_SHAPE_RECTANGLE %tmp.38 618 46 68 ];
+                %tmp.38 = getv %tmp.37 :SCREEN_SHAPE_RECTANGLE;
+                putv self :screenShape %tmp.38;
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 617; @position = 18; @symbol_constdef = [screenWidth,617,18,29]; @symbol_type<0> = [Number,617,33,39]; ]
+            const screenWidth as Number = 480;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 618; @position = 18; @symbol_constdef = [screenShape,618,18,29]; ]
+            const screenShape;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 619; @position = 18; @symbol_constdef = [hasNightMode,619,18,30]; @symbol_type<0> = [Boolean,619,34,41]; ]
+            const hasNightMode as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 620; @position = 18; @symbol_constdef = [hasGpu,620,18,24]; @symbol_type<0> = [Boolean,620,28,35]; ]
+            const hasGpu as Boolean = false;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 621; @position = 18; @symbol_constdef = [screenHeight,621,18,30]; @symbol_type<0> = [Number,621,34,40]; ]
+            const screenHeight as Number = 800;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 622; @position = 18; @symbol_constdef = [hasTouchScreen,622,18,32]; @symbol_type<0> = [Boolean,622,36,43]; ]
+            const hasTouchScreen as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 623; @position = 18; @symbol_constdef = [hasEnhancedReadabilityMode,623,18,44]; @symbol_type<0> = [Boolean,623,48,55]; ]
+            const hasEnhancedReadabilityMode as Boolean = false;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 626; @symbol_moduledef = [confirmation_icon_dark__hint_confirm,626,15,51]; ]
+        module confirmation_icon_dark__hint_confirm {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 626; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 627; @position = 18; @symbol_constdef = [filename,627,18,26]; @symbol_type<0> = [String,627,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/confirmation_icon_dark__hint_completion.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 628; @position = 18; @symbol_constdef = [disableTransparency,628,18,37]; @symbol_type<0> = [Boolean,628,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 629; @position = 18; @symbol_constdef = [dithering,629,18,27]; @symbol_type<0> = [String,629,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 630; @position = 18; @symbol_constdef = [automaticPalette,630,18,34]; @symbol_type<0> = [Boolean,630,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 633; @symbol_moduledef = [prompt_font__body_no_title,633,15,41]; ]
+        module prompt_font__body_no_title {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 633; ]
+            <init> {
+[ "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen" 634 18 ]
+                symbol [ Graphics %tmp.39 634 34 42 ];
+                %tmp.39 = getm $.Toybox.Graphics;
+                symbol [ TEXT_JUSTIFY_CENTER %tmp.40 634 43 62 ];
+                %tmp.40 = getv %tmp.39 :TEXT_JUSTIFY_CENTER;
+                symbol [ Graphics %tmp.41 634 63 71 ];
+                %tmp.41 = getm $.Toybox.Graphics;
+                symbol [ TEXT_JUSTIFY_VCENTER %tmp.42 634 72 92 ];
+                %tmp.42 = getv %tmp.41 :TEXT_JUSTIFY_VCENTER;
+                %tmp.43 = bitor %tmp.40 %tmp.42;
+                putv self :justification %tmp.43;
+[ "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen" 635 18 ]
+                symbol [ Graphics %tmp.44 635 25 33 ];
+                %tmp.44 = getm $.Toybox.Graphics;
+                symbol [ FONT_GLANCE_NUMBER %tmp.45 635 34 52 ];
+                %tmp.45 = getv %tmp.44 :FONT_GLANCE_NUMBER;
+                putv self :font %tmp.45;
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 634; @position = 18; @symbol_constdef = [justification,634,18,31]; ]
+            const justification;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 635; @position = 18; @symbol_constdef = [font,635,18,22]; ]
+            const font;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 638; @symbol_moduledef = [prompt_size__title_icon,638,15,38]; ]
+        module prompt_size__title_icon {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 638; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 639; @position = 18; @symbol_constdef = [scaleX,639,18,24]; @symbol_type<0> = [Number,639,28,34]; ]
+            const scaleX as Number = 108;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 640; @position = 18; @symbol_constdef = [scaleY,640,18,24]; @symbol_type<0> = [Number,640,28,34]; ]
+            const scaleY as Number = 108;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 641; @position = 18; @symbol_constdef = [scaleRelativeTo,641,18,33]; @symbol_type<0> = [String,641,37,43]; ]
+            const scaleRelativeTo as String = "screen";
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 644; @symbol_moduledef = [system_icon_dark__warning,644,15,40]; ]
+        module system_icon_dark__warning {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 644; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 645; @position = 18; @symbol_constdef = [filename,645,18,26]; @symbol_type<0> = [String,645,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/system_icon_dark__warning.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 646; @position = 18; @symbol_constdef = [disableTransparency,646,18,37]; @symbol_type<0> = [Boolean,646,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 647; @position = 18; @symbol_constdef = [dithering,647,18,27]; @symbol_type<0> = [String,647,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 648; @position = 18; @symbol_constdef = [automaticPalette,648,18,34]; @symbol_type<0> = [Boolean,648,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 651; @symbol_moduledef = [prompt_loc__title_icon,651,15,37]; ]
+        module prompt_loc__title_icon {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 651; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 652; @position = 18; @symbol_constdef = [x,652,18,19]; @symbol_type<0> = [Number,652,23,29]; ]
+            const x as Number = 240;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 653; @position = 18; @symbol_constdef = [y,653,18,19]; @symbol_type<0> = [Number,653,23,29]; ]
+            const y as Number = 86;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 654; @position = 18; @symbol_constdef = [horizontalJustification,654,18,41]; @symbol_type<0> = [String,654,45,51]; ]
+            const horizontalJustification as String = "center";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 655; @position = 18; @symbol_constdef = [verticalJustification,655,18,39]; @symbol_type<0> = [String,655,43,49]; ]
+            const verticalJustification as String = "center";
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 658; @symbol_moduledef = [prompt_font_enhanced_readability__title,658,15,54]; ]
+        module prompt_font_enhanced_readability__title {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 658; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 659; @position = 18; @symbol_constdef = [exclude,659,18,25]; @symbol_type<0> = [Boolean,659,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 662; @symbol_moduledef = [prompt_color_dark__body,662,15,38]; ]
+        module prompt_color_dark__body {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 662; ]
+            <init> {
+[ "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen" 664 18 ]
+                symbol [ Graphics %tmp.46 664 31 39 ];
+                %tmp.46 = getm $.Toybox.Graphics;
+                symbol [ COLOR_TRANSPARENT %tmp.47 664 40 57 ];
+                %tmp.47 = getv %tmp.46 :COLOR_TRANSPARENT;
+                putv self :background %tmp.47;
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 663; @position = 18; @symbol_constdef = [color,663,18,23]; @symbol_type<0> = [Number,663,27,33]; ]
+            const color as Number = 0xFFFFFF;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 664; @position = 18; @symbol_constdef = [background,664,18,28]; ]
+            const background;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 667; @symbol_moduledef = [confirmation_icon__hint_delete,667,15,45]; ]
+        module confirmation_icon__hint_delete {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 667; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 668; @position = 18; @symbol_constdef = [filename,668,18,26]; @symbol_type<0> = [String,668,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/confirmation_icon_dark__hint_delete.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 669; @position = 18; @symbol_constdef = [disableTransparency,669,18,37]; @symbol_type<0> = [Boolean,669,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 670; @position = 18; @symbol_constdef = [dithering,670,18,27]; @symbol_type<0> = [String,670,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 671; @position = 18; @symbol_constdef = [automaticPalette,671,18,34]; @symbol_type<0> = [Boolean,671,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 674; @symbol_moduledef = [system_icon_light__hint_button_right_top,674,15,55]; ]
+        module system_icon_light__hint_button_right_top {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 674; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 675; @position = 18; @symbol_constdef = [exclude,675,18,25]; @symbol_type<0> = [Boolean,675,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 678; @symbol_moduledef = [confirmation_size__body,678,15,38]; ]
+        module confirmation_size__body {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 678; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 679; @position = 18; @symbol_constdef = [width,679,18,23]; @symbol_type<0> = [Number,679,27,33]; ]
+            const width as Number = 460;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 680; @position = 18; @symbol_constdef = [height,680,18,24]; @symbol_type<0> = [Number,680,28,34]; ]
+            const height as Number = 671;
+        }
+        [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 683; @symbol_moduledef = [system_icon_positive__check,683,15,42]; ]
+        module system_icon_positive__check {
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 683; ]
+            <init> {
+            }
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 684; @position = 18; @symbol_constdef = [filename,684,18,26]; @symbol_type<0> = [String,684,30,36]; ]
+            const filename as String = "/home/ubuntu/.Garmin/ConnectIQ/Devices/edge1050/system_icon_positive__check.svg";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 685; @position = 18; @symbol_constdef = [disableTransparency,685,18,37]; @symbol_type<0> = [Boolean,685,41,48]; ]
+            const disableTransparency as Boolean = true;
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 686; @position = 18; @symbol_constdef = [dithering,686,18,27]; @symbol_type<0> = [String,686,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 687; @position = 18; @symbol_constdef = [automaticPalette,687,18,34]; @symbol_type<0> = [Boolean,687,38,45]; ]
+            const automaticPalette as Boolean = true;
+        }
+    }
+}
+[ @file = "/workspace/garmin/RideDashboard/bin/gen/006-B4440-00/source/Rez.mcgen"; @line = 1; ]
+<init> {
+}

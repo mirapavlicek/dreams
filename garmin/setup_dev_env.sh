@@ -29,29 +29,42 @@ sudo apt-get install -y -qq \
 # Simulátor je slinkovaný proti webkit2gtk-4.0 (libsoup2), který v Ubuntu 24.04
 # už není. Knihovny z jammy proto rozbalíme stranou a přidáme do LD_LIBRARY_PATH,
 # ať se nemíchají se systémovými.
-if [ ! -f "$WEBKIT_PREFIX/usr/lib/x86_64-linux-gnu/libwebkit2gtk-4.0.so.37" ]; then
-    log "webkit2gtk-4.0 pro simulátor (z Ubuntu jammy, mimo systémové cesty)"
+install_webkit40() {
     echo 'deb http://archive.ubuntu.com/ubuntu jammy main universe
 deb http://archive.ubuntu.com/ubuntu jammy-updates main universe
 deb http://security.ubuntu.com/ubuntu jammy-security main universe' \
         | sudo tee /etc/apt/sources.list.d/ciq-jammy.list >/dev/null
+    # Pin -1 drží jammy balíčky mimo systém - proto se nesmí instalovat, jen
+    # stahovat, a to jen s výslovně uvedeným původem (`pkg/jammy`); bez něj
+    # apt kvůli pinu hlásí "no candidate".
     printf 'Package: *\nPin: release n=jammy*\nPin-Priority: -1\n' \
         | sudo tee /etc/apt/preferences.d/ciq-jammy >/dev/null
     sudo apt-get update -qq
 
+    local workdir rc=0
     workdir="$(mktemp -d)"
     (
         cd "$workdir"
         for pkg in libwebkit2gtk-4.0-37 libjavascriptcoregtk-4.0-18 libsoup2.4-1 \
                    libsoup-gnome2.4-1 libicu70 libwoff1 libhyphen0 libenchant-2-2 \
                    libmanette-0.2-0 libharfbuzz-icu0; do
-            apt-get download "$pkg" >/dev/null
+            apt-get download "$pkg/jammy-updates" >/dev/null 2>&1 \
+                || apt-get download "$pkg/jammy-security" >/dev/null 2>&1 \
+                || apt-get download "$pkg/jammy" >/dev/null
         done
         sudo mkdir -p "$WEBKIT_PREFIX"
         sudo chown "$(id -u):$(id -g)" "$WEBKIT_PREFIX"
         for deb in *.deb; do dpkg -x "$deb" "$WEBKIT_PREFIX"; done
-    )
+    ) || rc=$?
     rm -rf "$workdir"
+    return "$rc"
+}
+
+if [ ! -f "$WEBKIT_PREFIX/usr/lib/x86_64-linux-gnu/libwebkit2gtk-4.0.so.37" ]; then
+    log "webkit2gtk-4.0 pro simulátor (z Ubuntu jammy, mimo systémové cesty)"
+    # Knihovny potřebuje jen simulátor. Když je archiv nemá, překlad ani
+    # podepisování to nezastaví, takže se jen ozveme a jede se dál.
+    install_webkit40 || log "POZOR: webkit2gtk-4.0 se nepodařilo připravit, simulátor nepoběží (překlad ano)"
 fi
 
 log "Connect IQ SDK"

@@ -1,0 +1,415 @@
+[ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 1; @symbol_usingdef<0> = [Toybox,1,6,12]; @symbol_usingdef<1> = [Lang,1,13,17]; ]
+using Toybox.Lang;
+[ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 2; @symbol_usingdef<0> = [Toybox,2,6,12]; @symbol_usingdef<1> = [Timer,2,13,18]; ]
+using Toybox.Timer;
+[ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 3; @symbol_usingdef<0> = [Toybox,3,6,12]; @symbol_usingdef<1> = [WatchUi,3,13,20]; ]
+using Toybox.WatchUi;
+//! Stav přepínače mezi mapovou a drobečkovou palubovkou.
+[ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 6; @symbol_moduledef = [RideMaps,6,7,15]; ]
+module RideMaps {
+    [ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 6; ]
+    <init> {
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 9; @position = 8; @symbol_vardef = [mWanted,9,8,15]; @symbol_type<0> = [Lang,9,19,23]; @symbol_type<1> = [Boolean,9,24,31]; ]
+    var mWanted as Lang.Boolean = true;
+    //! Mapové view existuje jen na jednotkách s kartografií v paměti.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 12; @symbol_functiondef = [available,12,13,22]; @symbol_return<0> = [Lang,12,28,32]; @symbol_return<1> = [Boolean,12,33,40]; ]
+    function available() as Lang.Boolean {
+_workspace_garmin_RideDashboard_source_RideView_mc_12_41_14_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 13 8 ]
+        symbol [ WatchUi %tmp.1 13 16 23 ];
+        %tmp.1 = getm $.Toybox.WatchUi;
+        %tmp.3 = const :MapTrackView;
+        symbol [ MapTrackView %tmp.3 13 29 41 const ];
+        %tmp.4 = canhazplz %tmp.1 %tmp.3;
+        %tmp.5 = as %tmp.4 Lang.Boolean;
+        symbol [ Lang %tmp.5 13 46 50 ];
+        symbol [ Boolean %tmp.5 13 51 58 ];
+        ret %tmp.5;
+_workspace_garmin_RideDashboard_source_RideView_mc_12_41_14_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 16; @symbol_functiondef = [wanted,16,13,19]; @symbol_return<0> = [Lang,16,25,29]; @symbol_return<1> = [Boolean,16,30,37]; ]
+    function wanted() as Lang.Boolean {
+_workspace_garmin_RideDashboard_source_RideView_mc_16_38_18_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 17 8 ]
+_workspace_garmin_RideDashboard_source_RideView_mc_17_15_17_61_begin:
+_workspace_garmin_RideDashboard_source_RideView_mc_17_15_17_30_begin:
+        %tmp.1 = self;
+        symbol [ available %tmp.2 17 15 24 ];
+        %tmp.2 = getv function %tmp.1 :available;
+        %tmp.3 = invoke %tmp.1 %tmp.2();
+        %tmp.4 = dup %tmp.3;
+        bf %tmp.4 @_workspace_garmin_RideDashboard_source_RideView_mc_17_30_17_30_end;
+_workspace_garmin_RideDashboard_source_RideView_mc_17_30_17_30_true:
+        symbol [ mWanted %tmp.6 17 30 37 ];
+        %tmp.6 = getv ? :mWanted;
+        %tmp.7 = and %tmp.3 %tmp.6;
+        push %tmp.7;
+_workspace_garmin_RideDashboard_source_RideView_mc_17_30_17_30_end:
+        %tmp.8 = phi [%tmp.4 @_workspace_garmin_RideDashboard_source_RideView_mc_17_15_17_30_begin] [%tmp.7 @_workspace_garmin_RideDashboard_source_RideView_mc_17_30_17_30_true] [%tmp.8 @_workspace_garmin_RideDashboard_source_RideView_mc_17_30_17_30_end];
+        %tmp.9 = dup %tmp.8;
+        bf %tmp.9 @_workspace_garmin_RideDashboard_source_RideView_mc_17_41_17_61_end;
+_workspace_garmin_RideDashboard_source_RideView_mc_17_41_17_61_true:
+        symbol [ RideData %tmp.11 17 41 49 ];
+        %tmp.11 = getv ? :RideData;
+        symbol [ mapEnabled %tmp.12 17 50 60 ];
+        %tmp.12 = getv function %tmp.11 :mapEnabled;
+        %tmp.13 = invoke %tmp.11 %tmp.12();
+        %tmp.14 = and %tmp.8 %tmp.13;
+        push %tmp.14;
+_workspace_garmin_RideDashboard_source_RideView_mc_17_41_17_61_end:
+        %tmp.15 = phi [%tmp.9 @_workspace_garmin_RideDashboard_source_RideView_mc_17_15_17_61_begin] [%tmp.14 @_workspace_garmin_RideDashboard_source_RideView_mc_17_41_17_61_true] [%tmp.15 @_workspace_garmin_RideDashboard_source_RideView_mc_17_41_17_61_end];
+        ret %tmp.15;
+_workspace_garmin_RideDashboard_source_RideView_mc_16_38_18_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 20; @symbol_functiondef = [setWanted,20,13,22]; @symbol_param<0> = [value,20,23,28]; @symbol_param<0>_type<0> = [Lang,20,32,36]; @symbol_param<0>_type<1> = [Boolean,20,37,44]; ]
+    function setWanted(value as Lang.Boolean) as Void {
+_workspace_garmin_RideDashboard_source_RideView_mc_20_54_22_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 21 8 ]
+        %tmp.1 = lgetv %value;
+        symbol [ value %tmp.1 21 18 23 ];
+        symbol [ mWanted ? 21 8 15 ];
+        putv self :mWanted %tmp.1;
+_workspace_garmin_RideDashboard_source_RideView_mc_20_54_22_4_stop:
+    }
+}
+//! Palubovka s drobečkovou stopou místo mapy. Je to výchozí obrazovka
+//! aplikace: Connect IQ neumí vrátit mapové view z getInitialView(), dá se jen
+//! vystrčit přes pushView, takže mapa se otevírá odsud.
+[ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 28; @symbol_classdef = [RideView,28,6,14]; @symbol_extends<0> = [WatchUi,28,23,30]; @symbol_extends<1> = [View,28,31,35]; ]
+class RideView extends WatchUi.View {
+    [ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 28; ]
+    <init> {
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 28; ]
+    static
+    <init> {
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 30; @position = 15; @symbol_vardef = [mTimer,30,15,21]; @symbol_type<0> = [Timer,30,25,30]; @symbol_type<1> = [Timer,30,31,36]; ]
+    protected
+    var mTimer as Timer.Timer or Null;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 31; @position = 15; @symbol_vardef = [mMapTimer,31,15,24]; @symbol_type<0> = [Timer,31,28,33]; @symbol_type<1> = [Timer,31,34,39]; ]
+    protected
+    var mMapTimer as Timer.Timer or Null;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 33; @symbol_functiondef = [initialize,33,13,23]; ]
+    function initialize() as Void {
+_workspace_garmin_RideDashboard_source_RideView_mc_33_26_35_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 34 8 ]
+        symbol [ View %tmp.2 34 8 12 ];
+        %tmp.2 = getv ? :View;
+        symbol [ initialize %tmp.3 34 13 23 ];
+        %tmp.3 = getv function %tmp.2 :initialize;
+        invoke %tmp.2 %tmp.3();
+_workspace_garmin_RideDashboard_source_RideView_mc_33_26_35_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 37; @symbol_functiondef = [onShow,37,13,19]; ]
+    function onShow() {
+_workspace_garmin_RideDashboard_source_RideView_mc_37_22_46_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 38 8 ]
+        symbol [ Timer %tmp.3 38 21 26 ];
+        %tmp.3 = getm $.Toybox.Timer;
+        symbol [ Timer %tmp.4 38 27 32 ];
+        %tmp.4 = getv function ? %tmp.3 :Timer;
+        %tmp.1 = newc %tmp.4 ();
+        symbol [ mTimer ? 38 8 14 ];
+        putv self :mTimer %tmp.1;
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 39 8 ]
+        symbol [ mTimer %tmp.6 39 8 14 ];
+        %tmp.6 = getv ? :mTimer;
+        symbol [ start %tmp.7 39 15 20 ];
+        %tmp.7 = getv function %tmp.6 :start;
+        %tmp.8 = self;
+        symbol [ method %tmp.9 39 21 27 ];
+        %tmp.9 = getv function %tmp.8 :method;
+        %tmp.11 = const :onTick;
+        symbol [ onTick %tmp.11 39 29 35 const ];
+        %tmp.12 = invoke %tmp.8 %tmp.9(%tmp.11);
+        %tmp.13 = 1000;
+        %tmp.14 = true;
+        invoke %tmp.6 %tmp.7(%tmp.12, %tmp.13, %tmp.14);
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 41 8 ]
+_workspace_garmin_RideDashboard_source_RideView_mc_41_8_45_8_if_stmt:
+        symbol [ RideMaps %tmp.16 41 12 20 ];
+        %tmp.16 = getv ? :RideMaps;
+        symbol [ wanted %tmp.17 41 21 27 ];
+        %tmp.17 = getv function %tmp.16 :wanted;
+        %tmp.18 = invoke %tmp.16 %tmp.17();
+        bf %tmp.18 @_workspace_garmin_RideDashboard_source_RideView_mc_41_8_45_8_if_end;
+_workspace_garmin_RideDashboard_source_RideView_mc_41_8_45_8_if_true:
+_workspace_garmin_RideDashboard_source_RideView_mc_41_31_45_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 43 12 ]
+        symbol [ Timer %tmp.21 43 28 33 ];
+        %tmp.21 = getm $.Toybox.Timer;
+        symbol [ Timer %tmp.22 43 34 39 ];
+        %tmp.22 = getv function ? %tmp.21 :Timer;
+        %tmp.19 = newc %tmp.22 ();
+        symbol [ mMapTimer ? 43 12 21 ];
+        putv self :mMapTimer %tmp.19;
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 44 12 ]
+        symbol [ mMapTimer %tmp.24 44 12 21 ];
+        %tmp.24 = getv ? :mMapTimer;
+        symbol [ start %tmp.25 44 22 27 ];
+        %tmp.25 = getv function %tmp.24 :start;
+        %tmp.26 = self;
+        symbol [ method %tmp.27 44 28 34 ];
+        %tmp.27 = getv function %tmp.26 :method;
+        %tmp.29 = const :onOpenMap;
+        symbol [ onOpenMap %tmp.29 44 36 45 const ];
+        %tmp.30 = invoke %tmp.26 %tmp.27(%tmp.29);
+        %tmp.31 = 50;
+        %tmp.32 = false;
+        invoke %tmp.24 %tmp.25(%tmp.30, %tmp.31, %tmp.32);
+_workspace_garmin_RideDashboard_source_RideView_mc_41_31_45_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideView_mc_41_8_45_8_if_end;
+_workspace_garmin_RideDashboard_source_RideView_mc_41_8_45_8_if_end:
+_workspace_garmin_RideDashboard_source_RideView_mc_37_22_46_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 48; @symbol_functiondef = [onHide,48,13,19]; ]
+    function onHide() {
+_workspace_garmin_RideDashboard_source_RideView_mc_48_22_57_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 49 8 ]
+_workspace_garmin_RideDashboard_source_RideView_mc_49_8_52_8_if_stmt:
+        symbol [ mTimer %tmp.2 49 12 18 ];
+        %tmp.2 = getv ? :mTimer;
+        %tmp.3 = null;
+        %tmp.4 = ne %tmp.2 %tmp.3;
+        bf %tmp.4 @_workspace_garmin_RideDashboard_source_RideView_mc_49_8_52_8_if_end;
+_workspace_garmin_RideDashboard_source_RideView_mc_49_8_52_8_if_true:
+_workspace_garmin_RideDashboard_source_RideView_mc_49_28_52_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 50 12 ]
+        symbol [ mTimer %tmp.6 50 12 18 ];
+        %tmp.6 = getv ? :mTimer;
+        %tmp.7 = as %tmp.6 { (!Null) };
+        symbol [ stop %tmp.8 50 19 23 ];
+        %tmp.8 = getv function %tmp.7 :stop;
+        invoke %tmp.7 %tmp.8();
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 51 12 ]
+        %tmp.9 = null;
+        symbol [ mTimer ? 51 12 18 ];
+        putv self :mTimer %tmp.9;
+_workspace_garmin_RideDashboard_source_RideView_mc_49_28_52_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideView_mc_49_8_52_8_if_end;
+_workspace_garmin_RideDashboard_source_RideView_mc_49_8_52_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 53 8 ]
+_workspace_garmin_RideDashboard_source_RideView_mc_53_8_56_8_if_stmt:
+        symbol [ mMapTimer %tmp.11 53 12 21 ];
+        %tmp.11 = getv ? :mMapTimer;
+        %tmp.12 = null;
+        %tmp.13 = ne %tmp.11 %tmp.12;
+        bf %tmp.13 @_workspace_garmin_RideDashboard_source_RideView_mc_53_8_56_8_if_end;
+_workspace_garmin_RideDashboard_source_RideView_mc_53_8_56_8_if_true:
+_workspace_garmin_RideDashboard_source_RideView_mc_53_31_56_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 54 12 ]
+        symbol [ mMapTimer %tmp.15 54 12 21 ];
+        %tmp.15 = getv ? :mMapTimer;
+        %tmp.16 = as %tmp.15 { (!Null) };
+        symbol [ stop %tmp.17 54 22 26 ];
+        %tmp.17 = getv function %tmp.16 :stop;
+        invoke %tmp.16 %tmp.17();
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 55 12 ]
+        %tmp.18 = null;
+        symbol [ mMapTimer ? 55 12 21 ];
+        putv self :mMapTimer %tmp.18;
+_workspace_garmin_RideDashboard_source_RideView_mc_53_31_56_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideView_mc_53_8_56_8_if_end;
+_workspace_garmin_RideDashboard_source_RideView_mc_53_8_56_8_if_end:
+_workspace_garmin_RideDashboard_source_RideView_mc_48_22_57_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 59; @symbol_functiondef = [onTick,59,13,19]; ]
+    function onTick() as Void {
+_workspace_garmin_RideDashboard_source_RideView_mc_59_30_62_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 60 8 ]
+        symbol [ RideData %tmp.2 60 8 16 ];
+        %tmp.2 = getv ? :RideData;
+        symbol [ poll %tmp.3 60 17 21 ];
+        %tmp.3 = getv function %tmp.2 :poll;
+        invoke %tmp.2 %tmp.3();
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 61 8 ]
+        symbol [ WatchUi %tmp.4 61 8 15 ];
+        %tmp.4 = getm $.Toybox.WatchUi;
+        symbol [ requestUpdate %tmp.5 61 16 29 ];
+        %tmp.5 = getv function %tmp.4 :requestUpdate;
+        invoke %tmp.4 %tmp.5();
+_workspace_garmin_RideDashboard_source_RideView_mc_59_30_62_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 64; @symbol_functiondef = [onOpenMap,64,13,22]; ]
+    function onOpenMap() as Void {
+_workspace_garmin_RideDashboard_source_RideView_mc_64_33_71_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 65 8 ]
+        %tmp.1 = null;
+        symbol [ mMapTimer ? 65 8 17 ];
+        putv self :mMapTimer %tmp.1;
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 66 8 ]
+_workspace_garmin_RideDashboard_source_RideView_mc_66_8_68_8_if_stmt:
+        symbol [ RideMaps %tmp.3 66 13 21 ];
+        %tmp.3 = getv ? :RideMaps;
+        symbol [ wanted %tmp.4 66 22 28 ];
+        %tmp.4 = getv function %tmp.3 :wanted;
+        %tmp.5 = invoke %tmp.3 %tmp.4();
+        %tmp.6 = not %tmp.5;
+        bf %tmp.6 @_workspace_garmin_RideDashboard_source_RideView_mc_66_8_68_8_if_end;
+_workspace_garmin_RideDashboard_source_RideView_mc_66_8_68_8_if_true:
+_workspace_garmin_RideDashboard_source_RideView_mc_66_32_68_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 67 12 ]
+        ret ?;
+_workspace_garmin_RideDashboard_source_RideView_mc_66_32_68_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideView_mc_66_8_68_8_if_end;
+_workspace_garmin_RideDashboard_source_RideView_mc_66_8_68_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 69 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideView_mc_64_33_71_4_start" "_workspace_garmin_RideDashboard_source_RideView_mc_64_33_71_4_stop" ]
+        %view.1 = local;
+        symbol [ view %view.1 69 12 16 ];
+        symbol [ RideMapView %tmp.10 69 23 34 ];
+        %tmp.10 = getv ? :RideMapView;
+        %tmp.7 = newc %tmp.10 ();
+        lputv %view.1 %tmp.7;
+        symbol [ view %view.1 69 12 16 ];
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 70 8 ]
+        symbol [ WatchUi %tmp.11 70 8 15 ];
+        %tmp.11 = getm $.Toybox.WatchUi;
+        symbol [ pushView %tmp.12 70 16 24 ];
+        %tmp.12 = getv function %tmp.11 :pushView;
+        %tmp.13 = lgetv %view.1;
+        symbol [ view %tmp.13 70 25 29 ];
+        symbol [ RideMapDelegate %tmp.17 70 35 50 ];
+        %tmp.17 = getv ? :RideMapDelegate;
+        %tmp.18 = lgetv %view.1;
+        symbol [ view %tmp.18 70 51 55 ];
+        %tmp.14 = newc %tmp.17 (%tmp.18);
+        symbol [ WatchUi %tmp.19 70 58 65 ];
+        %tmp.19 = getm $.Toybox.WatchUi;
+        symbol [ SLIDE_IMMEDIATE %tmp.20 70 66 81 ];
+        %tmp.20 = getv %tmp.19 :SLIDE_IMMEDIATE;
+        invoke %tmp.11 %tmp.12(%tmp.13, %tmp.14, %tmp.20);
+_workspace_garmin_RideDashboard_source_RideView_mc_64_33_71_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 73; @symbol_functiondef = [onUpdate,73,13,21]; @symbol_param<0> = [dc,73,22,24]; ]
+    function onUpdate(dc) {
+_workspace_garmin_RideDashboard_source_RideView_mc_73_26_79_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 74 8 ]
+_workspace_garmin_RideDashboard_source_RideView_mc_74_8_78_8_if_stmt:
+        symbol [ RideData %tmp.2 74 12 20 ];
+        %tmp.2 = getv ? :RideData;
+        symbol [ cockpitStyle %tmp.3 74 21 33 ];
+        %tmp.3 = getv function %tmp.2 :cockpitStyle;
+        %tmp.4 = invoke %tmp.2 %tmp.3();
+        bf %tmp.4 @_workspace_garmin_RideDashboard_source_RideView_mc_74_8_78_8_if_else_false;
+_workspace_garmin_RideDashboard_source_RideView_mc_74_8_78_8_if_true:
+_workspace_garmin_RideDashboard_source_RideView_mc_74_37_76_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 75 12 ]
+        symbol [ RideCockpit %tmp.6 75 12 23 ];
+        %tmp.6 = getv ? :RideCockpit;
+        symbol [ draw %tmp.7 75 24 28 ];
+        %tmp.7 = getv function %tmp.6 :draw;
+        %tmp.8 = lgetv %dc;
+        symbol [ dc %tmp.8 75 29 31 ];
+        %tmp.9 = false;
+        invoke %tmp.6 %tmp.7(%tmp.8, %tmp.9);
+_workspace_garmin_RideDashboard_source_RideView_mc_74_37_76_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideView_mc_74_8_78_8_if_end;
+_workspace_garmin_RideDashboard_source_RideView_mc_74_8_78_8_if_else_false:
+_workspace_garmin_RideDashboard_source_RideView_mc_76_15_78_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 77 12 ]
+        symbol [ RideChrome %tmp.11 77 12 22 ];
+        %tmp.11 = getv ? :RideChrome;
+        symbol [ draw %tmp.12 77 23 27 ];
+        %tmp.12 = getv function %tmp.11 :draw;
+        %tmp.13 = lgetv %dc;
+        symbol [ dc %tmp.13 77 28 30 ];
+        %tmp.14 = false;
+        invoke %tmp.11 %tmp.12(%tmp.13, %tmp.14);
+_workspace_garmin_RideDashboard_source_RideView_mc_76_15_78_8_stop:
+_workspace_garmin_RideDashboard_source_RideView_mc_74_8_78_8_if_end:
+_workspace_garmin_RideDashboard_source_RideView_mc_73_26_79_4_stop:
+    }
+}
+//! Výběr přepne zpátky na mapu, pokud ji přístroj umí.
+[ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 83; @symbol_classdef = [RideDelegate,83,6,18]; @symbol_extends<0> = [WatchUi,83,27,34]; @symbol_extends<1> = [BehaviorDelegate,83,35,51]; ]
+class RideDelegate extends WatchUi.BehaviorDelegate {
+    [ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 83; ]
+    <init> {
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 83; ]
+    static
+    <init> {
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 85; @position = 15; @symbol_vardef = [mView,85,15,20]; @symbol_type<0> = [RideView,85,24,32]; ]
+    protected
+    var mView as RideView;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 87; @symbol_functiondef = [initialize,87,13,23]; @symbol_param<0> = [view,87,24,28]; @symbol_param<0>_type<0> = [RideView,87,32,40]; ]
+    function initialize(view as RideView) as Void {
+_workspace_garmin_RideDashboard_source_RideView_mc_87_42_90_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 88 8 ]
+        symbol [ BehaviorDelegate %tmp.2 88 8 24 ];
+        %tmp.2 = getv ? :BehaviorDelegate;
+        symbol [ initialize %tmp.3 88 25 35 ];
+        %tmp.3 = getv function %tmp.2 :initialize;
+        invoke %tmp.2 %tmp.3();
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 89 8 ]
+        %tmp.4 = lgetv %view;
+        symbol [ view %tmp.4 89 16 20 ];
+        symbol [ mView ? 89 8 13 ];
+        putv self :mView %tmp.4;
+_workspace_garmin_RideDashboard_source_RideView_mc_87_42_90_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 92; @symbol_functiondef = [onSelect,92,13,21]; ]
+    function onSelect() {
+_workspace_garmin_RideDashboard_source_RideView_mc_92_24_100_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 93 8 ]
+_workspace_garmin_RideDashboard_source_RideView_mc_93_8_98_8_if_stmt:
+        symbol [ RideMaps %tmp.2 93 12 20 ];
+        %tmp.2 = getv ? :RideMaps;
+        symbol [ available %tmp.3 93 21 30 ];
+        %tmp.3 = getv function %tmp.2 :available;
+        %tmp.4 = invoke %tmp.2 %tmp.3();
+        bf %tmp.4 @_workspace_garmin_RideDashboard_source_RideView_mc_93_8_98_8_if_else_false;
+_workspace_garmin_RideDashboard_source_RideView_mc_93_8_98_8_if_true:
+_workspace_garmin_RideDashboard_source_RideView_mc_93_34_96_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 94 12 ]
+        symbol [ RideMaps %tmp.6 94 12 20 ];
+        %tmp.6 = getv ? :RideMaps;
+        symbol [ setWanted %tmp.7 94 21 30 ];
+        %tmp.7 = getv function %tmp.6 :setWanted;
+        %tmp.8 = true;
+        invoke %tmp.6 %tmp.7(%tmp.8);
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 95 12 ]
+        symbol [ mView %tmp.10 95 12 17 ];
+        %tmp.10 = getv ? :mView;
+        symbol [ onOpenMap %tmp.11 95 18 27 ];
+        %tmp.11 = getv function %tmp.10 :onOpenMap;
+        invoke %tmp.10 %tmp.11();
+_workspace_garmin_RideDashboard_source_RideView_mc_93_34_96_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideView_mc_93_8_98_8_if_end;
+_workspace_garmin_RideDashboard_source_RideView_mc_93_8_98_8_if_else_false:
+_workspace_garmin_RideDashboard_source_RideView_mc_96_15_98_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 97 12 ]
+        symbol [ WatchUi %tmp.12 97 12 19 ];
+        %tmp.12 = getm $.Toybox.WatchUi;
+        symbol [ requestUpdate %tmp.13 97 20 33 ];
+        %tmp.13 = getv function %tmp.12 :requestUpdate;
+        invoke %tmp.12 %tmp.13();
+_workspace_garmin_RideDashboard_source_RideView_mc_96_15_98_8_stop:
+_workspace_garmin_RideDashboard_source_RideView_mc_93_8_98_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 99 8 ]
+        %tmp.14 = true;
+        ret %tmp.14;
+_workspace_garmin_RideDashboard_source_RideView_mc_92_24_100_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 102; @symbol_functiondef = [onMenu,102,13,19]; ]
+    function onMenu() {
+_workspace_garmin_RideDashboard_source_RideView_mc_102_22_105_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 103 8 ]
+        symbol [ RideMenu %tmp.2 103 8 16 ];
+        %tmp.2 = getv ? :RideMenu;
+        symbol [ open %tmp.3 103 17 21 ];
+        %tmp.3 = getv function %tmp.2 :open;
+        invoke %tmp.2 %tmp.3();
+[ "/workspace/garmin/RideDashboard/source/RideView.mc" 104 8 ]
+        %tmp.4 = true;
+        ret %tmp.4;
+_workspace_garmin_RideDashboard_source_RideView_mc_102_22_105_4_stop:
+    }
+}
+[ @file = "/workspace/garmin/RideDashboard/source/RideView.mc"; @line = 1; ]
+<init> {
+}
