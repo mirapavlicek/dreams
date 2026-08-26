@@ -1,0 +1,129 @@
+using Toybox.Graphics;
+using Toybox.Lang;
+using Toybox.Position;
+using Toybox.System;
+using Toybox.Timer;
+using Toybox.WatchUi;
+
+//! Palubovka nad opravdovou mapou z paměti přístroje.
+//!
+//! MapTrackView vykresluje kartografii pod celou obrazovkou a sám se drží
+//! aktuální polohy. setScreenVisibleArea() mapu neořízne - jen říká, na kterou
+//! část obrazovky se má zaostřit a co ještě není zakryté naším rozhraním.
+//! Všechno mimo mapové okno si tedy musíme překreslit sami, jinak by mapa
+//! prosvítala pod ciferníky (viz vlákno "MapView" na fóru Connect IQ).
+class RideMapView extends WatchUi.MapTrackView {
+
+    hidden var mTimer as Timer.Timer?;
+    //: Kolik bodů stopy už je v polyline - přerýsovává se, jen když přibyly.
+    hidden var mTrackPoints as Lang.Number = 0;
+
+    function initialize() {
+        MapTrackView.initialize();
+
+        var settings = System.getDeviceSettings();
+        RideLayout.prepareSize(settings.screenWidth, settings.screenHeight);
+        applyWindow();
+        setMapMode(WatchUi.MAP_MODE_PREVIEW);
+    }
+
+    //! Zaostří mapu do okna uprostřed palubovky.
+    function applyWindow() as Void {
+        var rect = RideLayout.mapRect() as Lang.Array;
+        setScreenVisibleArea(rect[0] as Lang.Number, rect[1] as Lang.Number,
+            rect[2] as Lang.Number, rect[3] as Lang.Number);
+    }
+
+    function onShow() {
+        mTimer = new Timer.Timer();
+        mTimer.start(method(:onTick), 1000, true);
+    }
+
+    function onHide() {
+        if (mTimer != null) {
+            mTimer.stop();
+            mTimer = null;
+        }
+    }
+
+    function onTick() as Void {
+        updateTrack();
+        WatchUi.requestUpdate();
+    }
+
+    //! Projetá stopa jako polyline nad mapou. Skládat ji každou vteřinu je
+    //! zbytečně drahé, takže jen když od minule přibyly body.
+    function updateTrack() as Void {
+        var track = RideData.track();
+        if (track.size() < 2 || track.size() == mTrackPoints) {
+            return;
+        }
+
+        var polyline = new WatchUi.MapPolyline();
+        polyline.setColor(RideLayout.color("accent") as Lang.Number);
+        polyline.setWidth((RideLayout.s(RideLayout.number("map", "trackPen")) as Lang.Float).toNumber());
+        for (var i = 0; i < track.size(); i += 1) {
+            var point = track[i] as Lang.Array;
+            polyline.addLocation(new Position.Location({
+                :latitude => point[1] as Lang.Double,
+                :longitude => point[2] as Lang.Double,
+                :format => :degrees
+            }));
+        }
+        setPolyline(polyline);
+        mTrackPoints = track.size();
+    }
+
+    function isBrowsing() as Lang.Boolean {
+        return getMapMode() == WatchUi.MAP_MODE_BROWSE;
+    }
+
+    //! V režimu procházení patří obrazovka mapě - palubovku schováme, ať se dá
+    //! posouvat a zoomovat jako v nativní mapě.
+    function setBrowsing(browsing as Lang.Boolean) as Void {
+        if (browsing) {
+            var settings = System.getDeviceSettings();
+            setScreenVisibleArea(0, 0, settings.screenWidth - 1, settings.screenHeight - 1);
+            setMapMode(WatchUi.MAP_MODE_BROWSE);
+        } else {
+            applyWindow();
+            setMapMode(WatchUi.MAP_MODE_PREVIEW);
+        }
+        WatchUi.requestUpdate();
+    }
+
+    function onUpdate(dc) {
+        // Nejdřív mapa, pak naše rozhraní přes ni.
+        MapView.onUpdate(dc);
+        if (!isBrowsing()) {
+            RideChrome.draw(dc, true);
+        }
+    }
+}
+
+//! Výběr přepne na mapu přes celou obrazovku, zpět se vrací o krok dál až na
+//! palubovku s drobečkovou stopou.
+class RideMapDelegate extends WatchUi.BehaviorDelegate {
+
+    hidden var mView as RideMapView;
+
+    function initialize(view as RideMapView) {
+        BehaviorDelegate.initialize();
+        mView = view;
+    }
+
+    function onSelect() {
+        mView.setBrowsing(!mView.isBrowsing());
+        return true;
+    }
+
+    function onBack() {
+        if (mView.isBrowsing()) {
+            mView.setBrowsing(false);
+            return true;
+        }
+        RideMaps.setWanted(false);
+        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+        return true;
+    }
+}

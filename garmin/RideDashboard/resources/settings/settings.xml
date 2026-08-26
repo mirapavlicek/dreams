@@ -5,4 +5,7 @@
     <setting propertyKey="@Properties.showWeather" title="@Strings.SettingUseWeather">
         <settingConfig type="boolean"/>
     </setting>
+    <setting propertyKey="@Properties.useMap" title="@Strings.SettingUseMap" prompt="@Strings.SettingUseMapPrompt">
+        <settingConfig type="boolean"/>
+    </setting>
 </settings>

@@ -40,10 +40,33 @@ module RideLayout {
 
     //! Přepočítá měřítko podle skutečné velikosti displeje.
     function prepare(dc) as Void {
+        prepareSize(dc.getWidth(), dc.getHeight());
+    }
+
+    //! Totéž bez kreslicího kontextu - mapové view potřebuje rozměry okna už
+    //! v konstruktoru, kde žádné dc není.
+    function prepareSize(width, height) as Void {
         var canvas = section("canvas");
-        mScaleX = dc.getWidth() / (canvas["width"] as Lang.Number).toFloat();
-        mScaleY = dc.getHeight() / (canvas["height"] as Lang.Number).toFloat();
+        mScaleX = width / (canvas["width"] as Lang.Number).toFloat();
+        mScaleY = height / (canvas["height"] as Lang.Number).toFloat();
         mScale = mScaleX < mScaleY ? mScaleX : mScaleY;
+    }
+
+    //! Okno mapy v pixelech displeje jako [vlevo, nahoře, vpravo, dole].
+    //! Je o kousek menší než rámeček, aby kartografie nelezla pod okraj.
+    function mapRect() as Lang.Array {
+        var margin = number("middle", "margin");
+        var side = number("middle", "sideWidth");
+        var gap = number("middle", "gap");
+        var inset = number("map", "focusInset");
+        var left = margin + side + gap + inset;
+
+        return [
+            x(left).toNumber(),
+            y(number("middle", "top") + inset).toNumber(),
+            x(number("canvas", "width") - left).toNumber(),
+            y(number("middle", "bottom") - inset).toNumber()
+        ];
     }
 
     function x(designX) {

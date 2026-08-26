@@ -6,7 +6,12 @@ a opakuje kreslicí postup z `source/DashboardView.mc`, takže se dá rozvržen�
 ladit bez device packů.
 
     python3 garmin/tools/preview_ride.py
+    python3 garmin/tools/preview_ride.py --map --out /tmp/ride-map.png
     python3 garmin/tools/preview_ride.py --json data.json --out /tmp/ride.png
+
+S `--map` je uprostřed ilustrace kartografie, kterou na přístroji kreslí
+MapTrackView; bez ní drobečková stopa z GPS bodů, která funguje i na
+jednotkách bez map.
 """
 
 from __future__ import annotations
@@ -82,7 +87,10 @@ class Painter:
         )
         self.draw = ImageDraw.Draw(self.image)
 
-    def color(self, name: str) -> tuple[int, int, int]:
+    def color(self, name) -> tuple[int, int, int]:
+        """Jméno barvy z layout.json, nebo rovnou RGB trojice."""
+        if isinstance(name, tuple):
+            return name
         return rgb(self.colors[name])
 
     def s(self, value: float) -> float:
@@ -131,6 +139,19 @@ class Painter:
 
     def polygon(self, points, color) -> None:
         self.draw.polygon([(self.s(px), self.s(py)) for px, py in points], fill=self.color(color))
+
+    def rectangle(self, x, y, width, height, color) -> None:
+        self.draw.rectangle(
+            (self.s(x), self.s(y), self.s(x + width), self.s(y + height)),
+            fill=self.color(color),
+        )
+
+    def frame(self, x, y, width, height, color, width_px=2) -> None:
+        self.draw.rectangle(
+            (self.s(x), self.s(y), self.s(x + width), self.s(y + height)),
+            outline=self.color(color),
+            width=max(1, round(self.s(width_px))),
+        )
 
     def polyline(self, points, color, width) -> None:
         if len(points) < 2:
@@ -344,6 +365,96 @@ def draw_map(p: Painter, data: dict, box) -> None:
     p.text(x + 68, y + height - 17, "200 m", 11, "regular", "textDim", anchor="lm")
 
 
+MOCK_MAP = {
+    "land": (26, 29, 34),
+    "forest": (24, 42, 33),
+    "water": (18, 42, 66),
+    "minor": (58, 64, 74),
+    "major": (124, 132, 144),
+    "highway": (150, 118, 58),
+    "block": (36, 40, 46),
+}
+
+# Ilustrační kartografie v souřadnicích mapového okna 228x384. Na přístroji ji
+# kreslí MapTrackView z map v paměti - tady jde jen o to, aby náhled ukázal,
+# jak palubovka nad mapou vypadá.
+MOCK_ROADS = [
+    ("water", 13, [(-20, 30), (40, 80), (58, 170), (120, 235), (140, 330), (200, 400)]),
+    ("highway", 7, [(-20, 315), (55, 262), (108, 215), (158, 138), (250, 52)]),
+    ("major", 5, [(-20, 118), (72, 132), (142, 108), (250, 128)]),
+    ("major", 4, [(96, -20), (104, 120), (86, 220), (108, 400)]),
+    ("minor", 3, [(-20, 200), (60, 196), (96, 205)]),
+    ("minor", 3, [(104, 285), (170, 278), (250, 292)]),
+    ("minor", 3, [(30, 60), (34, 196)]),
+    ("minor", 3, [(168, 20), (176, 110), (152, 168)]),
+    ("minor", 3, [(190, 190), (250, 186)]),
+]
+
+MOCK_BLOCKS = [(18, 210, 30, 26), (56, 214, 26, 22), (112, 300, 34, 24), (180, 200, 28, 30)]
+
+
+def draw_device_map(p: Painter, data: dict, box) -> None:
+    """Mapové okno tak, jak ho vykreslí MapTrackView, s palubovkou nad ním."""
+    x, y, width, height = box
+    scale = p.scale
+    tile = Image.new("RGB", (round(width * scale), round(height * scale)), MOCK_MAP["land"])
+    pen = ImageDraw.Draw(tile)
+
+    pen.ellipse(
+        (-30 * scale, 250 * scale, 90 * scale, 400 * scale),
+        fill=MOCK_MAP["forest"],
+    )
+    for bx, by, bw, bh in MOCK_BLOCKS:
+        pen.rectangle((bx * scale, by * scale, (bx + bw) * scale, (by + bh) * scale), fill=MOCK_MAP["block"])
+    for color, road_width, points in MOCK_ROADS:
+        pen.line(
+            [(px * scale, py * scale) for px, py in points],
+            fill=MOCK_MAP[color],
+            width=max(1, round(road_width * scale)),
+            joint="curve",
+        )
+    p.image.paste(tile, (round(x * scale), round(y * scale)))
+
+    # Stopa a šipka polohy - to kreslí aplikace jako MapPolyline nad mapou.
+    route = data.get("route") or demo_route()
+    travelled = data.get("track") or route[: int(len(route) * 0.62)]
+    padding = p.layout["map"]["padding"]
+    points = route + travelled
+    min_x = min(px for px, _ in points)
+    max_x = max(px for px, _ in points)
+    min_y = min(py for _, py in points)
+    max_y = max(py for _, py in points)
+    span = max(max_x - min_x, max_y - min_y, 1e-6)
+    factor = min(width - 2 * padding, height - 2 * padding) / span
+    offset_x = x + padding + (width - 2 * padding - (max_x - min_x) * factor) / 2
+    offset_y = y + padding + (height - 2 * padding - (max_y - min_y) * factor) / 2
+
+    def project(point):
+        px, py = point
+        return offset_x + (px - min_x) * factor, offset_y + (max_y - py) * factor
+
+    p.polyline([project(point) for point in travelled], "accent", p.layout["map"]["trackPen"])
+    here = project(travelled[-1])
+    previous = project(travelled[-2]) if len(travelled) > 1 else (here[0], here[1] + 1)
+    angle = math.atan2(here[1] - previous[1], here[0] - previous[0])
+    size = p.layout["map"]["markerRadius"] + 3
+    p.polygon(
+        [
+            (here[0] + size * math.cos(angle), here[1] + size * math.sin(angle)),
+            (here[0] + size * math.cos(angle + 2.5), here[1] + size * math.sin(angle + 2.5)),
+            (here[0] + size * 0.4 * math.cos(angle + math.pi), here[1] + size * 0.4 * math.sin(angle + math.pi)),
+            (here[0] + size * math.cos(angle - 2.5), here[1] + size * math.sin(angle - 2.5)),
+        ],
+        "text",
+    )
+
+    strip = 18
+    p.rectangle(x + 1, y + height - strip, width - 2, strip - 1, "panel")
+    p.text(x + width / 2, y + height - strip / 2, "MAPA · výběr = přes celou obrazovku", 11,
+           "regular", "textDim")
+    p.frame(x, y, width, height, "panelEdge", 2)
+
+
 def demo_route():
     points = []
     for step in range(90):
@@ -398,7 +509,7 @@ def draw_weather_icon(p: Painter, cx, cy, weather) -> None:
     p.circle(cx + 3, cy + 1, 6, fill="textDim")
 
 
-def render(data: dict, layout: dict) -> Image.Image:
+def render(data: dict, layout: dict, device_map: bool = False) -> Image.Image:
     p = Painter(layout)
 
     draw_clock(p, data)
@@ -432,7 +543,10 @@ def render(data: dict, layout: dict) -> Image.Image:
         p, (right_x, top + cell_height + gap, side, cell_height),
         "NAJETO", f"{data['distance']:.1f}", "km", "text",
     )
-    draw_map(p, data, (map_x, top, map_width, bottom - top))
+    if device_map:
+        draw_device_map(p, data, (map_x, top, map_width, bottom - top))
+    else:
+        draw_map(p, data, (map_x, top, map_width, bottom - top))
 
     draw_bottom(p, data)
     return p.finish()
@@ -442,13 +556,18 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--json", help="soubor s daty (klíče jako v DEMO)")
     parser.add_argument("--out", default="garmin/docs/preview/ride-edge1050.png")
+    parser.add_argument(
+        "--map",
+        action="store_true",
+        help="režim s mapou z paměti přístroje (RideMapView) místo drobečkové stopy",
+    )
     args = parser.parse_args()
 
     data = dict(DEMO)
     if args.json:
         data.update(json.loads(pathlib.Path(args.json).read_text(encoding="utf-8")))
 
-    image = render(data, load_layout())
+    image = render(data, load_layout(), device_map=args.map)
     out = pathlib.Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     image.save(out)

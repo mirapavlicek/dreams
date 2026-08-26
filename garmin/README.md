@@ -3,8 +3,9 @@
 Dvě aplikace a společné vývojové prostředí:
 
 - **[RideDashboard](#ridedashboard--palubovka-pro-edge-1050)** — palubovka pro
-  cyklopočítač Edge 1050 (480×800): tachometr s půlkruhem kadence, mapa uprostřed,
-  metriky kolem ní a spodní lišta se stavem baterie, převýšením a počasím.
+  cyklopočítač Edge 1050 (480×800): tachometr s půlkruhem kadence, mapa přístroje
+  uprostřed, metriky kolem ní a spodní lišta se stavem baterie, převýšením
+  a počasím.
 - **[QMailDashboard](#qmaildashboard--stav-schránky-na-hodinkách)** — stav
   poštovní schránky jako hustota pravděpodobnosti `|ψ|²` podle knihovny `qmail`.
 
@@ -25,24 +26,54 @@ Rozvržení shora dolů:
 | Prostřední pás | mapa uprostřed, po stranách kompas a dojezd na elektřinu (vlevo), vzdálenost do cíle a najeté kilometry (vpravo) |
 | Spodní lišta | zbývající energie e-biku, nastoupáno, sestoupáno, teplota a počasí |
 
-Dvě věci, které Connect IQ neumožňuje a jsou proto řešené jinak:
+## Mapa uprostřed palubovky
 
-- **Mapa.** Mapové dlaždice se do vlastního rozvržení vykreslit nedají —
-  `MapTrackView` zabírá celou obrazovku. Buňka proto kreslí *drobečkovou mapu*:
-  projetou stopu z GPS bodů, aktuální polohu a měřítko.
-- **Baterie e-biku.** ANT+ profil elektrokol (LEV) v Connect IQ API není, takže
-  dojezd je **odhad**: uživatel v nastavení zadá dojezd na plnou baterii a
-  aplikace ho úměrně krátí podle ujeté vzdálenosti.
+Uprostřed je **opravdová mapa z paměti přístroje**, ne jen nakreslená stopa:
+
+![Palubovka s mapou](docs/preview/ride-edge1050-map.png)
+
+Trik je v tom, že `setScreenVisibleArea()` mapu neořízne. Mapa se vykreslí pod
+celou obrazovkou a metoda jen říká, na kterou část se má zaostřit a co ještě
+není zakryté rozhraním aplikace — přesně jak to popisuje vlákno
+[MapView](https://forums.garmin.com/developer/connect-iq/f/discussion/7014/mapview)
+na fóru Connect IQ. Okolí mapového okna si tedy aplikace musí přebarvit sama,
+jinak kartografie prosvítá pod ciferníky.
+
+Prakticky to znamená:
+
+- `RideMapView` dědí z `MapTrackView`, takže se mapa sama drží aktuální polohy
+  a kreslí navigační šipku; projetá stopa jde nad ni jako `MapPolyline`.
+- `RideChrome` v mapovém režimu nemaže celé plátno (`dc.clear()` by mapu
+  přetřel), ale vyplní jen čtyři pruhy kolem okna.
+- Mapové view nejde vrátit z `getInitialView()`, dá se jen vystrčit přes
+  `pushView()`. Výchozí obrazovka je proto `RideView` a mapa se otevře hned po
+  startu.
+- **Výběr** přepne mapu přes celou obrazovku (`MAP_MODE_BROWSE`, posouvání
+  a zoom jako v nativní mapě), **zpět** vrátí palubovku a podruhé odejde na
+  variantu s drobečkovou stopou.
+- Bez map v paměti (`WatchUi has :MapTrackView`) nebo po vypnutí volby *Mapa
+  z paměti přístroje* zůstane drobečková stopa z GPS bodů. Pozor při přidávání
+  jednotek bez kartografie do manifestu — třída dědící z `MapTrackView` se pro
+  ně nepřeloží, musela by se vyřadit anotací v `monkey.jungle`.
+
+Co Connect IQ neumožňuje: **baterii e-biku**. ANT+ profil elektrokol (LEV)
+v API není, takže dojezd je **odhad** — uživatel v nastavení zadá dojezd na
+plnou baterii a aplikace ho úměrně krátí podle ujeté vzdálenosti.
 
 Rozvržení je popsané v `RideDashboard/resources/json/layout.json` v pixelech
 návrhového plátna 480×800; při kreslení se přepočítá na skutečný displej, takže
 stejná čísla platí i pro menší jednotky Edge.
 
 ```bash
-python3 garmin/tools/preview_ride.py            # náhled do garmin/docs/preview
+python3 garmin/tools/preview_ride.py            # náhled s drobečkovou stopou
+python3 garmin/tools/preview_ride.py --map \
+    --out garmin/docs/preview/ride-edge1050-map.png   # náhled s mapou
 ./garmin/check.sh RideDashboard                 # překlad bez Garmin účtu
 ./garmin/run_simulator.sh edge1050 RideDashboard
 ```
+
+V náhledu s `--map` je kartografie jen ilustrace toho, co na přístroji vykreslí
+`MapTrackView` — renderer žádné mapové podklady nemá.
 
 ---
 
@@ -90,11 +121,13 @@ garmin/
     source/GlanceView.mc             # kompaktní řádek
   RideDashboard/
     resources/json/layout.json       # rozvržení palubovky v pixelech 480x800
-    resources/settings/              # dojezd na plnou baterii, počasí
+    resources/settings/              # dojezd na plnou baterii, počasí, mapa
     source/RideApp.mc                # vstupní bod + odběr GPS pozic
     source/RideLayout.mc             # škálování návrhu na displej, výběr fontů
     source/RideData.mc               # metriky z Activity, Weather a Position
-    source/RideView.mc               # kreslení celé palubovky
+    source/RideChrome.mc             # kreslení palubovky (sdílí obě obrazovky)
+    source/RideView.mc               # varianta s drobečkovou stopou
+    source/RideMapView.mc            # varianta s mapou z paměti přístroje
   tools/preview.py                   # náhled qmail dashboardu do PNG
   tools/preview_ride.py              # náhled palubovky do PNG
   tools/qmail_server.py              # servíruje reálná data z .eml složky

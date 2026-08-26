@@ -1,4 +1,5 @@
 <properties>
     <property id="assistFullRangeKm" type="number">90</property>
     <property id="showWeather" type="boolean">true</property>
+    <property id="useMap" type="boolean">true</property>
 </properties>

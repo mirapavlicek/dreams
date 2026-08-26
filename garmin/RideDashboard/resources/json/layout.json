@@ -43,6 +43,7 @@
         "trackPen": 4,
         "routePen": 3,
         "markerRadius": 7,
-        "padding": 14
+        "padding": 14,
+        "focusInset": 2
     }
 }

@@ -15,6 +15,7 @@ module RideData {
 
     var mFullRangeKm = 90.0;
     var mShowWeather = true;
+    var mUseMap = true;
     var mTrack = null;
     var mLatitudeScale = 1.0;
 
@@ -37,6 +38,15 @@ module RideData {
         if (weather instanceof Lang.Boolean) {
             mShowWeather = weather;
         }
+        var useMap = Application.Properties.getValue("useMap");
+        if (useMap instanceof Lang.Boolean) {
+            mUseMap = useMap;
+        }
+    }
+
+    //! Chce uživatel mapu z paměti přístroje, nebo mu stačí drobečková stopa?
+    function mapEnabled() as Lang.Boolean {
+        return mUseMap;
     }
 
     function info() {
@@ -203,7 +213,11 @@ module RideData {
         return current.currentLocationAccuracy >= Position.QUALITY_USABLE;
     }
 
-    // --- stopa pro minimapu -------------------------------------------------
+    // --- stopa ---------------------------------------------------------------
+    //
+    // Každý bod je [x, šířka, délka]: x je délka zkrácená kosinem šířky pro
+    // drobečkovou mapu, zbylá dvě čísla jsou surové stupně pro polyline nad
+    // opravdovou mapou.
 
     function onPosition(positionInfo as Position.Info) as Void {
         if (positionInfo == null || positionInfo.position == null) {
@@ -220,7 +234,7 @@ module RideData {
             // Délku zkracujeme kosinem šířky, aby minimapa nebyla natažená.
             mLatitudeScale = Math.cos(latitude * Math.PI / 180.0);
         }
-        mTrack.add([longitude * mLatitudeScale, latitude]);
+        mTrack.add([longitude * mLatitudeScale, latitude, longitude]);
         if (mTrack.size() > TRACK_CAPACITY) {
             mTrack = mTrack.slice(mTrack.size() - TRACK_CAPACITY, mTrack.size());
         }

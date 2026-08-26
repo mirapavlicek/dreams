@@ -5,6 +5,9 @@ using Toybox.WatchUi;
 //! Jízdní dashboard pro Edge: tachometr s půlkruhem kadence, mapa uprostřed
 //! obklopená čtyřmi metrikami a spodní lišta se stavem baterie, převýšením
 //! a počasím.
+//!
+//! Mapová obrazovka (RideMapView) se otevírá z RideView - Connect IQ mapové
+//! view z getInitialView() nepřijme.
 class RideApp extends Application.AppBase {
 
     function initialize() {
@@ -29,7 +32,8 @@ class RideApp extends Application.AppBase {
     }
 
     function getInitialView() {
-        return [new RideView(), new RideDelegate()];
+        var view = new RideView();
+        return [view, new RideDelegate(view)];
     }
 
     function onSettingsChanged() {
