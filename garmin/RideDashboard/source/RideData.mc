@@ -14,10 +14,11 @@ module RideData {
     const TRACK_CAPACITY = 150;
 
     //: Odkud je dojezd elektrokola: přímo z kola, dopočítaný ze stavu jeho
-    //: baterie, nebo jen odhad z ujetých kilometrů.
+    //: baterie (přes ANT+ nebo Bluetooth), nebo jen odhad z ujetých kilometrů.
     const ASSIST_FROM_BIKE = 0;
     const ASSIST_FROM_BATTERY = 1;
-    const ASSIST_ESTIMATED = 2;
+    const ASSIST_FROM_BLE = 2;
+    const ASSIST_ESTIMATED = 3;
 
     var mFullRangeKm = 90.0;
     var mBatteryWh = 0.0;
@@ -27,6 +28,8 @@ module RideData {
     var mUseLev as Lang.Boolean = true;
     var mLevDeviceNumber as Lang.Number = 0;
     var mLev as RideLev or Null = null;
+    var mBleName as Lang.String = "";
+    var mBle as RideBle or Null = null;
     var mTrack = null;
     var mLatitudeScale = 1.0;
 
@@ -77,6 +80,12 @@ module RideData {
         if (!mUseLev) {
             closeSensors();
         }
+
+        var bleName = Application.Properties.getValue("bleBatteryName");
+        if (bleName instanceof Lang.String && !bleName.equals(mBleName)) {
+            mBleName = bleName;
+            closeBle();
+        }
     }
 
     // --- ANT+ kanál elektrokola ---------------------------------------------
@@ -85,6 +94,16 @@ module RideData {
     //! zabral někdo jiný (na jednom kanálu může viset jen jedna aplikace),
     //! zůstane null a dojezd se odhaduje.
     function openSensors() as Void {
+        openLev();
+        openBle();
+    }
+
+    function closeSensors() as Void {
+        closeLev();
+        closeBle();
+    }
+
+    function openLev() as Void {
         if (!mUseLev || mLev != null || !(Toybox has :Ant)) {
             return;
         }
@@ -97,7 +116,7 @@ module RideData {
         }
     }
 
-    function closeSensors() as Void {
+    function closeLev() as Void {
         if (mLev == null) {
             return;
         }
@@ -107,6 +126,41 @@ module RideData {
             // Kanál už mohl spadnout sám, na tom nesejde.
         }
         mLev = null;
+    }
+
+    //! Bluetooth se zapíná jen vyplněným jménem kola - skenování stojí baterii
+    //! a kolům s ANT+ profilem LEV není k ničemu.
+    function openBle() as Void {
+        if (mBleName.length() == 0 || mBle != null || !(Toybox has :BluetoothLowEnergy)) {
+            return;
+        }
+        try {
+            var sensor = new RideBle(mBleName);
+            if (sensor.start()) {
+                mBle = sensor;
+            }
+        } catch (exception) {
+            mBle = null;
+        }
+    }
+
+    function closeBle() as Void {
+        if (mBle == null) {
+            return;
+        }
+        try {
+            mBle.stop();
+        } catch (exception) {
+            // Spojení mohlo mezitím spadnout, na tom nesejde.
+        }
+        mBle = null;
+    }
+
+    //! Tik z obrazovky: po Bluetooth se o hodnotu musíme čas od času říct sami.
+    function poll() as Void {
+        if (mBle != null) {
+            mBle.poll();
+        }
     }
 
     //! Kolo, které zrovna mluví. Jinak null a všechno se odhaduje.
@@ -239,15 +293,22 @@ module RideData {
     // Který zdroj se povedl, hlásí assistSource(); kreslení pak k odhadu
     // připisuje poznámku, aby se nezaměnil s měřením.
 
+    //! Procenta baterie ze standardní BLE služby, když ji kolo nabízí.
+    function bleBatteryPercent() as Lang.Number or Null {
+        return mBle == null ? null : mBle.batteryPercent();
+    }
+
     function assistSource() as Lang.Number {
         var bike = lev();
-        if (bike == null) {
-            return ASSIST_ESTIMATED;
+        if (bike != null) {
+            if (bike.rangeKm() != null) {
+                return ASSIST_FROM_BIKE;
+            }
+            if (bike.batteryPercent() != null) {
+                return ASSIST_FROM_BATTERY;
+            }
         }
-        if (bike.rangeKm() != null) {
-            return ASSIST_FROM_BIKE;
-        }
-        return bike.batteryPercent() == null ? ASSIST_ESTIMATED : ASSIST_FROM_BATTERY;
+        return bleBatteryPercent() == null ? ASSIST_ESTIMATED : ASSIST_FROM_BLE;
     }
 
     //! Je dojezd měřený kolem, nebo jen náš odhad?
@@ -266,6 +327,11 @@ module RideData {
             if (soc != null) {
                 return rangeFromBattery(soc, bike.consumptionWhPerKm());
             }
+        }
+        var blePercent = bleBatteryPercent();
+        if (blePercent != null) {
+            // Přes BLE známe jen procenta, spotřebu ne - ta by musela z kola.
+            return rangeFromBattery(blePercent, null);
         }
         var remaining = mFullRangeKm - distanceKm();
         return remaining > 0.0 ? remaining : 0.0;
@@ -287,6 +353,10 @@ module RideData {
             if (soc != null) {
                 return soc;
             }
+        }
+        var blePercent = bleBatteryPercent();
+        if (blePercent != null) {
+            return blePercent;
         }
         if (mFullRangeKm <= 0.0) {
             return 0;
@@ -330,8 +400,12 @@ module RideData {
     //! Popisek k baterii kola: měřená hodnota se doplní režimem asistence,
     //! odhad se přizná.
     function assistBatteryLabel() as Lang.String {
-        if (!assistMeasured()) {
+        var source = assistSource();
+        if (source == ASSIST_ESTIMATED) {
             return "E-BIKE · ODHAD";
+        }
+        if (source == ASSIST_FROM_BLE) {
+            return "E-BIKE · BLE";
         }
         var mode = assistModeText();
         return mode == null ? "E-BIKE" : "E-BIKE · " + mode;
@@ -348,6 +422,9 @@ module RideData {
         var source = assistSource();
         if (source == ASSIST_ESTIMATED) {
             return "odhad";
+        }
+        if (source == ASSIST_FROM_BLE) {
+            return "baterie přes BLE";
         }
         var mode = assistModeText();
         if (mode != null) {

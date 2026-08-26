@@ -57,6 +57,7 @@ class RideView extends WatchUi.View {
     }
 
     function onTick() as Void {
+        RideData.poll();
         WatchUi.requestUpdate();
     }
 

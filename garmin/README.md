@@ -125,7 +125,8 @@ Dojezd se bere v tomto pořadí:
 2. **ze stavu baterie** — když kolo dojezd neposílá, spočítá se z procent
    a spotřeby ve Wh/km podle kapacity vyplněné v nastavení; bez kapacity
    z poměrné části dojezdu na plnou,
-3. **odhad z ujetých kilometrů** — když se s kolem nemluví vůbec.
+3. **z baterie přes Bluetooth** — pro kola bez ANT+ LEV, viz níže,
+4. **odhad z ujetých kilometrů** — když se s kolem nemluví vůbec.
 
 Odhad se v palubovce přizná: v přístrojovém štítu jednotkou `km · odhad`
 a popiskem `E-BIKE · ODHAD`, v panelech poznámkou pod hodnotou. Měřený dojezd
@@ -134,9 +135,35 @@ naopak ukazuje i režim asistence (`E-BIKE · ACTIVE`).
 ![Dojezd jako odhad, když kolo LEV neumí](docs/preview/ride-cockpit-estimate.png)
 
 Profil LEV vysílá Giant (RideControl), Specialized, Yamaha, Mahle, Fazua Ride 60
-(od firmware bundle 007) a TQ HPR50 v Treku Fuel EXe. **Bosch** ANT+ ignoruje
-úplně a **Shimano STEPS** jede po Bluetooth, tam zůstane odhad. Ne každý systém
-posílá všechno — TQ třeba dojezd nehlásí, takže se počítá ze stavu baterie.
+(od firmware bundle 007) a TQ HPR50 v Treku Fuel EXe. Ne každý systém posílá
+všechno — TQ třeba dojezd nehlásí, takže se počítá ze stavu baterie.
+
+### Bluetooth jako záloha
+
+Edge 1050 (a stejně tak 1040, 840, 540 nebo Explore 2) umí v Connect IQ
+i `Toybox.BluetoothLowEnergy` v roli centrály, takže pro kola bez ANT+ LEV je
+tu druhá cesta. Má ale úzké hrdlo: **přečíst jde jen to, co je standardní.**
+`RideBle` proto hledá službu **Battery Service (0x180F)** a z ní
+charakteristiku **Battery Level (0x2A19)**, tedy procenta baterie. Kolo se
+najde podle jména vyplněného v nastavení (prázdné pole = nehledat, skenování
+stojí baterii), aplikace se s ním spáruje, jednou za půl minuty si o hodnotu
+řekne a přihlásí se i k oznámením. Procenta pak vejdou do stejného řetězce jako
+data z ANT+ a dojezd se z nich dopočítá; v palubovce je to poznat popiskem
+`E-BIKE · BLE`.
+
+Co přes Bluetooth **nejde**:
+
+- **DJI Avinox** (Amflow a spol.) telemetrii nevysílá vůbec — jeho ANT+
+  certifikace je jen na *příjem* dat z hrudního pásu do displeje kola, a BLE
+  má vyhrazené pro vlastní aplikaci. Proto pro něj v tabulce výše není řádek:
+  nejde ani přečíst, ani rozpoznat.
+- **Bosch Smart System** má sice od května 2026 veřejně zdokumentované Live
+  Data Interface (protobuf, Apache-2.0), jenže vyžaduje šifrované spojení
+  a aktivační sekvenci, na kterou Connect IQ nemá dosah. Novější firmware Edge
+  ale Bosch podporuje nativně přes systémové menu *Senzory* — tam se s ním
+  aplikace prát nemá.
+- **Shimano STEPS** vozí data ve vlastních službách (`…5348494D414E4F…`, tedy
+  „SHIMANO“ v ASCII), které specifikované nejsou.
 
 **Pozor na nativní spárování:** na jednom kole může viset jen jeden posluchač.
 Když je e-bike připojený přes systémové menu *Senzory* nebo ho drží jiná
@@ -211,6 +238,7 @@ garmin/
     source/RideLayout.mc             # škálování návrhu na displej, výběr fontů
     source/RideData.mc               # metriky z Activity, Weather a Position
     source/RideLev.mc                # elektrokolo přes ANT+ profil LEV
+    source/RideBle.mc                # baterie kola přes standardní BLE službu
     source/RideChrome.mc             # kreslení stylu s panely
     source/RideCockpit.mc            # kreslení stylu přístrojového štítu
     source/RideView.mc               # obrazovka s drobečkovou stopou

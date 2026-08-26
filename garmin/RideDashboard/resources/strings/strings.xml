@@ -8,6 +8,8 @@
     <string id="SettingAssistRangePrompt">Použije se, dokud kolo vlastní dojezd neposílá</string>
     <string id="SettingBatteryWh">Kapacita baterie (Wh)</string>
     <string id="SettingBatteryWhPrompt">0 = neznámá; se známou kapacitou (Giant EnergyPak 500 nebo 625) počítáme dojezd ze spotřeby kola</string>
+    <string id="SettingBleName">Jméno kola v Bluetooth</string>
+    <string id="SettingBleNamePrompt">Prázdné = nehledat. Pro kola bez ANT+ LEV: přečte procenta baterie, pokud kolo nabízí standardní BLE službu</string>
     <string id="SettingUseWeather">Zobrazovat počasí</string>
     <string id="SettingUseMap">Mapa z paměti přístroje</string>
     <string id="SettingUseMapPrompt">Vypnuto: uprostřed se kreslí jen drobečková stopa z GPS</string>

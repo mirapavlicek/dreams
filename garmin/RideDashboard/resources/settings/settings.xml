@@ -11,6 +11,9 @@
     <setting propertyKey="@Properties.assistBatteryWh" title="@Strings.SettingBatteryWh" prompt="@Strings.SettingBatteryWhPrompt">
         <settingConfig type="numeric" min="0" max="2000"/>
     </setting>
+    <setting propertyKey="@Properties.bleBatteryName" title="@Strings.SettingBleName" prompt="@Strings.SettingBleNamePrompt">
+        <settingConfig type="alphaNumeric" maxLength="24"/>
+    </setting>
     <setting propertyKey="@Properties.showWeather" title="@Strings.SettingUseWeather">
         <settingConfig type="boolean"/>
     </setting>

@@ -50,6 +50,7 @@ class RideMapView extends WatchUi.MapTrackView {
     }
 
     function onTick() as Void {
+        RideData.poll();
         updateTrack();
         WatchUi.requestUpdate();
     }

@@ -44,7 +44,8 @@ DEMO = {
     "assistRange": 48.2,
     "assistBattery": 63,
     # Odkud je dojezd: "bike" = stránka 2 profilu ANT+ LEV, "battery" =
-    # dopočet ze stavu baterie kola, "estimate" = jen odhad z ujetých km.
+    # dopočet ze stavu baterie kola, "ble" = procenta ze standardní služby
+    # Bluetooth, "estimate" = jen odhad z ujetých km.
     "assistSource": "bike",
     # Režim asistence tak, jak mu říká výrobce kola (Giant: ECO, BASIC,
     # ACTIVE, AUTO, SPORT, POWER); u neznámé značky "ASIST 3".
@@ -75,19 +76,25 @@ def assist_range_unit(data: dict) -> str:
 
 
 def assist_battery_label(data: dict) -> str:
-    if not assist_measured(data):
+    source = data.get("assistSource", "estimate")
+    if source == "estimate":
         return "E-BIKE · ODHAD"
+    if source == "ble":
+        return "E-BIKE · BLE"
     mode = data.get("assistMode")
     return f"E-BIKE · {mode}" if mode else "E-BIKE"
 
 
 def assist_note(data: dict) -> str:
-    if not assist_measured(data):
+    source = data.get("assistSource", "estimate")
+    if source == "estimate":
         return "odhad"
+    if source == "ble":
+        return "baterie přes BLE"
     mode = data.get("assistMode")
     if mode:
         return mode
-    return "přímo z kola" if data["assistSource"] == "bike" else "ze stavu baterie"
+    return "přímo z kola" if source == "bike" else "ze stavu baterie"
 
 
 def load_layout() -> dict:
