@@ -24,7 +24,13 @@ import pathlib
 from PIL import Image, ImageDraw, ImageFont
 
 PROJECT_DIR = pathlib.Path(__file__).resolve().parents[1] / "RideDashboard"
-LAYOUT_PATH = PROJECT_DIR / "resources" / "json" / "layout.json"
+
+#: Plátno 480x800 pro velké jednotky, 246x322 pro úzké - stejně jako je
+#: monkey.jungle přiřazuje zařízením.
+LAYOUTS = {
+    "full": PROJECT_DIR / "resources" / "json" / "layout.json",
+    "compact": PROJECT_DIR / "resources-compact" / "json" / "layout.json",
+}
 
 SUPERSAMPLE = 3
 
@@ -97,8 +103,18 @@ def assist_note(data: dict) -> str:
     return "přímo z kola" if source == "bike" else "ze stavu baterie"
 
 
-def load_layout() -> dict:
-    return json.loads(LAYOUT_PATH.read_text(encoding="utf-8"))
+def load_layout(name: str = "full") -> dict:
+    return json.loads(LAYOUTS[name].read_text(encoding="utf-8"))
+
+
+def feature(layout: dict, name: str) -> bool:
+    """Volitelný prvek palubovky; kompaktní rozvržení si jich pár vypíná."""
+    return layout.get("features", {}).get(name, True)
+
+
+def center_x(painter) -> float:
+    """Vodorovný střed plátna - u kompaktního rozvržení to není 240."""
+    return painter.layout["canvas"]["width"] / 2
 
 
 def rgb(value: int) -> tuple[int, int, int]:
@@ -221,6 +237,17 @@ class Painter:
     def text_width(self, value, size, weight="regular") -> float:
         return self.draw.textlength(value, font=font(weight, round(self.s(size)))) / self.scale
 
+    def fit(self, value, size, max_width, weight="regular") -> float:
+        """Největší velikost do `max_width`, jako `RideLayout.fitFont` v aplikaci.
+
+        Aplikace přepíná mezi systémovými fonty, kterých je pár a nejmenší z nich
+        má dané dno; renderer má DejaVu plynule škálovatelné, takže se čísla
+        o kousek liší. Jde o to, aby se sousední údaje nepřekrývaly.
+        """
+        while size > 6 and self.text_width(value, size, weight) > max_width:
+            size -= 1
+        return size
+
     def circle(self, cx, cy, radius, fill=None, outline=None, width=1) -> None:
         box = (self.s(cx - radius), self.s(cy - radius), self.s(cx + radius), self.s(cy + radius))
         self.draw.ellipse(
@@ -248,9 +275,11 @@ def cadence_color(cadence: int, maximum: int) -> str:
 def draw_clock(p: Painter, data: dict) -> None:
     clock = p.layout["clock"]
     center = clock["y"] + clock["height"] / 2
-    p.text(240, center, data["clock"], 30, "mono", "text")
+    width = p.layout["canvas"]["width"]
+    p.text(center_x(p), center, data["clock"], clock["size"], "mono", "text")
     p.text(14, center, "GPS", 13, "bold", "ok", anchor="lm")
-    p.text(466, center, f"{int(data['deviceBattery'])}%", 13, "regular", "textDim", anchor="rm")
+    p.text(width - 14, center, f"{int(data['deviceBattery'])}%", 13, "regular", "textDim",
+           anchor="rm")
 
 
 def draw_cadence(p: Painter, data: dict) -> None:
@@ -280,23 +309,26 @@ def draw_cadence(p: Painter, data: dict) -> None:
     p.text(cx - radius + pen / 2, cy + 16, "0", 13, "regular", "textDim")
     p.text(cx + radius - pen / 2, cy + 16, str(maximum), 13, "regular", "textDim")
 
-    p.text(cx, spec["labelY"], str(cadence), 32, "bold", cadence_color(cadence, maximum))
-    p.text(cx, spec["unitY"], "KADENCE rpm", 13, "regular", "textDim")
+    p.text(cx, spec["labelY"], str(cadence), spec["labelSize"], "bold",
+           cadence_color(cadence, maximum))
+    p.text(cx, spec["unitY"], "KADENCE rpm", spec["unitSize"], "regular", "textDim")
 
 
 def draw_speed(p: Painter, data: dict) -> None:
     """Tachometr: celá čísla velká, desetinné místo menší - jako na palubovce."""
     spec = p.layout["speed"]
     whole, _, decimal = f"{data['speed']:.1f}".partition(".")
-    big, small = 106, 46
+    big, small = spec["size"], spec["decimalSize"]
+    center = center_x(p)
 
     whole_width = p.text_width(whole, big, "mono")
     decimal_width = p.text_width("." + decimal, small, "mono")
-    left = 240 - (whole_width + decimal_width) / 2
+    left = center - (whole_width + decimal_width) / 2
 
     p.text(left, spec["cy"], whole, big, "mono", "text", anchor="lm")
-    p.text(left + whole_width, spec["cy"] + 22, "." + decimal, small, "mono", "text", anchor="lm")
-    p.text(240, spec["unitY"], "km/h", 20, "regular", "textDim")
+    p.text(left + whole_width, spec["cy"] + (big - small) * 0.45, "." + decimal, small, "mono",
+           "text", anchor="lm")
+    p.text(center, spec["unitY"], "km/h", spec["unitSize"], "regular", "textDim")
 
 
 def draw_speed_stats(p: Painter, data: dict) -> None:
@@ -612,11 +644,12 @@ def draw_heading_tape(p: Painter, data: dict) -> None:
     heading = float(data["heading"])
     y = spec["y"] + spec["height"] / 2
     spacing = spec["spacing"]
+    center = center_x(p)
 
     first = int((heading - 70) // 10) * 10
     for step in range(first, int(heading + 71), 10):
         bearing = step % 360
-        x = 240 + (step - heading) * spacing
+        x = center + (step - heading) * spacing
         if bearing % 45 == 0:
             p.text(x, y, CARDINALS[bearing // 45], 13, "bold", "text")
         elif bearing % 30 == 0:
@@ -624,7 +657,7 @@ def draw_heading_tape(p: Painter, data: dict) -> None:
         else:
             p.line(x, y - 4, x, y + 4, "textDim", 1)
 
-    p.polygon([(240, y + 11), (235, y + 17), (245, y + 17)], "accent")
+    p.polygon([(center, y + 11), (center - 5, y + 17), (center + 5, y + 17)], "accent")
 
 
 def draw_gauge(p: Painter, cx, cy, radius, pen, ratio, color) -> None:
@@ -655,7 +688,8 @@ def draw_cockpit_top(p: Painter, data: dict) -> None:
     spec = p.layout["cockpit"]
     draw_scrim(p, 0, spec["top"]["height"], True)
 
-    draw_heading_tape(p, data)
+    if feature(p.layout, "tape"):
+        draw_heading_tape(p, data)
     draw_cadence_gauge(p, data)
 
     speed = spec["speed"]
@@ -676,10 +710,12 @@ def draw_cockpit_top(p: Painter, data: dict) -> None:
     p.text(clock["x"], clock["statusY"], f"{int(data['deviceBattery'])} %", 10, "regular", "textDim",
            anchor="rm")
 
+    if not feature(p.layout, "chips"):
+        return
     chips = spec["chips"]
     height = chips["height"]
     cells = [("PRŮMĚR", f"{data['avgSpeed']:.1f}", "accent"), ("MAX", f"{data['maxSpeed']:.1f}", "warn")]
-    width = (480 - 2 * chips["margin"] - chips["gap"]) / 2
+    width = (p.layout["canvas"]["width"] - 2 * chips["margin"] - chips["gap"]) / 2
     for index, (label, value, color) in enumerate(cells):
         x = chips["margin"] + index * (width + chips["gap"])
         p.pill(x, chips["y"], width, height, "panel")
@@ -708,42 +744,57 @@ def draw_cockpit_bottom(p: Painter, data: dict) -> None:
         ("DO CÍLE", f"{data['distanceToDestination']:.1f}", f"km · {data['eta']}", "accent"),
         ("NAJETO", f"{data['distance']:.1f}", "km", "text"),
     ]
-    width = (480 - 2 * margin) / 3
+    canvas_width = p.layout["canvas"]["width"]
+    width = (canvas_width - 2 * margin) / 3
     for index, (label, value, unit, color) in enumerate(columns):
         cx = margin + width * (index + 0.5)
         if index:
             x = margin + width * index
             p.line(x, row_a["dividerTop"], x, row_a["dividerTop"] + row_a["dividerHeight"], "panelEdge", 1)
-        p.text(cx, row_a["titleY"], label, 10, "regular", "textDim")
-        value_width = p.text_width(value, 32, "mono")
-        p.text(cx - value_width / 2, row_a["valueY"], value, 32, "mono", color, anchor="lm")
-        p.text(cx + value_width / 2 + 5, row_a["valueY"] + 6, unit, 10, "regular", "textDim", anchor="lm")
+        p.text(cx, row_a["titleY"], label, p.fit(label, 10, width - 4), "regular", "textDim")
+
+        # Hodnota s jednotkou tvoří jeden blok na střed sloupce - stejně jako
+        # v RideCockpit.drawSummary, aby jednotka nepřelezla do vedlejšího.
+        room = width - 6
+        value_size = p.fit(value, 32, room * 0.7, "mono")
+        value_width = p.text_width(value, value_size, "mono")
+        unit_size = p.fit(unit, 10, room - value_width - 5)
+        unit_width = p.text_width(unit, unit_size)
+        left = cx - (value_width + 5 + unit_width) / 2
+        p.text(left, row_a["valueY"], value, value_size, "mono", color, anchor="lm")
+        p.text(left + value_width + 5, row_a["valueY"] + 6, unit, unit_size, "regular", "textDim",
+               anchor="lm")
 
     row_b = spec["rowB"]
     battery = int(data["assistBattery"])
     battery_color = "ok" if battery > 30 else "danger"
+    column = (canvas_width - 2 * margin) / 4
     cells = [
         (margin, f"{battery} %", assist_battery_label(data), battery_color, None),
-        (150, f"{int(data['ascent'])} m", "NASTOUPÁNO", "warn", True),
-        (268, f"{int(data['descent'])} m", "SESTOUPÁNO", "cold", False),
+        (margin + column, f"{int(data['ascent'])} m", "NASTOUPÁNO", "warn", True),
+        (margin + 2 * column, f"{int(data['descent'])} m", "SESTOUPÁNO", "cold", False),
     ]
     for x, value, label, color, arrow in cells:
         offset = 0
         if arrow is not None:
             # Šipky se kreslí, ne píšou - Garmin fonty znak ↑ nemají.
             draw_arrow(p, x + 5, row_b["y"], arrow, color)
-            offset = 15
-        p.text(x + offset, row_b["y"], value, 17, "mono", color, anchor="lm")
-        p.text(x, row_b["labelY"], label, 10, "regular", "textDim", anchor="lm")
+            offset = 14
+        p.text(x + offset, row_b["y"], value, p.fit(value, 17, column - offset, "mono"), "mono",
+               color, anchor="lm")
+        p.text(x, row_b["labelY"], label, p.fit(label, 10, column - 8), "regular", "textDim",
+               anchor="lm")
 
-    draw_weather_icon(p, 396, row_b["y"] - 2, data["weather"])
-    p.text(480 - margin, row_b["y"], f"{int(data['temperature'])} °C", 19, "mono", "text", anchor="rm")
-    p.text(480 - margin, row_b["labelY"], WEATHER_LABELS.get(data["weather"], "POČASÍ"), 10,
-           "regular", "textDim", anchor="rm")
+    draw_weather_icon(p, margin + 3 * column + 8, row_b["y"] - 2, data["weather"])
+    p.text(canvas_width - margin, row_b["y"], f"{int(data['temperature'])} °C", 19, "mono", "text",
+           anchor="rm")
+    p.text(canvas_width - margin, row_b["labelY"], WEATHER_LABELS.get(data["weather"], "POČASÍ"),
+           10, "regular", "textDim", anchor="rm")
 
     # Baterie e-biku jako tenký proužek přes celou spodní hranu.
     battery_spec = spec["battery"]
-    p.bar(0, battery_spec["y"], 480, battery_spec["height"], battery / 100.0, battery_color)
+    p.bar(0, battery_spec["y"], canvas_width, battery_spec["height"], battery / 100.0,
+          battery_color)
 
 
 def draw_cockpit_inset(p: Painter, data: dict) -> None:
@@ -812,7 +863,8 @@ def render_cockpit(data: dict, layout: dict, device_map: bool = True) -> Image.I
     if device_map:
         draw_device_map_area(p, data, (0, map_top, canvas["width"], map_bottom - map_top))
         # Přehledová stopa dává smysl jen nad zazoomovanou mapou.
-        draw_cockpit_inset(p, data)
+        if feature(layout, "inset"):
+            draw_cockpit_inset(p, data)
     else:
         # Bez kartografie zaplní místo mezi překryvy jen projetá stopa.
         focus = spec["focus"]
@@ -830,7 +882,9 @@ def render(data: dict, layout: dict, device_map: bool = False) -> Image.Image:
     draw_cadence(p, data)
     draw_speed(p, data)
     draw_speed_stats(p, data)
-    p.line(8, layout["divider"]["y"], 472, layout["divider"]["y"], "panelEdge", 1)
+    margin = layout["divider"]["margin"]
+    p.line(margin, layout["divider"]["y"], layout["canvas"]["width"] - margin,
+           layout["divider"]["y"], "panelEdge", 1)
 
     middle = layout["middle"]
     canvas = layout["canvas"]
@@ -886,6 +940,11 @@ def main() -> int:
         action="store_true",
         help="kolo neposílá ANT+ LEV, dojezd je jen odhad z ujetých kilometrů",
     )
+    parser.add_argument(
+        "--compact",
+        action="store_true",
+        help="rozvržení pro úzké displeje (Edge 830/530/840/540, Explore 2, MTB)",
+    )
     args = parser.parse_args()
 
     data = dict(DEMO)
@@ -894,7 +953,7 @@ def main() -> int:
     if args.json:
         data.update(json.loads(pathlib.Path(args.json).read_text(encoding="utf-8")))
 
-    layout = load_layout()
+    layout = load_layout("compact" if args.compact else "full")
     if args.cockpit:
         image = render_cockpit(data, layout, device_map=args.map)
     else:

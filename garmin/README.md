@@ -223,6 +223,8 @@ Proto jsou plátna dvě a `monkey.jungle` je přiřazuje podle zařízení:
 Rozhoduje šířka, ne úhlopříčka. Edge Explore 2 je svisle vysoký, ale 240 pixelů
 na šířku ho staví vedle Edge 830, ne vedle 1050.
 
+![Kompaktní rozvržení](docs/preview/ride-cockpit-compact.png)
+
 Zbytek si kreslení dopočítá samo: řádky se skládají podle **změřených šířek
 a výšek písma**, ne podle pevných souřadnic. Když se popiska nevejde ani
 nejmenším fontem, sáhne se po kratší variantě (`E-BIKE · ODHAD` → `ODHAD`,
