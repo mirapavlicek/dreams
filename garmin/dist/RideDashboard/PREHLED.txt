@@ -1,0 +1,21 @@
+RideDashboard - který soubor do kterého přístroje
+vytvořeno: 2026-08-26 11:28
+
+SOUBOR                             PŘÍSTROJ                 DISPLEJ    ROZVRŽENÍ
+RideDashboard-edge1030.prg         Edge® 1030                 282x470    plné
+RideDashboard-edge1030bontrager.prg Edge® 1030 / Bontrager     282x470    plné
+RideDashboard-edge1030plus.prg     Edge® 1030 Plus            282x470    plné
+RideDashboard-edge1040.prg         Edge® 1040 / 1040 Solar    282x470    plné
+RideDashboard-edge1050.prg         Edge® 1050                 480x800    plné
+RideDashboard-edge530.prg          Edge® 530                  246x322    kompaktní
+RideDashboard-edge540.prg          Edge® 540 / 540 Solar      246x322    kompaktní
+RideDashboard-edge550.prg          Edge® 550                  420x600    plné
+RideDashboard-edge830.prg          Edge® 830                  246x322    kompaktní
+RideDashboard-edge840.prg          Edge® 840 / 840 Solar      246x322    kompaktní
+RideDashboard-edge850.prg          Edge® 850                  420x600    plné
+RideDashboard-edgeexplore2.prg     Edge® Explore 2            240x400    plné
+RideDashboard-edgemtb.prg          Edge® MTB                  240x320    kompaktní
+
+Nahrání: přístroj připoj USB kabelem, soubor zkopíruj do GARMIN/APPS
+a přístroj odpoj. Po odpojení soubor ze složky zmizí - firmware si ho
+přesune do vlastního úložiště.

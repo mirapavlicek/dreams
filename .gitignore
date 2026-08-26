@@ -9,6 +9,13 @@ venv/
 
 # Connect IQ build artefakty
 garmin/QMailDashboard/bin/
+garmin/RideDashboard/bin/
 *.prg
 *.prg.debug.xml
 *.iq
+
+# Hotové buildy k nahrání do přístroje se verzují schválně: vyrobit se dají
+# jen s Garmin developer účtem a staženými device packy, takže bez nich by se
+# k aplikaci nedalo dostat.
+!garmin/dist/
+!garmin/dist/**/*.prg
