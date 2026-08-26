@@ -19,3 +19,6 @@ garmin/RideDashboard/bin/
 # k aplikaci nedalo dostat.
 !garmin/dist/
 !garmin/dist/**/*.prg
+
+# Balíček pro release se skládá při vydání, do repozitáře nepatří.
+garmin/dist/*.zip
