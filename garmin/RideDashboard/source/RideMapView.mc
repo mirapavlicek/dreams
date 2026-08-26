@@ -135,4 +135,9 @@ class RideMapDelegate extends WatchUi.BehaviorDelegate {
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
         return true;
     }
+
+    function onMenu() {
+        RideMenu.open();
+        return true;
+    }
 }

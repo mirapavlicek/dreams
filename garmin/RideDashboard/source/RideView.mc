@@ -98,4 +98,9 @@ class RideDelegate extends WatchUi.BehaviorDelegate {
         }
         return true;
     }
+
+    function onMenu() {
+        RideMenu.open();
+        return true;
+    }
 }

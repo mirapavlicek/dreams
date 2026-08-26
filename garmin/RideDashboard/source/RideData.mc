@@ -20,8 +20,8 @@ module RideData {
     const ASSIST_FROM_BLE = 2;
     const ASSIST_ESTIMATED = 3;
 
-    var mFullRangeKm = 90.0;
-    var mBatteryWh = 0.0;
+    var mFullRangeKm as Lang.Float = 90.0;
+    var mBatteryWh as Lang.Float = 0.0;
     var mShowWeather = true;
     var mUseMap = true;
     var mCockpitStyle = true;

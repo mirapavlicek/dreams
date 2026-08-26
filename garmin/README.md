@@ -171,6 +171,38 @@ Connect IQ aplikace, náš kanál data nedostane a dojezd spadne na odhad — ko
 je pak potřeba ze *Senzorů* odpojit. Data se objeví do zhruba patnácti vteřin
 od chvíle, kdy je Edge blízko ovladače kola.
 
+## Nastavení
+
+Všechno jde nastavit dvěma cestami. Z telefonu přes Garmin Connect (styl
+palubovky, mapa, počasí, elektrokolo, kapacita baterie, jméno kola v Bluetooth)
+a **tlačítkem menu přímo v přístroji**, kde je zkrácený výběr: styl, mapa,
+elektrokolo, nové spárování kola, kapacita baterie a dojezd na plnou. Obojí
+píše do stejných properties.
+
+Menu v přístroji tam není pro parádu: aplikace nahraná ručně (sideload) se
+v Garmin Connect ani v Garmin Expressu neobjeví, takže při testování je to
+jediná cesta, jak se k nastavení dostat.
+
+## Nahrání do přístroje
+
+```bash
+export GARMIN_USERNAME="..."       # účet z developer.garmin.com
+export GARMIN_PASSWORD="..."
+./garmin/setup_dev_env.sh          # stáhne i device packy pro zařízení z manifestu
+./garmin/build.sh edge1050 RideDashboard
+```
+
+Vznikne `RideDashboard/bin/RideDashboard-edge1050.prg`. Ten se do přístroje
+dostane ručně:
+
+1. připoj Edge USB kabelem, přihlásí se jako MTP zařízení,
+2. zkopíruj `.prg` do složky `GARMIN/APPS`,
+3. odpoj přístroj — aplikace se objeví mezi Connect IQ aplikacemi.
+
+Po odpojení soubor ze složky zmizí, to je v pořádku: firmware si ho přesune do
+vlastního úložiště. Překládej vždy pro **to zařízení, na kterém se bude
+spouštět** — Edge cizí build tiše zahodí a napíše to jen do `GARMIN/APPS/LOGS`.
+
 Rozvržení je popsané v `RideDashboard/resources/json/layout.json` v pixelech
 návrhového plátna 480×800; při kreslení se přepočítá na skutečný displej, takže
 stejná čísla platí i pro menší jednotky Edge.
@@ -239,6 +271,7 @@ garmin/
     source/RideData.mc               # metriky z Activity, Weather a Position
     source/RideLev.mc                # elektrokolo přes ANT+ profil LEV
     source/RideBle.mc                # baterie kola přes standardní BLE službu
+    source/RideMenu.mc               # nastavení přímo v přístroji
     source/RideChrome.mc             # kreslení stylu s panely
     source/RideCockpit.mc            # kreslení stylu přístrojového štítu
     source/RideView.mc               # obrazovka s drobečkovou stopou
