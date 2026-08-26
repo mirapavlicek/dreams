@@ -201,8 +201,9 @@ Celá řada Edge od **830** výš. Starší modely (Explore, 820, 520, 130) maj�
 
 ![Palubovka na různých jednotkách Edge](docs/device/prehled.png)
 
-Zleva Edge 1050, 1040, Explore 2, 830 a MTB — všechny snímky ze simulátoru
-v měřítku 1:1, takže jsou vidět skutečné poměry.
+Zleva Edge 1050, 850, 1040, Explore 2, 830 a MTB — snímky ze simulátoru
+v měřítku 1:1, takže jsou vidět skutečné poměry. Bílá plocha uprostřed je
+mapové okno; simulátor kartografii nemá, na přístroji je tam mapa.
 
 ### Dvě rozvržení, protože font má dno
 
