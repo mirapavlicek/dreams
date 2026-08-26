@@ -18,8 +18,11 @@ module RideCockpit {
         RideLayout.prepare(dc);
 
         if (mapBehind) {
-            // Přehledová stopa dává smysl jen nad zazoomovanou mapou.
-            drawInset(dc);
+            // Přehledová stopa dává smysl jen nad zazoomovanou mapou - a jen
+            // tam, kde na ni po překryvech zbude kus mapy.
+            if (RideLayout.feature("inset")) {
+                drawInset(dc);
+            }
         } else {
             drawFallbackTrack(dc);
         }
@@ -137,11 +140,15 @@ module RideCockpit {
     function drawTop(dc) as Void {
         scrim(dc, 0, RideLayout.at(RideLayout.group("cockpit", "top"), "height"), true);
 
-        drawTape(dc);
+        if (RideLayout.feature("tape")) {
+            drawTape(dc);
+        }
         drawCadence(dc);
         drawSpeed(dc);
         drawClock(dc);
-        drawChips(dc);
+        if (RideLayout.feature("chips")) {
+            drawChips(dc);
+        }
     }
 
     //! Kompasová páska přes celou šířku - v autě jsou tady názvy ulic.
@@ -229,28 +236,39 @@ module RideCockpit {
             Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
     }
 
+    //! Hodiny a pod nimi stavový řádek. Řádek se skládá zprava doleva podle
+    //! změřených šířek - pevné odsazení by při nejmenším Garmin fontu (a ten je
+    //! větší, než návrh čeká) nechalo procenta baterie ležet přes nápis GPS.
     function drawClock(dc) as Void {
         var spec = RideLayout.group("cockpit", "clock");
-        var x = RideLayout.at(spec, "x");
-        var statusY = RideLayout.at(spec, "statusY");
+        var right = RideLayout.x(RideLayout.at(spec, "x"));
+        var statusY = RideLayout.y(RideLayout.at(spec, "statusY"));
+        var font = RideLayout.textFont(dc, 10);
+        var gap = RideLayout.x(8);
 
         dc.setColor(RideLayout.color("text"), Graphics.COLOR_TRANSPARENT);
-        dc.drawText(RideLayout.x(x), RideLayout.y(RideLayout.at(spec, "y")),
+        dc.drawText(right, RideLayout.y(RideLayout.at(spec, "y")),
             RideLayout.numberFont(dc, 24), RideData.clockString(),
             Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
 
+        var battery = RideData.deviceBatteryPercent().toString() + " %";
+        dc.setColor(RideLayout.color("textDim"), Graphics.COLOR_TRANSPARENT);
+        dc.drawText(right, statusY, font, battery,
+            Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
+
+        var gpsRight = right - dc.getTextWidthInPixels(battery, font) - gap;
+        dc.drawText(gpsRight, statusY, font, "GPS",
+            Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
+
+        var dot = RideLayout.s(3.5);
         dc.setColor(RideData.hasFix() ? RideLayout.color("ok") : RideLayout.color("textDim"),
             Graphics.COLOR_TRANSPARENT);
-        dc.fillCircle(RideLayout.x(x - 60), RideLayout.y(statusY), RideLayout.s(3.5));
-
-        dc.setColor(RideLayout.color("textDim"), Graphics.COLOR_TRANSPARENT);
-        dc.drawText(RideLayout.x(x - 50), RideLayout.y(statusY), RideLayout.textFont(dc, 10), "GPS",
-            Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
-        dc.drawText(RideLayout.x(x), RideLayout.y(statusY), RideLayout.textFont(dc, 10),
-            RideData.deviceBatteryPercent().toString() + " %",
-            Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.fillCircle(gpsRight - dc.getTextWidthInPixels("GPS", font) - dot - gap / 2, statusY, dot);
     }
 
+    //! Pilulky s průměrnou a maximální rychlostí. Obsah se skládá zprava:
+    //! nejdřív jednotka, před ni hodnota a popiska dostane, co zbude - když
+    //! nezbude nic (malý displej), vynechá se.
     function drawChips(dc) as Void {
         var spec = RideLayout.group("cockpit", "chips");
         var y = RideLayout.at(spec, "y");
@@ -258,6 +276,10 @@ module RideCockpit {
         var gap = RideLayout.at(spec, "gap");
         var margin = RideLayout.at(spec, "margin");
         var width = (RideLayout.number("canvas", "width") - 2 * margin - gap) / 2.0;
+        var padding = RideLayout.x(14);
+        var unitFont = RideLayout.textFont(dc, 10);
+        var valueFont = RideLayout.numberFont(dc, 19);
+        var unitWidth = dc.getTextWidthInPixels("km/h", unitFont);
 
         var titles = ["PRŮMĚR", "MAX"];
         var values = [RideData.averageSpeed(), RideData.maxSpeed()];
@@ -265,20 +287,28 @@ module RideCockpit {
 
         for (var i = 0; i < titles.size(); i += 1) {
             var x = margin + i * (width + gap);
-            var centerY = y + height / 2.0;
+            var centerY = RideLayout.y(y + height / 2.0);
+            var right = RideLayout.x(x + width) - padding;
             pill(dc, x, y, width, height);
 
             dc.setColor(RideLayout.color("textDim"), Graphics.COLOR_TRANSPARENT);
-            dc.drawText(RideLayout.x(x + 16), RideLayout.y(centerY), RideLayout.textFont(dc, 10), titles[i],
-                Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
+            dc.drawText(right, centerY, unitFont, "km/h",
+                Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
 
+            var value = values[i].format("%.1f");
+            var valueRight = right - unitWidth - RideLayout.x(4);
             dc.setColor(RideLayout.color(colors[i]), Graphics.COLOR_TRANSPARENT);
-            dc.drawText(RideLayout.x(x + width - 42), RideLayout.y(centerY), RideLayout.numberFont(dc, 19),
-                values[i].format("%.1f"), Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
+            dc.drawText(valueRight, centerY, valueFont, value,
+                Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
 
+            var left = RideLayout.x(x) + padding;
+            var room = valueRight - dc.getTextWidthInPixels(value, valueFont) - left - RideLayout.x(6);
+            if (room <= 0) {
+                continue;
+            }
             dc.setColor(RideLayout.color("textDim"), Graphics.COLOR_TRANSPARENT);
-            dc.drawText(RideLayout.x(x + width - 16), RideLayout.y(centerY + 1), RideLayout.textFont(dc, 10),
-                "km/h", Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
+            dc.drawText(left, centerY, RideLayout.fitFont(dc, titles[i], room, 10), titles[i],
+                Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
         }
     }
 
@@ -325,60 +355,98 @@ module RideCockpit {
                 dc.drawLine(lineX, RideLayout.y(dividerTop), lineX, RideLayout.y(dividerTop + dividerHeight));
             }
 
-            RideChrome.label(dc, cx, titleY, titles[i], 10, "textDim");
+            RideChrome.labelIn(dc, cx, titleY, width - 4, titles[i], 10, "textDim");
 
-            var font = RideLayout.numberFont(dc, 32);
+            // Hodnota s jednotkou tvoří jeden blok na střed sloupce, celý
+            // zmenšený tak, aby nepřelezl do vedlejšího.
+            var room = RideLayout.x(width - 6);
+            var pad = RideLayout.x(5);
+            var font = RideLayout.fitNumberFont(dc, values[i], room * 0.7, 32);
             var valueWidth = dc.getTextWidthInPixels(values[i], font);
-            var left = RideLayout.x(cx) - valueWidth / 2;
+            var unit = fitUnit(dc, units[i], room - valueWidth - pad);
+            var unitFont = unit[0];
+            var unitWidth = dc.getTextWidthInPixels(unit[1], unitFont);
+            var left = RideLayout.x(cx) - (valueWidth + pad + unitWidth) / 2;
 
             dc.setColor(RideLayout.color(colors[i]), Graphics.COLOR_TRANSPARENT);
             dc.drawText(left, RideLayout.y(valueY), font, values[i],
                 Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
 
             dc.setColor(RideLayout.color("textDim"), Graphics.COLOR_TRANSPARENT);
-            dc.drawText(left + valueWidth + RideLayout.x(5), RideLayout.y(valueY + 6),
-                RideLayout.textFont(dc, 10), units[i],
+            dc.drawText(left + valueWidth + pad, RideLayout.y(valueY + 6), unitFont, unit[1],
                 Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
         }
     }
 
-    //! Řádek se stavem: baterie e-biku, převýšení a počasí.
+    //! Jednotka do zbylého místa vedle hodnoty jako [font, text].
+    //!
+    //! Přívažek za jednotkou ("km · odhad", "km · 15:04") je hezký, dokud se
+    //! vejde; na úzkém displeji z něj zbude holé "km". Zdroj dojezdu je pak
+    //! stejně ve stavovém řádku pod tím.
+    function fitUnit(dc, text, room) as Lang.Array {
+        var separator = text.find(" ·");
+        var choices = separator == null ? [text] : [text, text.substring(0, separator)];
+        return RideChrome.fitText(dc, choices, room, 10);
+    }
+
+    //! Řádek se stavem: baterie e-biku, převýšení a počasí. Sloupce se dělí
+    //! rovným dílem přes celou šířku, popisky se do svého dílu vejdou zmenšením
+    //! fontu - dřív měly pevné souřadnice a "SESTOUPÁNO" leželo přes počasí.
     function drawStatus(dc, margin, canvasWidth) as Void {
         var spec = RideLayout.group("cockpit", "rowB");
         var y = RideLayout.at(spec, "y");
         var labelY = RideLayout.at(spec, "labelY");
         var battery = RideData.assistBatteryPercent();
-        var batteryColor = battery > 30 ? "ok" : "danger";
         var temperature = RideData.temperature();
+        var width = (canvasWidth - 2 * margin) / 4.0;
 
-        value(dc, margin, y, labelY, battery.toString() + " %", RideData.assistBatteryLabel(), batteryColor);
-        climb(dc, 150, y, labelY, true, RideData.ascent(), "NASTOUPÁNO", "warn");
-        climb(dc, 268, y, labelY, false, RideData.descent(), "SESTOUPÁNO", "cold");
+        // Popisky dostanou dvě varianty: na čtvrtinu úzkého displeje se
+        // "SESTOUPÁNO" nevejde ani nejmenším fontem, ale šipka nahoru a dolů
+        // to řekne taky - proto je druhá varianta prázdná.
+        value(dc, [margin, y, labelY, width], battery.toString() + " %",
+            [RideData.assistBatteryLabel(), RideData.assistShortLabel()],
+            battery > 30 ? "ok" : "danger");
+        climb(dc, [margin + width, y, labelY, width], true, RideData.ascent(),
+            ["NASTOUPÁNO", "STOUPÁNÍ"], "warn");
+        climb(dc, [margin + 2 * width, y, labelY, width], false, RideData.descent(),
+            ["SESTOUPÁNO", "KLESÁNÍ"], "cold");
 
-        RideChrome.drawWeatherIcon(dc, 396, y - 2);
-        dc.setColor(RideLayout.color("text"), Graphics.COLOR_TRANSPARENT);
-        dc.drawText(RideLayout.x(canvasWidth - margin), RideLayout.y(y), RideLayout.numberFont(dc, 19),
+        var weatherX = margin + 3 * width;
+        RideChrome.drawWeatherIcon(dc, weatherX + 8, y - 2);
+        value(dc, [weatherX + 20, y, labelY, width - 20],
             temperature == null ? "--" : temperature.toString() + " °C",
-            Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
-        dc.setColor(RideLayout.color("textDim"), Graphics.COLOR_TRANSPARENT);
-        dc.drawText(RideLayout.x(canvasWidth - margin), RideLayout.y(labelY),
-            RideLayout.textFont(dc, 10), RideChrome.weatherLabel(),
-            Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
+            [RideChrome.weatherLabel()], "text");
     }
 
-    function value(dc, x, y, labelY, text, title, colorName) as Void {
+    //! @param box [x, y hodnoty, y popisky, šířka sloupce] v návrhových pixelech
+    //! @param titles varianty popisky od nejdelší; vejít se musí aspoň prázdná
+    function value(dc, box as Lang.Array, text, titles as Lang.Array, colorName) as Void {
+        valueText(dc, box[0], box[1], box[3], text, colorName);
+        valueLabel(dc, box[0], box[2], box[3], titles);
+    }
+
+    function valueText(dc, x, y, width, text, colorName) as Void {
         dc.setColor(RideLayout.color(colorName), Graphics.COLOR_TRANSPARENT);
-        dc.drawText(RideLayout.x(x), RideLayout.y(y), RideLayout.numberFont(dc, 17), text,
+        dc.drawText(RideLayout.x(x), RideLayout.y(y),
+            RideLayout.fitNumberFont(dc, text, RideLayout.x(width), 17), text,
             Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
+    }
+
+    function valueLabel(dc, x, y, width, titles as Lang.Array) as Void {
+        // Mezi sloupci musí zbýt mezera, jinak popisky navazují jedna na druhou
+        // bez pauzy a čtou se jako jedno slovo.
+        var title = RideChrome.fitText(dc, titles, RideLayout.x(width - 8), 10);
         dc.setColor(RideLayout.color("textDim"), Graphics.COLOR_TRANSPARENT);
-        dc.drawText(RideLayout.x(x), RideLayout.y(labelY), RideLayout.textFont(dc, 10), title,
+        dc.drawText(RideLayout.x(x), RideLayout.y(y), title[0], title[1],
             Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
     }
 
     //! Šipky se kreslí, ne píšou - Garmin fonty znak "↑" nemají.
-    function climb(dc, x, y, labelY, up, meters, title, colorName) as Void {
-        var cx = RideLayout.x(x + 5);
-        var cy = RideLayout.y(y);
+    //! Šipka odsune jen hodnotu; popiska pod ní smí začít u kraje sloupce, ať
+    //! má na dlouhé "SESTOUPÁNO" co nejvíc místa.
+    function climb(dc, box as Lang.Array, up, meters, titles, colorName) as Void {
+        var cx = RideLayout.x(box[0] + 5);
+        var cy = RideLayout.y(box[1]);
         var size = RideLayout.s(5);
 
         dc.setColor(RideLayout.color(colorName), Graphics.COLOR_TRANSPARENT);
@@ -388,7 +456,8 @@ module RideCockpit {
             dc.fillPolygon([[cx, cy + size], [cx - size, cy - size], [cx + size, cy - size]]);
         }
 
-        value(dc, x + 15, y, labelY, meters.toString() + " m", title, colorName);
+        valueText(dc, box[0] + 14, box[1], box[3] - 14, meters.toString() + " m", colorName);
+        valueLabel(dc, box[0], box[2], box[3], titles);
     }
 
     //! Baterie e-biku jako tenký proužek přes celou spodní hranu.

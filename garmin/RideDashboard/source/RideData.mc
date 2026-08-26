@@ -411,6 +411,20 @@ module RideData {
         return mode == null ? "E-BIKE" : "E-BIKE · " + mode;
     }
 
+    //! Zkrácený popisek pro malé displeje: vedle procent baterie je "E-BIKE"
+    //! zřejmé i bez psaní, důležitý je zdroj čísla.
+    function assistShortLabel() as Lang.String {
+        var source = assistSource();
+        if (source == ASSIST_ESTIMATED) {
+            return "ODHAD";
+        }
+        if (source == ASSIST_FROM_BLE) {
+            return "BLE";
+        }
+        var mode = assistModeText();
+        return mode == null ? "E-BIKE" : mode;
+    }
+
     //! Jednotka pod dojezdem - u odhadu je poctivé to napsat.
     function assistRangeUnit() as Lang.String {
         return assistMeasured() ? "km" : "km · odhad";

@@ -47,6 +47,18 @@ module RideLayout {
         return section("colors")[name];
     }
 
+    //! Volitelné prvky palubovky. Malé displeje si část z nich v kompaktním
+    //! rozvržení vypnou - na 246x322 se kompasová páska ani pilulky s průměrem
+    //! nevejdou tak, aby se daly přečíst.
+    function feature(name) as Lang.Boolean {
+        var features = layout()["features"];
+        if (features == null) {
+            return true;
+        }
+        var value = (features as Lang.Dictionary)[name];
+        return value == null ? true : value as Lang.Boolean;
+    }
+
     //! Přepočítá měřítko podle skutečné velikosti displeje.
     function prepare(dc) as Void {
         prepareSize(dc.getWidth(), dc.getHeight());
@@ -103,6 +115,39 @@ module RideLayout {
         return designSize * mScale;
     }
 
+    //: Systémové fonty od nejmenšího po největší. Drží se v proměnné, protože
+    //: kreslení běží každou vteřinu a pole by se jinak vyrábělo pořád dokola.
+    var mTextFonts = null;
+    var mNumberFonts = null;
+
+    function textFonts() as Lang.Array {
+        if (mTextFonts == null) {
+            mTextFonts = [
+                Graphics.FONT_XTINY,
+                Graphics.FONT_TINY,
+                Graphics.FONT_SMALL,
+                Graphics.FONT_MEDIUM,
+                Graphics.FONT_LARGE
+            ];
+        }
+        return mTextFonts as Lang.Array;
+    }
+
+    //! Číslicové fonty jsou vyšší a užší - pro tachometr a hodnoty v buňkách.
+    function numberFonts() as Lang.Array {
+        if (mNumberFonts == null) {
+            mNumberFonts = [
+                Graphics.FONT_XTINY,
+                Graphics.FONT_TINY,
+                Graphics.FONT_NUMBER_MILD,
+                Graphics.FONT_NUMBER_MEDIUM,
+                Graphics.FONT_NUMBER_HOT,
+                Graphics.FONT_NUMBER_THAI_HOT
+            ];
+        }
+        return mNumberFonts as Lang.Array;
+    }
+
     function pick(dc, candidates as Lang.Array, designSize) {
         var target = designSize * mScale * FONT_HEIGHT_RATIO;
         var best = candidates[0];
@@ -115,26 +160,40 @@ module RideLayout {
         return best;
     }
 
-    //! Nejbližší menší systémový font pro text dané návrhové velikosti.
-    function textFont(dc, designSize) {
-        return pick(dc, [
-            Graphics.FONT_XTINY,
-            Graphics.FONT_TINY,
-            Graphics.FONT_SMALL,
-            Graphics.FONT_MEDIUM,
-            Graphics.FONT_LARGE
-        ], designSize);
+    //! Největší z `candidates`, do kterého se text vejde na `maxWidth` pixelů.
+    //!
+    //! Návrh počítá s popiskami kolem deseti pixelů, jenže nejmenší Garmin font
+    //! je na Edge 1050 vysoký 21 pixelů - textFont() proto vrací něco výrazně
+    //! většího, než si rozvržení představuje, a sousední údaje se překrývají.
+    //! Pod XTINY se ale zmenšit nedá; tam už si musí pomoct samo rozvržení.
+    function shrink(dc, candidates as Lang.Array, font, text, maxWidth) {
+        var index = 0;
+        for (var i = 0; i < candidates.size(); i += 1) {
+            if (candidates[i] == font) {
+                index = i;
+            }
+        }
+        while (index > 0 && dc.getTextWidthInPixels(text, font) > maxWidth) {
+            index -= 1;
+            font = candidates[index];
+        }
+        return font;
     }
 
-    //! Číslicové fonty jsou vyšší a užší - pro tachometr a hodnoty v buňkách.
+    function fitFont(dc, text, maxWidth, designSize) {
+        return shrink(dc, textFonts(), textFont(dc, designSize), text, maxWidth);
+    }
+
+    function fitNumberFont(dc, text, maxWidth, designSize) {
+        return shrink(dc, numberFonts(), numberFont(dc, designSize), text, maxWidth);
+    }
+
+    //! Nejbližší menší systémový font pro text dané návrhové velikosti.
+    function textFont(dc, designSize) {
+        return pick(dc, textFonts(), designSize);
+    }
+
     function numberFont(dc, designSize) {
-        return pick(dc, [
-            Graphics.FONT_XTINY,
-            Graphics.FONT_TINY,
-            Graphics.FONT_NUMBER_MILD,
-            Graphics.FONT_NUMBER_MEDIUM,
-            Graphics.FONT_NUMBER_HOT,
-            Graphics.FONT_NUMBER_THAI_HOT
-        ], designSize);
+        return pick(dc, numberFonts(), designSize);
     }
 }

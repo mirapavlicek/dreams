@@ -1,6 +1,7 @@
 {
     "note": "Rozvržení jízdního dashboardu. Souřadnice jsou v pixelech návrhového plátna 480x800 (Edge 1050); při kreslení se škálují poměrem skutečného displeje. Čte to jak aplikace (Rez.JsonData.Layout), tak náhled garmin/tools/preview_ride.py.",
     "canvas": { "width": 480, "height": 800 },
+    "features": { "tape": true, "chips": true, "inset": true },
     "colors": {
         "background": 329482,
         "panel": 988187,

@@ -76,6 +76,34 @@ module RideChrome {
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
     }
 
+    //! Popiska na střed, která se vejde do `width` návrhových pixelů.
+    //! Nejmenší Garmin font je pořád větší, než si návrh představuje, takže bez
+    //! tohohle by si sousední sloupce lezly do textu.
+    function labelIn(dc, cx, y, width, text, size, colorName) as Void {
+        dc.setColor(RideLayout.color(colorName), Graphics.COLOR_TRANSPARENT);
+        dc.drawText(RideLayout.x(cx), RideLayout.y(y),
+            RideLayout.fitFont(dc, text, RideLayout.x(width), size), text,
+            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+    }
+
+    //! Nejdelší z nabídnutých variant textu, která se vejde do `room` pixelů
+    //! displeje, jako dvojice [font, text].
+    //!
+    //! Pod FONT_XTINY se zmenšit nedá, takže na úzkém sloupci se dlouhá popiska
+    //! vejít nemůže ani teoreticky. Místo přetékání se proto sáhne po kratší
+    //! variantě ("E-BIKE · ODHAD" -> "ODHAD"), a když ani ta nestačí, nekreslí
+    //! se nic - rozmazaná změť písmen řekne míň než prázdné místo.
+    function fitText(dc, choices as Lang.Array, room, size) as Lang.Array {
+        for (var i = 0; i < choices.size(); i += 1) {
+            var text = choices[i] as Lang.String;
+            var font = RideLayout.fitFont(dc, text, room, size);
+            if (dc.getTextWidthInPixels(text, font) <= room) {
+                return [font, text];
+            }
+        }
+        return [RideLayout.textFont(dc, size), ""];
+    }
+
     function number(dc, x, y, text, size, colorName) as Void {
         dc.setColor(RideLayout.color(colorName), Graphics.COLOR_TRANSPARENT);
         dc.drawText(RideLayout.x(x), RideLayout.y(y), RideLayout.numberFont(dc, size), text,

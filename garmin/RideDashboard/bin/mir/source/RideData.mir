@@ -2374,370 +2374,448 @@ _workspace_garmin_RideDashboard_source_RideData_mc_411_15_411_55_end:
         ret %tmp.25;
 _workspace_garmin_RideDashboard_source_RideData_mc_402_49_412_4_stop:
     }
-    //! Jednotka pod dojezdem - u odhadu je poctivé to napsat.
-    [ @file = "/workspace/garmin/RideDashboard/source/RideData.mc"; @line = 415; @symbol_functiondef = [assistRangeUnit,415,13,28]; @symbol_return<0> = [Lang,415,34,38]; @symbol_return<1> = [String,415,39,45]; ]
-    function assistRangeUnit() as Lang.String {
-_workspace_garmin_RideDashboard_source_RideData_mc_415_46_417_4_start:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 416 8 ]
-_workspace_garmin_RideDashboard_source_RideData_mc_416_15_416_41_begin:
-        %tmp.1 = self;
-        symbol [ assistMeasured %tmp.2 416 15 29 ];
-        %tmp.2 = getv function %tmp.1 :assistMeasured;
-        %tmp.3 = invoke %tmp.1 %tmp.2();
-        bf %tmp.3 @_workspace_garmin_RideDashboard_source_RideData_mc_416_15_416_41_else_false;
-_workspace_garmin_RideDashboard_source_RideData_mc_416_15_416_41_true:
-        %tmp.4 = "km";
-        push %tmp.4;
-        goto @_workspace_garmin_RideDashboard_source_RideData_mc_416_15_416_41_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_416_15_416_41_else_false:
-        %tmp.5 = "km · odhad";
-        push %tmp.5;
-_workspace_garmin_RideDashboard_source_RideData_mc_416_15_416_41_end:
-        %tmp.6 = phi [%tmp.3 @_workspace_garmin_RideDashboard_source_RideData_mc_416_15_416_41_begin] [%tmp.4 @_workspace_garmin_RideDashboard_source_RideData_mc_416_15_416_41_true] [%tmp.5 @_workspace_garmin_RideDashboard_source_RideData_mc_416_15_416_41_else_false] [%tmp.6 @_workspace_garmin_RideDashboard_source_RideData_mc_416_15_416_41_end];
-        ret %tmp.6;
-_workspace_garmin_RideDashboard_source_RideData_mc_415_46_417_4_stop:
-    }
-    //! Poznámka pod dojezd tam, kde je na ni místo: odkud číslo je a jakou
-    //! asistenci kolo zrovna drží.
-    [ @file = "/workspace/garmin/RideDashboard/source/RideData.mc"; @line = 421; @symbol_functiondef = [assistNote,421,13,23]; @symbol_return<0> = [Lang,421,29,33]; @symbol_return<1> = [String,421,34,40]; ]
-    function assistNote() as Lang.String {
-_workspace_garmin_RideDashboard_source_RideData_mc_421_41_434_4_start:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 422 8 ]
-        [ "_workspace_garmin_RideDashboard_source_RideData_mc_421_41_434_4_start" "_workspace_garmin_RideDashboard_source_RideData_mc_421_41_434_4_stop" ]
+    //! Zkrácený popisek pro malé displeje: vedle procent baterie je "E-BIKE"
+    //! zřejmé i bez psaní, důležitý je zdroj čísla.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideData.mc"; @line = 416; @symbol_functiondef = [assistShortLabel,416,13,29]; @symbol_return<0> = [Lang,416,35,39]; @symbol_return<1> = [String,416,40,46]; ]
+    function assistShortLabel() as Lang.String {
+_workspace_garmin_RideDashboard_source_RideData_mc_416_47_426_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 417 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideData_mc_416_47_426_4_start" "_workspace_garmin_RideDashboard_source_RideData_mc_416_47_426_4_stop" ]
         %source.1 = local;
-        symbol [ source %source.1 422 12 18 ];
+        symbol [ source %source.1 417 12 18 ];
         %tmp.1 = self;
-        symbol [ assistSource %tmp.2 422 21 33 ];
+        symbol [ assistSource %tmp.2 417 21 33 ];
         %tmp.2 = getv function %tmp.1 :assistSource;
         %tmp.3 = invoke %tmp.1 %tmp.2();
         lputv %source.1 %tmp.3;
-        symbol [ source %source.1 422 12 18 ];
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 423 8 ]
-_workspace_garmin_RideDashboard_source_RideData_mc_423_8_425_8_if_stmt:
+        symbol [ source %source.1 417 12 18 ];
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 418 8 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_418_8_420_8_if_stmt:
         %tmp.4 = lgetv %source.1;
-        symbol [ source %tmp.4 423 12 18 ];
-        symbol [ ASSIST_ESTIMATED %tmp.6 423 22 38 ];
+        symbol [ source %tmp.4 418 12 18 ];
+        symbol [ ASSIST_ESTIMATED %tmp.6 418 22 38 ];
         %tmp.6 = getv ? :ASSIST_ESTIMATED;
         %tmp.7 = eq %tmp.4 %tmp.6;
-        bf %tmp.7 @_workspace_garmin_RideDashboard_source_RideData_mc_423_8_425_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_423_8_425_8_if_true:
-_workspace_garmin_RideDashboard_source_RideData_mc_423_40_425_8_start:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 424 12 ]
-        %tmp.8 = "odhad";
+        bf %tmp.7 @_workspace_garmin_RideDashboard_source_RideData_mc_418_8_420_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_418_8_420_8_if_true:
+_workspace_garmin_RideDashboard_source_RideData_mc_418_40_420_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 419 12 ]
+        %tmp.8 = "ODHAD";
         ret %tmp.8;
-_workspace_garmin_RideDashboard_source_RideData_mc_423_40_425_8_stop:
-        goto @_workspace_garmin_RideDashboard_source_RideData_mc_423_8_425_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_423_8_425_8_if_end:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 426 8 ]
-_workspace_garmin_RideDashboard_source_RideData_mc_426_8_428_8_if_stmt:
+_workspace_garmin_RideDashboard_source_RideData_mc_418_40_420_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideData_mc_418_8_420_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_418_8_420_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 421 8 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_421_8_423_8_if_stmt:
         %tmp.9 = lgetv %source.1;
-        symbol [ source %tmp.9 426 12 18 ];
-        symbol [ ASSIST_FROM_BLE %tmp.11 426 22 37 ];
+        symbol [ source %tmp.9 421 12 18 ];
+        symbol [ ASSIST_FROM_BLE %tmp.11 421 22 37 ];
         %tmp.11 = getv ? :ASSIST_FROM_BLE;
         %tmp.12 = eq %tmp.9 %tmp.11;
-        bf %tmp.12 @_workspace_garmin_RideDashboard_source_RideData_mc_426_8_428_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_426_8_428_8_if_true:
-_workspace_garmin_RideDashboard_source_RideData_mc_426_39_428_8_start:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 427 12 ]
-        %tmp.13 = "baterie přes BLE";
+        bf %tmp.12 @_workspace_garmin_RideDashboard_source_RideData_mc_421_8_423_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_421_8_423_8_if_true:
+_workspace_garmin_RideDashboard_source_RideData_mc_421_39_423_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 422 12 ]
+        %tmp.13 = "BLE";
         ret %tmp.13;
-_workspace_garmin_RideDashboard_source_RideData_mc_426_39_428_8_stop:
-        goto @_workspace_garmin_RideDashboard_source_RideData_mc_426_8_428_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_426_8_428_8_if_end:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 429 8 ]
-        [ "_workspace_garmin_RideDashboard_source_RideData_mc_421_41_434_4_start" "_workspace_garmin_RideDashboard_source_RideData_mc_421_41_434_4_stop" ]
+_workspace_garmin_RideDashboard_source_RideData_mc_421_39_423_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideData_mc_421_8_423_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_421_8_423_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 424 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideData_mc_416_47_426_4_start" "_workspace_garmin_RideDashboard_source_RideData_mc_416_47_426_4_stop" ]
         %mode.2 = local;
-        symbol [ mode %mode.2 429 12 16 ];
+        symbol [ mode %mode.2 424 12 16 ];
         %tmp.14 = self;
-        symbol [ assistModeText %tmp.15 429 19 33 ];
+        symbol [ assistModeText %tmp.15 424 19 33 ];
         %tmp.15 = getv function %tmp.14 :assistModeText;
         %tmp.16 = invoke %tmp.14 %tmp.15();
         lputv %mode.2 %tmp.16;
-        symbol [ mode %mode.2 429 12 16 ];
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 430 8 ]
-_workspace_garmin_RideDashboard_source_RideData_mc_430_8_432_8_if_stmt:
+        symbol [ mode %mode.2 424 12 16 ];
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 425 8 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_425_15_425_41_begin:
         %tmp.17 = lgetv %mode.2;
-        symbol [ mode %tmp.17 430 12 16 ];
+        symbol [ mode %tmp.17 425 15 19 ];
+        %tmp.18 = null;
+        %tmp.19 = eq %tmp.17 %tmp.18;
+        bf %tmp.19 @_workspace_garmin_RideDashboard_source_RideData_mc_425_15_425_41_else_false;
+_workspace_garmin_RideDashboard_source_RideData_mc_425_15_425_41_true:
+        %tmp.20 = "E-BIKE";
+        push %tmp.20;
+        goto @_workspace_garmin_RideDashboard_source_RideData_mc_425_15_425_41_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_425_15_425_41_else_false:
+        %tmp.21 = lgetv %mode.2;
+        symbol [ mode %tmp.21 425 41 45 ];
+        %tmp.22 = as %tmp.21 { (!Null) };
+        push %tmp.22;
+_workspace_garmin_RideDashboard_source_RideData_mc_425_15_425_41_end:
+        %tmp.23 = phi [%tmp.19 @_workspace_garmin_RideDashboard_source_RideData_mc_425_15_425_41_begin] [%tmp.20 @_workspace_garmin_RideDashboard_source_RideData_mc_425_15_425_41_true] [%tmp.22 @_workspace_garmin_RideDashboard_source_RideData_mc_425_15_425_41_else_false] [%tmp.23 @_workspace_garmin_RideDashboard_source_RideData_mc_425_15_425_41_end];
+        ret %tmp.23;
+_workspace_garmin_RideDashboard_source_RideData_mc_416_47_426_4_stop:
+    }
+    //! Jednotka pod dojezdem - u odhadu je poctivé to napsat.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideData.mc"; @line = 429; @symbol_functiondef = [assistRangeUnit,429,13,28]; @symbol_return<0> = [Lang,429,34,38]; @symbol_return<1> = [String,429,39,45]; ]
+    function assistRangeUnit() as Lang.String {
+_workspace_garmin_RideDashboard_source_RideData_mc_429_46_431_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 430 8 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_430_15_430_41_begin:
+        %tmp.1 = self;
+        symbol [ assistMeasured %tmp.2 430 15 29 ];
+        %tmp.2 = getv function %tmp.1 :assistMeasured;
+        %tmp.3 = invoke %tmp.1 %tmp.2();
+        bf %tmp.3 @_workspace_garmin_RideDashboard_source_RideData_mc_430_15_430_41_else_false;
+_workspace_garmin_RideDashboard_source_RideData_mc_430_15_430_41_true:
+        %tmp.4 = "km";
+        push %tmp.4;
+        goto @_workspace_garmin_RideDashboard_source_RideData_mc_430_15_430_41_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_430_15_430_41_else_false:
+        %tmp.5 = "km · odhad";
+        push %tmp.5;
+_workspace_garmin_RideDashboard_source_RideData_mc_430_15_430_41_end:
+        %tmp.6 = phi [%tmp.3 @_workspace_garmin_RideDashboard_source_RideData_mc_430_15_430_41_begin] [%tmp.4 @_workspace_garmin_RideDashboard_source_RideData_mc_430_15_430_41_true] [%tmp.5 @_workspace_garmin_RideDashboard_source_RideData_mc_430_15_430_41_else_false] [%tmp.6 @_workspace_garmin_RideDashboard_source_RideData_mc_430_15_430_41_end];
+        ret %tmp.6;
+_workspace_garmin_RideDashboard_source_RideData_mc_429_46_431_4_stop:
+    }
+    //! Poznámka pod dojezd tam, kde je na ni místo: odkud číslo je a jakou
+    //! asistenci kolo zrovna drží.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideData.mc"; @line = 435; @symbol_functiondef = [assistNote,435,13,23]; @symbol_return<0> = [Lang,435,29,33]; @symbol_return<1> = [String,435,34,40]; ]
+    function assistNote() as Lang.String {
+_workspace_garmin_RideDashboard_source_RideData_mc_435_41_448_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 436 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideData_mc_435_41_448_4_start" "_workspace_garmin_RideDashboard_source_RideData_mc_435_41_448_4_stop" ]
+        %source.1 = local;
+        symbol [ source %source.1 436 12 18 ];
+        %tmp.1 = self;
+        symbol [ assistSource %tmp.2 436 21 33 ];
+        %tmp.2 = getv function %tmp.1 :assistSource;
+        %tmp.3 = invoke %tmp.1 %tmp.2();
+        lputv %source.1 %tmp.3;
+        symbol [ source %source.1 436 12 18 ];
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 437 8 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_437_8_439_8_if_stmt:
+        %tmp.4 = lgetv %source.1;
+        symbol [ source %tmp.4 437 12 18 ];
+        symbol [ ASSIST_ESTIMATED %tmp.6 437 22 38 ];
+        %tmp.6 = getv ? :ASSIST_ESTIMATED;
+        %tmp.7 = eq %tmp.4 %tmp.6;
+        bf %tmp.7 @_workspace_garmin_RideDashboard_source_RideData_mc_437_8_439_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_437_8_439_8_if_true:
+_workspace_garmin_RideDashboard_source_RideData_mc_437_40_439_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 438 12 ]
+        %tmp.8 = "odhad";
+        ret %tmp.8;
+_workspace_garmin_RideDashboard_source_RideData_mc_437_40_439_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideData_mc_437_8_439_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_437_8_439_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 440 8 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_440_8_442_8_if_stmt:
+        %tmp.9 = lgetv %source.1;
+        symbol [ source %tmp.9 440 12 18 ];
+        symbol [ ASSIST_FROM_BLE %tmp.11 440 22 37 ];
+        %tmp.11 = getv ? :ASSIST_FROM_BLE;
+        %tmp.12 = eq %tmp.9 %tmp.11;
+        bf %tmp.12 @_workspace_garmin_RideDashboard_source_RideData_mc_440_8_442_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_440_8_442_8_if_true:
+_workspace_garmin_RideDashboard_source_RideData_mc_440_39_442_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 441 12 ]
+        %tmp.13 = "baterie přes BLE";
+        ret %tmp.13;
+_workspace_garmin_RideDashboard_source_RideData_mc_440_39_442_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideData_mc_440_8_442_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_440_8_442_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 443 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideData_mc_435_41_448_4_start" "_workspace_garmin_RideDashboard_source_RideData_mc_435_41_448_4_stop" ]
+        %mode.2 = local;
+        symbol [ mode %mode.2 443 12 16 ];
+        %tmp.14 = self;
+        symbol [ assistModeText %tmp.15 443 19 33 ];
+        %tmp.15 = getv function %tmp.14 :assistModeText;
+        %tmp.16 = invoke %tmp.14 %tmp.15();
+        lputv %mode.2 %tmp.16;
+        symbol [ mode %mode.2 443 12 16 ];
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 444 8 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_444_8_446_8_if_stmt:
+        %tmp.17 = lgetv %mode.2;
+        symbol [ mode %tmp.17 444 12 16 ];
         %tmp.18 = null;
         %tmp.19 = ne %tmp.17 %tmp.18;
-        bf %tmp.19 @_workspace_garmin_RideDashboard_source_RideData_mc_430_8_432_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_430_8_432_8_if_true:
-_workspace_garmin_RideDashboard_source_RideData_mc_430_26_432_8_start:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 431 12 ]
+        bf %tmp.19 @_workspace_garmin_RideDashboard_source_RideData_mc_444_8_446_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_444_8_446_8_if_true:
+_workspace_garmin_RideDashboard_source_RideData_mc_444_26_446_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 445 12 ]
         %tmp.20 = lgetv %mode.2;
-        symbol [ mode %tmp.20 431 19 23 ];
+        symbol [ mode %tmp.20 445 19 23 ];
         %tmp.21 = as %tmp.20 { (!Null) };
         ret %tmp.21;
-_workspace_garmin_RideDashboard_source_RideData_mc_430_26_432_8_stop:
-        goto @_workspace_garmin_RideDashboard_source_RideData_mc_430_8_432_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_430_8_432_8_if_end:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 433 8 ]
-_workspace_garmin_RideDashboard_source_RideData_mc_433_15_433_61_begin:
+_workspace_garmin_RideDashboard_source_RideData_mc_444_26_446_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideData_mc_444_8_446_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_444_8_446_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 447 8 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_447_15_447_61_begin:
         %tmp.22 = lgetv %source.1;
-        symbol [ source %tmp.22 433 15 21 ];
-        symbol [ ASSIST_FROM_BIKE %tmp.24 433 25 41 ];
+        symbol [ source %tmp.22 447 15 21 ];
+        symbol [ ASSIST_FROM_BIKE %tmp.24 447 25 41 ];
         %tmp.24 = getv ? :ASSIST_FROM_BIKE;
         %tmp.25 = eq %tmp.22 %tmp.24;
-        bf %tmp.25 @_workspace_garmin_RideDashboard_source_RideData_mc_433_15_433_61_else_false;
-_workspace_garmin_RideDashboard_source_RideData_mc_433_15_433_61_true:
+        bf %tmp.25 @_workspace_garmin_RideDashboard_source_RideData_mc_447_15_447_61_else_false;
+_workspace_garmin_RideDashboard_source_RideData_mc_447_15_447_61_true:
         %tmp.26 = "přímo z kola";
         push %tmp.26;
-        goto @_workspace_garmin_RideDashboard_source_RideData_mc_433_15_433_61_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_433_15_433_61_else_false:
+        goto @_workspace_garmin_RideDashboard_source_RideData_mc_447_15_447_61_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_447_15_447_61_else_false:
         %tmp.27 = "ze stavu baterie";
         push %tmp.27;
-_workspace_garmin_RideDashboard_source_RideData_mc_433_15_433_61_end:
-        %tmp.28 = phi [%tmp.25 @_workspace_garmin_RideDashboard_source_RideData_mc_433_15_433_61_begin] [%tmp.26 @_workspace_garmin_RideDashboard_source_RideData_mc_433_15_433_61_true] [%tmp.27 @_workspace_garmin_RideDashboard_source_RideData_mc_433_15_433_61_else_false] [%tmp.28 @_workspace_garmin_RideDashboard_source_RideData_mc_433_15_433_61_end];
+_workspace_garmin_RideDashboard_source_RideData_mc_447_15_447_61_end:
+        %tmp.28 = phi [%tmp.25 @_workspace_garmin_RideDashboard_source_RideData_mc_447_15_447_61_begin] [%tmp.26 @_workspace_garmin_RideDashboard_source_RideData_mc_447_15_447_61_true] [%tmp.27 @_workspace_garmin_RideDashboard_source_RideData_mc_447_15_447_61_else_false] [%tmp.28 @_workspace_garmin_RideDashboard_source_RideData_mc_447_15_447_61_end];
         ret %tmp.28;
-_workspace_garmin_RideDashboard_source_RideData_mc_421_41_434_4_stop:
+_workspace_garmin_RideDashboard_source_RideData_mc_435_41_448_4_stop:
     }
-    [ @file = "/workspace/garmin/RideDashboard/source/RideData.mc"; @line = 436; @symbol_functiondef = [deviceBatteryPercent,436,13,33]; ]
+    [ @file = "/workspace/garmin/RideDashboard/source/RideData.mc"; @line = 450; @symbol_functiondef = [deviceBatteryPercent,450,13,33]; ]
     function deviceBatteryPercent() {
-_workspace_garmin_RideDashboard_source_RideData_mc_436_36_438_4_start:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 437 8 ]
-        symbol [ System %tmp.1 437 15 21 ];
+_workspace_garmin_RideDashboard_source_RideData_mc_450_36_452_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 451 8 ]
+        symbol [ System %tmp.1 451 15 21 ];
         %tmp.1 = getm $.Toybox.System;
-        symbol [ getSystemStats %tmp.2 437 22 36 ];
+        symbol [ getSystemStats %tmp.2 451 22 36 ];
         %tmp.2 = getv function %tmp.1 :getSystemStats;
         %tmp.3 = invoke %tmp.1 %tmp.2();
-        symbol [ battery %tmp.4 437 39 46 ];
+        symbol [ battery %tmp.4 451 39 46 ];
         %tmp.4 = getv %tmp.3 :battery;
-        symbol [ toNumber %tmp.5 437 47 55 ];
+        symbol [ toNumber %tmp.5 451 47 55 ];
         %tmp.5 = getv function %tmp.4 :toNumber;
         %tmp.6 = invoke %tmp.4 %tmp.5();
         ret %tmp.6;
-_workspace_garmin_RideDashboard_source_RideData_mc_436_36_438_4_stop:
+_workspace_garmin_RideDashboard_source_RideData_mc_450_36_452_4_stop:
     }
-    [ @file = "/workspace/garmin/RideDashboard/source/RideData.mc"; @line = 442; @symbol_functiondef = [temperature,442,13,24]; ]
+    [ @file = "/workspace/garmin/RideDashboard/source/RideData.mc"; @line = 456; @symbol_functiondef = [temperature,456,13,24]; ]
     function temperature() {
-_workspace_garmin_RideDashboard_source_RideData_mc_442_27_451_4_start:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 443 8 ]
-_workspace_garmin_RideDashboard_source_RideData_mc_443_8_445_8_if_stmt:
-_workspace_garmin_RideDashboard_source_RideData_mc_443_12_443_50_begin:
-        symbol [ mShowWeather %tmp.2 443 13 25 ];
+_workspace_garmin_RideDashboard_source_RideData_mc_456_27_465_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 457 8 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_457_8_459_8_if_stmt:
+_workspace_garmin_RideDashboard_source_RideData_mc_457_12_457_50_begin:
+        symbol [ mShowWeather %tmp.2 457 13 25 ];
         %tmp.2 = getv ? :mShowWeather;
         %tmp.3 = not %tmp.2;
-        bt %tmp.3 @_workspace_garmin_RideDashboard_source_RideData_mc_443_8_445_8_if_true;
-_workspace_garmin_RideDashboard_source_RideData_mc_443_29_443_50_false:
-        symbol [ Toybox %tmp.5 443 31 37 ];
+        bt %tmp.3 @_workspace_garmin_RideDashboard_source_RideData_mc_457_8_459_8_if_true;
+_workspace_garmin_RideDashboard_source_RideData_mc_457_29_457_50_false:
+        symbol [ Toybox %tmp.5 457 31 37 ];
         %tmp.5 = getv ? :Toybox;
         %tmp.7 = const :Weather;
-        symbol [ Weather %tmp.7 443 43 50 const ];
+        symbol [ Weather %tmp.7 457 43 50 const ];
         %tmp.8 = canhazplz %tmp.5 %tmp.7;
         %tmp.9 = not %tmp.8;
         push %tmp.9;
-_workspace_garmin_RideDashboard_source_RideData_mc_443_29_443_50_end:
-        %tmp.10 = phi [%tmp.3 @_workspace_garmin_RideDashboard_source_RideData_mc_443_12_443_50_begin] [%tmp.9 @_workspace_garmin_RideDashboard_source_RideData_mc_443_29_443_50_false] [%tmp.10 @_workspace_garmin_RideDashboard_source_RideData_mc_443_29_443_50_end];
-        bf %tmp.10 @_workspace_garmin_RideDashboard_source_RideData_mc_443_8_445_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_443_8_445_8_if_true:
-_workspace_garmin_RideDashboard_source_RideData_mc_443_53_445_8_start:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 444 12 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_457_29_457_50_end:
+        %tmp.10 = phi [%tmp.3 @_workspace_garmin_RideDashboard_source_RideData_mc_457_12_457_50_begin] [%tmp.9 @_workspace_garmin_RideDashboard_source_RideData_mc_457_29_457_50_false] [%tmp.10 @_workspace_garmin_RideDashboard_source_RideData_mc_457_29_457_50_end];
+        bf %tmp.10 @_workspace_garmin_RideDashboard_source_RideData_mc_457_8_459_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_457_8_459_8_if_true:
+_workspace_garmin_RideDashboard_source_RideData_mc_457_53_459_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 458 12 ]
         %tmp.11 = null;
         ret %tmp.11;
-_workspace_garmin_RideDashboard_source_RideData_mc_443_53_445_8_stop:
-        goto @_workspace_garmin_RideDashboard_source_RideData_mc_443_8_445_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_443_8_445_8_if_end:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 446 8 ]
-        [ "_workspace_garmin_RideDashboard_source_RideData_mc_442_27_451_4_start" "_workspace_garmin_RideDashboard_source_RideData_mc_442_27_451_4_stop" ]
+_workspace_garmin_RideDashboard_source_RideData_mc_457_53_459_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideData_mc_457_8_459_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_457_8_459_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 460 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideData_mc_456_27_465_4_start" "_workspace_garmin_RideDashboard_source_RideData_mc_456_27_465_4_stop" ]
         %conditions.1 = local;
-        symbol [ conditions %conditions.1 446 12 22 ];
-        symbol [ Toybox %tmp.13 446 25 31 ];
+        symbol [ conditions %conditions.1 460 12 22 ];
+        symbol [ Toybox %tmp.13 460 25 31 ];
         %tmp.13 = getv ? :Toybox;
-        symbol [ Weather %tmp.14 446 32 39 ];
+        symbol [ Weather %tmp.14 460 32 39 ];
         %tmp.14 = getv %tmp.13 :Weather;
-        symbol [ getCurrentConditions %tmp.15 446 40 60 ];
+        symbol [ getCurrentConditions %tmp.15 460 40 60 ];
         %tmp.15 = getv function %tmp.14 :getCurrentConditions;
         %tmp.16 = invoke %tmp.14 %tmp.15();
         lputv %conditions.1 %tmp.16;
-        symbol [ conditions %conditions.1 446 12 22 ];
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 447 8 ]
-_workspace_garmin_RideDashboard_source_RideData_mc_447_8_449_8_if_stmt:
-_workspace_garmin_RideDashboard_source_RideData_mc_447_12_447_81_begin:
+        symbol [ conditions %conditions.1 460 12 22 ];
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 461 8 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_461_8_463_8_if_stmt:
+_workspace_garmin_RideDashboard_source_RideData_mc_461_12_461_81_begin:
         %tmp.17 = lgetv %conditions.1;
-        symbol [ conditions %tmp.17 447 12 22 ];
+        symbol [ conditions %tmp.17 461 12 22 ];
         %tmp.18 = null;
         %tmp.19 = eq %tmp.17 %tmp.18;
-        bt %tmp.19 @_workspace_garmin_RideDashboard_source_RideData_mc_447_8_449_8_if_true;
-_workspace_garmin_RideDashboard_source_RideData_mc_447_34_447_81_false:
+        bt %tmp.19 @_workspace_garmin_RideDashboard_source_RideData_mc_461_8_463_8_if_true;
+_workspace_garmin_RideDashboard_source_RideData_mc_461_34_461_81_false:
         %tmp.20 = lgetv %conditions.1;
-        symbol [ conditions %tmp.20 447 36 46 ];
+        symbol [ conditions %tmp.20 461 36 46 ];
         %tmp.21 = as %tmp.20 { (!Null) };
-        symbol [ temperature %tmp.22 447 47 58 ];
+        symbol [ temperature %tmp.22 461 47 58 ];
         %tmp.22 = getv %tmp.21 :temperature;
-        symbol [ Lang %tmp.23 447 70 74 ];
+        symbol [ Lang %tmp.23 461 70 74 ];
         %tmp.23 = getm $.Toybox.Lang;
-        symbol [ Number %tmp.24 447 75 81 ];
+        symbol [ Number %tmp.24 461 75 81 ];
         %tmp.24 = getv %tmp.23 :Number;
         %tmp.25 = isa %tmp.22 %tmp.24;
         %tmp.26 = not %tmp.25;
         push %tmp.26;
-_workspace_garmin_RideDashboard_source_RideData_mc_447_34_447_81_end:
-        %tmp.27 = phi [%tmp.19 @_workspace_garmin_RideDashboard_source_RideData_mc_447_12_447_81_begin] [%tmp.26 @_workspace_garmin_RideDashboard_source_RideData_mc_447_34_447_81_false] [%tmp.27 @_workspace_garmin_RideDashboard_source_RideData_mc_447_34_447_81_end];
-        bf %tmp.27 @_workspace_garmin_RideDashboard_source_RideData_mc_447_8_449_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_447_8_449_8_if_true:
-_workspace_garmin_RideDashboard_source_RideData_mc_447_84_449_8_start:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 448 12 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_461_34_461_81_end:
+        %tmp.27 = phi [%tmp.19 @_workspace_garmin_RideDashboard_source_RideData_mc_461_12_461_81_begin] [%tmp.26 @_workspace_garmin_RideDashboard_source_RideData_mc_461_34_461_81_false] [%tmp.27 @_workspace_garmin_RideDashboard_source_RideData_mc_461_34_461_81_end];
+        bf %tmp.27 @_workspace_garmin_RideDashboard_source_RideData_mc_461_8_463_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_461_8_463_8_if_true:
+_workspace_garmin_RideDashboard_source_RideData_mc_461_84_463_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 462 12 ]
         %tmp.28 = null;
         ret %tmp.28;
-_workspace_garmin_RideDashboard_source_RideData_mc_447_84_449_8_stop:
-        goto @_workspace_garmin_RideDashboard_source_RideData_mc_447_8_449_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_447_8_449_8_if_end:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 450 8 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_461_84_463_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideData_mc_461_8_463_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_461_8_463_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 464 8 ]
         %tmp.29 = lgetv %conditions.1;
-        symbol [ conditions %tmp.29 450 15 25 ];
-        symbol [ temperature %tmp.30 450 26 37 ];
+        symbol [ conditions %tmp.29 464 15 25 ];
+        symbol [ temperature %tmp.30 464 26 37 ];
         %tmp.30 = getv %tmp.29 :temperature;
         ret %tmp.30;
-_workspace_garmin_RideDashboard_source_RideData_mc_442_27_451_4_stop:
+_workspace_garmin_RideDashboard_source_RideData_mc_456_27_465_4_stop:
     }
-    [ @file = "/workspace/garmin/RideDashboard/source/RideData.mc"; @line = 453; @symbol_functiondef = [weatherCondition,453,13,29]; ]
+    [ @file = "/workspace/garmin/RideDashboard/source/RideData.mc"; @line = 467; @symbol_functiondef = [weatherCondition,467,13,29]; ]
     function weatherCondition() {
-_workspace_garmin_RideDashboard_source_RideData_mc_453_32_459_4_start:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 454 8 ]
-_workspace_garmin_RideDashboard_source_RideData_mc_454_8_456_8_if_stmt:
-_workspace_garmin_RideDashboard_source_RideData_mc_454_12_454_50_begin:
-        symbol [ mShowWeather %tmp.2 454 13 25 ];
+_workspace_garmin_RideDashboard_source_RideData_mc_467_32_473_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 468 8 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_468_8_470_8_if_stmt:
+_workspace_garmin_RideDashboard_source_RideData_mc_468_12_468_50_begin:
+        symbol [ mShowWeather %tmp.2 468 13 25 ];
         %tmp.2 = getv ? :mShowWeather;
         %tmp.3 = not %tmp.2;
-        bt %tmp.3 @_workspace_garmin_RideDashboard_source_RideData_mc_454_8_456_8_if_true;
-_workspace_garmin_RideDashboard_source_RideData_mc_454_29_454_50_false:
-        symbol [ Toybox %tmp.5 454 31 37 ];
+        bt %tmp.3 @_workspace_garmin_RideDashboard_source_RideData_mc_468_8_470_8_if_true;
+_workspace_garmin_RideDashboard_source_RideData_mc_468_29_468_50_false:
+        symbol [ Toybox %tmp.5 468 31 37 ];
         %tmp.5 = getv ? :Toybox;
         %tmp.7 = const :Weather;
-        symbol [ Weather %tmp.7 454 43 50 const ];
+        symbol [ Weather %tmp.7 468 43 50 const ];
         %tmp.8 = canhazplz %tmp.5 %tmp.7;
         %tmp.9 = not %tmp.8;
         push %tmp.9;
-_workspace_garmin_RideDashboard_source_RideData_mc_454_29_454_50_end:
-        %tmp.10 = phi [%tmp.3 @_workspace_garmin_RideDashboard_source_RideData_mc_454_12_454_50_begin] [%tmp.9 @_workspace_garmin_RideDashboard_source_RideData_mc_454_29_454_50_false] [%tmp.10 @_workspace_garmin_RideDashboard_source_RideData_mc_454_29_454_50_end];
-        bf %tmp.10 @_workspace_garmin_RideDashboard_source_RideData_mc_454_8_456_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_454_8_456_8_if_true:
-_workspace_garmin_RideDashboard_source_RideData_mc_454_53_456_8_start:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 455 12 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_468_29_468_50_end:
+        %tmp.10 = phi [%tmp.3 @_workspace_garmin_RideDashboard_source_RideData_mc_468_12_468_50_begin] [%tmp.9 @_workspace_garmin_RideDashboard_source_RideData_mc_468_29_468_50_false] [%tmp.10 @_workspace_garmin_RideDashboard_source_RideData_mc_468_29_468_50_end];
+        bf %tmp.10 @_workspace_garmin_RideDashboard_source_RideData_mc_468_8_470_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_468_8_470_8_if_true:
+_workspace_garmin_RideDashboard_source_RideData_mc_468_53_470_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 469 12 ]
         %tmp.11 = null;
         ret %tmp.11;
-_workspace_garmin_RideDashboard_source_RideData_mc_454_53_456_8_stop:
-        goto @_workspace_garmin_RideDashboard_source_RideData_mc_454_8_456_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_454_8_456_8_if_end:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 457 8 ]
-        [ "_workspace_garmin_RideDashboard_source_RideData_mc_453_32_459_4_start" "_workspace_garmin_RideDashboard_source_RideData_mc_453_32_459_4_stop" ]
+_workspace_garmin_RideDashboard_source_RideData_mc_468_53_470_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideData_mc_468_8_470_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_468_8_470_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 471 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideData_mc_467_32_473_4_start" "_workspace_garmin_RideDashboard_source_RideData_mc_467_32_473_4_stop" ]
         %conditions.1 = local;
-        symbol [ conditions %conditions.1 457 12 22 ];
-        symbol [ Toybox %tmp.13 457 25 31 ];
+        symbol [ conditions %conditions.1 471 12 22 ];
+        symbol [ Toybox %tmp.13 471 25 31 ];
         %tmp.13 = getv ? :Toybox;
-        symbol [ Weather %tmp.14 457 32 39 ];
+        symbol [ Weather %tmp.14 471 32 39 ];
         %tmp.14 = getv %tmp.13 :Weather;
-        symbol [ getCurrentConditions %tmp.15 457 40 60 ];
+        symbol [ getCurrentConditions %tmp.15 471 40 60 ];
         %tmp.15 = getv function %tmp.14 :getCurrentConditions;
         %tmp.16 = invoke %tmp.14 %tmp.15();
         lputv %conditions.1 %tmp.16;
-        symbol [ conditions %conditions.1 457 12 22 ];
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 458 8 ]
-_workspace_garmin_RideDashboard_source_RideData_mc_458_15_458_54_begin:
+        symbol [ conditions %conditions.1 471 12 22 ];
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 472 8 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_472_15_472_54_begin:
         %tmp.17 = lgetv %conditions.1;
-        symbol [ conditions %tmp.17 458 15 25 ];
+        symbol [ conditions %tmp.17 472 15 25 ];
         %tmp.18 = null;
         %tmp.19 = eq %tmp.17 %tmp.18;
-        bf %tmp.19 @_workspace_garmin_RideDashboard_source_RideData_mc_458_15_458_54_else_false;
-_workspace_garmin_RideDashboard_source_RideData_mc_458_15_458_54_true:
+        bf %tmp.19 @_workspace_garmin_RideDashboard_source_RideData_mc_472_15_472_54_else_false;
+_workspace_garmin_RideDashboard_source_RideData_mc_472_15_472_54_true:
         %tmp.20 = null;
         push %tmp.20;
-        goto @_workspace_garmin_RideDashboard_source_RideData_mc_458_15_458_54_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_458_15_458_54_else_false:
+        goto @_workspace_garmin_RideDashboard_source_RideData_mc_472_15_472_54_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_472_15_472_54_else_false:
         %tmp.21 = lgetv %conditions.1;
-        symbol [ conditions %tmp.21 458 43 53 ];
+        symbol [ conditions %tmp.21 472 43 53 ];
         %tmp.22 = as %tmp.21 { (!Null) };
-        symbol [ condition %tmp.23 458 54 63 ];
+        symbol [ condition %tmp.23 472 54 63 ];
         %tmp.23 = getv %tmp.22 :condition;
         push %tmp.23;
-_workspace_garmin_RideDashboard_source_RideData_mc_458_15_458_54_end:
-        %tmp.24 = phi [%tmp.19 @_workspace_garmin_RideDashboard_source_RideData_mc_458_15_458_54_begin] [%tmp.20 @_workspace_garmin_RideDashboard_source_RideData_mc_458_15_458_54_true] [%tmp.23 @_workspace_garmin_RideDashboard_source_RideData_mc_458_15_458_54_else_false] [%tmp.24 @_workspace_garmin_RideDashboard_source_RideData_mc_458_15_458_54_end];
+_workspace_garmin_RideDashboard_source_RideData_mc_472_15_472_54_end:
+        %tmp.24 = phi [%tmp.19 @_workspace_garmin_RideDashboard_source_RideData_mc_472_15_472_54_begin] [%tmp.20 @_workspace_garmin_RideDashboard_source_RideData_mc_472_15_472_54_true] [%tmp.23 @_workspace_garmin_RideDashboard_source_RideData_mc_472_15_472_54_else_false] [%tmp.24 @_workspace_garmin_RideDashboard_source_RideData_mc_472_15_472_54_end];
         ret %tmp.24;
-_workspace_garmin_RideDashboard_source_RideData_mc_453_32_459_4_stop:
+_workspace_garmin_RideDashboard_source_RideData_mc_467_32_473_4_stop:
     }
-    [ @file = "/workspace/garmin/RideDashboard/source/RideData.mc"; @line = 461; @symbol_functiondef = [clockString,461,13,24]; ]
+    [ @file = "/workspace/garmin/RideDashboard/source/RideData.mc"; @line = 475; @symbol_functiondef = [clockString,475,13,24]; ]
     function clockString() {
-_workspace_garmin_RideDashboard_source_RideData_mc_461_27_471_4_start:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 462 8 ]
-        [ "_workspace_garmin_RideDashboard_source_RideData_mc_461_27_471_4_start" "_workspace_garmin_RideDashboard_source_RideData_mc_461_27_471_4_stop" ]
+_workspace_garmin_RideDashboard_source_RideData_mc_475_27_485_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 476 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideData_mc_475_27_485_4_start" "_workspace_garmin_RideDashboard_source_RideData_mc_475_27_485_4_stop" ]
         %now.1 = local;
-        symbol [ now %now.1 462 12 15 ];
-        symbol [ System %tmp.1 462 18 24 ];
+        symbol [ now %now.1 476 12 15 ];
+        symbol [ System %tmp.1 476 18 24 ];
         %tmp.1 = getm $.Toybox.System;
-        symbol [ getClockTime %tmp.2 462 25 37 ];
+        symbol [ getClockTime %tmp.2 476 25 37 ];
         %tmp.2 = getv function %tmp.1 :getClockTime;
         %tmp.3 = invoke %tmp.1 %tmp.2();
         lputv %now.1 %tmp.3;
-        symbol [ now %now.1 462 12 15 ];
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 463 8 ]
-        [ "_workspace_garmin_RideDashboard_source_RideData_mc_461_27_471_4_start" "_workspace_garmin_RideDashboard_source_RideData_mc_461_27_471_4_stop" ]
+        symbol [ now %now.1 476 12 15 ];
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 477 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideData_mc_475_27_485_4_start" "_workspace_garmin_RideDashboard_source_RideData_mc_475_27_485_4_stop" ]
         %hour.2 = local;
-        symbol [ hour %hour.2 463 12 16 ];
+        symbol [ hour %hour.2 477 12 16 ];
         %tmp.4 = lgetv %now.1;
-        symbol [ now %tmp.4 463 19 22 ];
-        symbol [ hour %tmp.5 463 23 27 ];
+        symbol [ now %tmp.4 477 19 22 ];
+        symbol [ hour %tmp.5 477 23 27 ];
         %tmp.5 = getv %tmp.4 :hour;
         lputv %hour.2 %tmp.5;
-        symbol [ hour %hour.2 463 12 16 ];
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 464 8 ]
-_workspace_garmin_RideDashboard_source_RideData_mc_464_8_469_8_if_stmt:
-        symbol [ System %tmp.6 464 13 19 ];
+        symbol [ hour %hour.2 477 12 16 ];
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 478 8 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_478_8_483_8_if_stmt:
+        symbol [ System %tmp.6 478 13 19 ];
         %tmp.6 = getm $.Toybox.System;
-        symbol [ getDeviceSettings %tmp.7 464 20 37 ];
+        symbol [ getDeviceSettings %tmp.7 478 20 37 ];
         %tmp.7 = getv function %tmp.6 :getDeviceSettings;
         %tmp.8 = invoke %tmp.6 %tmp.7();
-        symbol [ is24Hour %tmp.9 464 40 48 ];
+        symbol [ is24Hour %tmp.9 478 40 48 ];
         %tmp.9 = getv %tmp.8 :is24Hour;
         %tmp.10 = not %tmp.9;
-        bf %tmp.10 @_workspace_garmin_RideDashboard_source_RideData_mc_464_8_469_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_464_8_469_8_if_true:
-_workspace_garmin_RideDashboard_source_RideData_mc_464_50_469_8_start:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 465 12 ]
+        bf %tmp.10 @_workspace_garmin_RideDashboard_source_RideData_mc_478_8_483_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_478_8_483_8_if_true:
+_workspace_garmin_RideDashboard_source_RideData_mc_478_50_483_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 479 12 ]
         %tmp.11 = lgetv %hour.2;
-        symbol [ hour %tmp.11 465 19 23 ];
+        symbol [ hour %tmp.11 479 19 23 ];
         %tmp.12 = 12;
         %tmp.13 = mod %tmp.11 %tmp.12;
         lputv %hour.2 %tmp.13;
-        symbol [ hour %hour.2 465 12 16 ];
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 466 12 ]
-_workspace_garmin_RideDashboard_source_RideData_mc_466_12_468_12_if_stmt:
+        symbol [ hour %hour.2 479 12 16 ];
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 480 12 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_480_12_482_12_if_stmt:
         %tmp.14 = lgetv %hour.2;
-        symbol [ hour %tmp.14 466 16 20 ];
+        symbol [ hour %tmp.14 480 16 20 ];
         %tmp.15 = 0;
         %tmp.16 = eq %tmp.14 %tmp.15;
-        bf %tmp.16 @_workspace_garmin_RideDashboard_source_RideData_mc_466_12_468_12_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_466_12_468_12_if_true:
-_workspace_garmin_RideDashboard_source_RideData_mc_466_27_468_12_start:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 467 16 ]
+        bf %tmp.16 @_workspace_garmin_RideDashboard_source_RideData_mc_480_12_482_12_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_480_12_482_12_if_true:
+_workspace_garmin_RideDashboard_source_RideData_mc_480_27_482_12_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 481 16 ]
         %tmp.17 = 12;
         lputv %hour.2 %tmp.17;
-        symbol [ hour %hour.2 467 16 20 ];
-_workspace_garmin_RideDashboard_source_RideData_mc_466_27_468_12_stop:
-        goto @_workspace_garmin_RideDashboard_source_RideData_mc_466_12_468_12_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_466_12_468_12_if_end:
-_workspace_garmin_RideDashboard_source_RideData_mc_464_50_469_8_stop:
-        goto @_workspace_garmin_RideDashboard_source_RideData_mc_464_8_469_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_464_8_469_8_if_end:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 470 8 ]
-        symbol [ Lang %tmp.18 470 15 19 ];
+        symbol [ hour %hour.2 481 16 20 ];
+_workspace_garmin_RideDashboard_source_RideData_mc_480_27_482_12_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideData_mc_480_12_482_12_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_480_12_482_12_if_end:
+_workspace_garmin_RideDashboard_source_RideData_mc_478_50_483_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideData_mc_478_8_483_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_478_8_483_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 484 8 ]
+        symbol [ Lang %tmp.18 484 15 19 ];
         %tmp.18 = getm $.Toybox.Lang;
-        symbol [ format %tmp.19 470 20 26 ];
+        symbol [ format %tmp.19 484 20 26 ];
         %tmp.19 = getv function %tmp.18 :format;
         %tmp.20 = "$1$:$2$";
         %tmp.21 = newa 2;
         %tmp.22 = lgetv %hour.2;
-        symbol [ hour %tmp.22 470 39 43 ];
-        symbol [ format %tmp.23 470 44 50 ];
+        symbol [ hour %tmp.22 484 39 43 ];
+        symbol [ format %tmp.23 484 44 50 ];
         %tmp.23 = getv function %tmp.22 :format;
         %tmp.24 = "%02d";
         %tmp.25 = invoke %tmp.22 %tmp.23(%tmp.24);
         %tmp.26 = dup %tmp.21;
         %tmp.27 = aputv %tmp.26 0 %tmp.25;
         %tmp.28 = lgetv %now.1;
-        symbol [ now %tmp.28 470 60 63 ];
-        symbol [ min %tmp.29 470 64 67 ];
+        symbol [ now %tmp.28 484 60 63 ];
+        symbol [ min %tmp.29 484 64 67 ];
         %tmp.29 = getv %tmp.28 :min;
-        symbol [ format %tmp.30 470 68 74 ];
+        symbol [ format %tmp.30 484 68 74 ];
         %tmp.30 = getv function %tmp.29 :format;
         %tmp.31 = "%02d";
         %tmp.32 = invoke %tmp.29 %tmp.30(%tmp.31);
@@ -2745,269 +2823,269 @@ _workspace_garmin_RideDashboard_source_RideData_mc_464_8_469_8_if_end:
         %tmp.34 = aputv %tmp.33 1 %tmp.32;
         %tmp.35 = invoke %tmp.18 %tmp.19(%tmp.20, %tmp.34);
         ret %tmp.35;
-_workspace_garmin_RideDashboard_source_RideData_mc_461_27_471_4_stop:
+_workspace_garmin_RideDashboard_source_RideData_mc_475_27_485_4_stop:
     }
-    [ @file = "/workspace/garmin/RideDashboard/source/RideData.mc"; @line = 473; @symbol_functiondef = [hasFix,473,13,19]; ]
+    [ @file = "/workspace/garmin/RideDashboard/source/RideData.mc"; @line = 487; @symbol_functiondef = [hasFix,487,13,19]; ]
     function hasFix() {
-_workspace_garmin_RideDashboard_source_RideData_mc_473_22_479_4_start:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 474 8 ]
-        [ "_workspace_garmin_RideDashboard_source_RideData_mc_473_22_479_4_start" "_workspace_garmin_RideDashboard_source_RideData_mc_473_22_479_4_stop" ]
+_workspace_garmin_RideDashboard_source_RideData_mc_487_22_493_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 488 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideData_mc_487_22_493_4_start" "_workspace_garmin_RideDashboard_source_RideData_mc_487_22_493_4_stop" ]
         %current.1 = local;
-        symbol [ current %current.1 474 12 19 ];
+        symbol [ current %current.1 488 12 19 ];
         %tmp.1 = self;
-        symbol [ info %tmp.2 474 22 26 ];
+        symbol [ info %tmp.2 488 22 26 ];
         %tmp.2 = getv function %tmp.1 :info;
         %tmp.3 = invoke %tmp.1 %tmp.2();
         lputv %current.1 %tmp.3;
-        symbol [ current %current.1 474 12 19 ];
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 475 8 ]
-_workspace_garmin_RideDashboard_source_RideData_mc_475_8_477_8_if_stmt:
-_workspace_garmin_RideDashboard_source_RideData_mc_475_12_475_87_begin:
+        symbol [ current %current.1 488 12 19 ];
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 489 8 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_489_8_491_8_if_stmt:
+_workspace_garmin_RideDashboard_source_RideData_mc_489_12_489_87_begin:
         %tmp.4 = lgetv %current.1;
-        symbol [ current %tmp.4 475 12 19 ];
+        symbol [ current %tmp.4 489 12 19 ];
         %tmp.5 = null;
         %tmp.6 = eq %tmp.4 %tmp.5;
-        bt %tmp.6 @_workspace_garmin_RideDashboard_source_RideData_mc_475_8_477_8_if_true;
-_workspace_garmin_RideDashboard_source_RideData_mc_475_31_475_87_false:
+        bt %tmp.6 @_workspace_garmin_RideDashboard_source_RideData_mc_489_8_491_8_if_true;
+_workspace_garmin_RideDashboard_source_RideData_mc_489_31_489_87_false:
         %tmp.7 = lgetv %current.1;
-        symbol [ current %tmp.7 475 33 40 ];
+        symbol [ current %tmp.7 489 33 40 ];
         %tmp.8 = as %tmp.7 { (!Null) };
-        symbol [ currentLocationAccuracy %tmp.9 475 41 64 ];
+        symbol [ currentLocationAccuracy %tmp.9 489 41 64 ];
         %tmp.9 = getv %tmp.8 :currentLocationAccuracy;
-        symbol [ Lang %tmp.10 475 76 80 ];
+        symbol [ Lang %tmp.10 489 76 80 ];
         %tmp.10 = getm $.Toybox.Lang;
-        symbol [ Number %tmp.11 475 81 87 ];
+        symbol [ Number %tmp.11 489 81 87 ];
         %tmp.11 = getv %tmp.10 :Number;
         %tmp.12 = isa %tmp.9 %tmp.11;
         %tmp.13 = not %tmp.12;
         push %tmp.13;
-_workspace_garmin_RideDashboard_source_RideData_mc_475_31_475_87_end:
-        %tmp.14 = phi [%tmp.6 @_workspace_garmin_RideDashboard_source_RideData_mc_475_12_475_87_begin] [%tmp.13 @_workspace_garmin_RideDashboard_source_RideData_mc_475_31_475_87_false] [%tmp.14 @_workspace_garmin_RideDashboard_source_RideData_mc_475_31_475_87_end];
-        bf %tmp.14 @_workspace_garmin_RideDashboard_source_RideData_mc_475_8_477_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_475_8_477_8_if_true:
-_workspace_garmin_RideDashboard_source_RideData_mc_475_90_477_8_start:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 476 12 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_489_31_489_87_end:
+        %tmp.14 = phi [%tmp.6 @_workspace_garmin_RideDashboard_source_RideData_mc_489_12_489_87_begin] [%tmp.13 @_workspace_garmin_RideDashboard_source_RideData_mc_489_31_489_87_false] [%tmp.14 @_workspace_garmin_RideDashboard_source_RideData_mc_489_31_489_87_end];
+        bf %tmp.14 @_workspace_garmin_RideDashboard_source_RideData_mc_489_8_491_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_489_8_491_8_if_true:
+_workspace_garmin_RideDashboard_source_RideData_mc_489_90_491_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 490 12 ]
         %tmp.15 = false;
         ret %tmp.15;
-_workspace_garmin_RideDashboard_source_RideData_mc_475_90_477_8_stop:
-        goto @_workspace_garmin_RideDashboard_source_RideData_mc_475_8_477_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_475_8_477_8_if_end:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 478 8 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_489_90_491_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideData_mc_489_8_491_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_489_8_491_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 492 8 ]
         %tmp.16 = lgetv %current.1;
-        symbol [ current %tmp.16 478 15 22 ];
-        symbol [ currentLocationAccuracy %tmp.17 478 23 46 ];
+        symbol [ current %tmp.16 492 15 22 ];
+        symbol [ currentLocationAccuracy %tmp.17 492 23 46 ];
         %tmp.17 = getv %tmp.16 :currentLocationAccuracy;
-        symbol [ Position %tmp.18 478 50 58 ];
+        symbol [ Position %tmp.18 492 50 58 ];
         %tmp.18 = getm $.Toybox.Position;
-        symbol [ QUALITY_USABLE %tmp.19 478 59 73 ];
+        symbol [ QUALITY_USABLE %tmp.19 492 59 73 ];
         %tmp.19 = getv %tmp.18 :QUALITY_USABLE;
         %tmp.20 = gte %tmp.17 %tmp.19;
         ret %tmp.20;
-_workspace_garmin_RideDashboard_source_RideData_mc_473_22_479_4_stop:
+_workspace_garmin_RideDashboard_source_RideData_mc_487_22_493_4_stop:
     }
-    [ @file = "/workspace/garmin/RideDashboard/source/RideData.mc"; @line = 487; @symbol_functiondef = [onPosition,487,13,23]; @symbol_param<0> = [positionInfo,487,24,36]; @symbol_param<0>_type<0> = [Position,487,40,48]; @symbol_param<0>_type<1> = [Info,487,49,53]; ]
+    [ @file = "/workspace/garmin/RideDashboard/source/RideData.mc"; @line = 501; @symbol_functiondef = [onPosition,501,13,23]; @symbol_param<0> = [positionInfo,501,24,36]; @symbol_param<0>_type<0> = [Position,501,40,48]; @symbol_param<0>_type<1> = [Info,501,49,53]; ]
     function onPosition(positionInfo as Position.Info) as Void {
-_workspace_garmin_RideDashboard_source_RideData_mc_487_63_506_4_start:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 488 8 ]
-_workspace_garmin_RideDashboard_source_RideData_mc_488_8_490_8_if_stmt:
-_workspace_garmin_RideDashboard_source_RideData_mc_488_12_488_61_begin:
+_workspace_garmin_RideDashboard_source_RideData_mc_501_63_520_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 502 8 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_502_8_504_8_if_stmt:
+_workspace_garmin_RideDashboard_source_RideData_mc_502_12_502_61_begin:
         %tmp.1 = lgetv %positionInfo;
-        symbol [ positionInfo %tmp.1 488 12 24 ];
+        symbol [ positionInfo %tmp.1 502 12 24 ];
         %tmp.2 = null;
         %tmp.3 = eq %tmp.1 %tmp.2;
-        bt %tmp.3 @_workspace_garmin_RideDashboard_source_RideData_mc_488_8_490_8_if_true;
-_workspace_garmin_RideDashboard_source_RideData_mc_488_36_488_61_false:
+        bt %tmp.3 @_workspace_garmin_RideDashboard_source_RideData_mc_502_8_504_8_if_true;
+_workspace_garmin_RideDashboard_source_RideData_mc_502_36_502_61_false:
         %tmp.4 = lgetv %positionInfo;
-        symbol [ positionInfo %tmp.4 488 36 48 ];
+        symbol [ positionInfo %tmp.4 502 36 48 ];
         %tmp.5 = as %tmp.4 { (!Null) };
-        symbol [ position %tmp.6 488 49 57 ];
+        symbol [ position %tmp.6 502 49 57 ];
         %tmp.6 = getv %tmp.5 :position;
         %tmp.7 = null;
         %tmp.8 = eq %tmp.6 %tmp.7;
         push %tmp.8;
-_workspace_garmin_RideDashboard_source_RideData_mc_488_36_488_61_end:
-        %tmp.9 = phi [%tmp.3 @_workspace_garmin_RideDashboard_source_RideData_mc_488_12_488_61_begin] [%tmp.8 @_workspace_garmin_RideDashboard_source_RideData_mc_488_36_488_61_false] [%tmp.9 @_workspace_garmin_RideDashboard_source_RideData_mc_488_36_488_61_end];
-        bf %tmp.9 @_workspace_garmin_RideDashboard_source_RideData_mc_488_8_490_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_488_8_490_8_if_true:
-_workspace_garmin_RideDashboard_source_RideData_mc_488_67_490_8_start:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 489 12 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_502_36_502_61_end:
+        %tmp.9 = phi [%tmp.3 @_workspace_garmin_RideDashboard_source_RideData_mc_502_12_502_61_begin] [%tmp.8 @_workspace_garmin_RideDashboard_source_RideData_mc_502_36_502_61_false] [%tmp.9 @_workspace_garmin_RideDashboard_source_RideData_mc_502_36_502_61_end];
+        bf %tmp.9 @_workspace_garmin_RideDashboard_source_RideData_mc_502_8_504_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_502_8_504_8_if_true:
+_workspace_garmin_RideDashboard_source_RideData_mc_502_67_504_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 503 12 ]
         ret ?;
-_workspace_garmin_RideDashboard_source_RideData_mc_488_67_490_8_stop:
-        goto @_workspace_garmin_RideDashboard_source_RideData_mc_488_8_490_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_488_8_490_8_if_end:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 491 8 ]
-        [ "_workspace_garmin_RideDashboard_source_RideData_mc_487_63_506_4_start" "_workspace_garmin_RideDashboard_source_RideData_mc_487_63_506_4_stop" ]
+_workspace_garmin_RideDashboard_source_RideData_mc_502_67_504_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideData_mc_502_8_504_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_502_8_504_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 505 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideData_mc_501_63_520_4_start" "_workspace_garmin_RideDashboard_source_RideData_mc_501_63_520_4_stop" ]
         %degrees.1 = local;
-        symbol [ degrees %degrees.1 491 12 19 ];
+        symbol [ degrees %degrees.1 505 12 19 ];
         %tmp.10 = lgetv %positionInfo;
-        symbol [ positionInfo %tmp.10 491 22 34 ];
-        symbol [ position %tmp.11 491 35 43 ];
+        symbol [ positionInfo %tmp.10 505 22 34 ];
+        symbol [ position %tmp.11 505 35 43 ];
         %tmp.11 = getv %tmp.10 :position;
-        symbol [ toDegrees %tmp.12 491 44 53 ];
+        symbol [ toDegrees %tmp.12 505 44 53 ];
         %tmp.12 = getv function %tmp.11 :toDegrees;
         %tmp.13 = invoke %tmp.11 %tmp.12();
         %tmp.14 = as %tmp.13 Lang.Array<Lang.Double>;
-        symbol [ Lang %tmp.14 491 59 63 ];
-        symbol [ Array %tmp.14 491 64 69 ];
-        symbol [ Lang %tmp.14 491 70 74 ];
-        symbol [ Double %tmp.14 491 75 81 ];
+        symbol [ Lang %tmp.14 505 59 63 ];
+        symbol [ Array %tmp.14 505 64 69 ];
+        symbol [ Lang %tmp.14 505 70 74 ];
+        symbol [ Double %tmp.14 505 75 81 ];
         lputv %degrees.1 %tmp.14;
-        symbol [ degrees %degrees.1 491 12 19 ];
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 492 8 ]
-        [ "_workspace_garmin_RideDashboard_source_RideData_mc_487_63_506_4_start" "_workspace_garmin_RideDashboard_source_RideData_mc_487_63_506_4_stop" ]
+        symbol [ degrees %degrees.1 505 12 19 ];
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 506 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideData_mc_501_63_520_4_start" "_workspace_garmin_RideDashboard_source_RideData_mc_501_63_520_4_stop" ]
         %latitude.2 = local;
-        symbol [ latitude %latitude.2 492 12 20 ];
+        symbol [ latitude %latitude.2 506 12 20 ];
         %tmp.15 = lgetv %degrees.1;
-        symbol [ degrees %tmp.15 492 23 30 ];
+        symbol [ degrees %tmp.15 506 23 30 ];
         %tmp.16 = 0;
         %tmp.17 = agetv %tmp.15 %tmp.16;
         lputv %latitude.2 %tmp.17;
-        symbol [ latitude %latitude.2 492 12 20 ];
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 493 8 ]
-        [ "_workspace_garmin_RideDashboard_source_RideData_mc_487_63_506_4_start" "_workspace_garmin_RideDashboard_source_RideData_mc_487_63_506_4_stop" ]
+        symbol [ latitude %latitude.2 506 12 20 ];
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 507 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideData_mc_501_63_520_4_start" "_workspace_garmin_RideDashboard_source_RideData_mc_501_63_520_4_stop" ]
         %longitude.3 = local;
-        symbol [ longitude %longitude.3 493 12 21 ];
+        symbol [ longitude %longitude.3 507 12 21 ];
         %tmp.18 = lgetv %degrees.1;
-        symbol [ degrees %tmp.18 493 24 31 ];
+        symbol [ degrees %tmp.18 507 24 31 ];
         %tmp.19 = 1;
         %tmp.20 = agetv %tmp.18 %tmp.19;
         lputv %longitude.3 %tmp.20;
-        symbol [ longitude %longitude.3 493 12 21 ];
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 495 8 ]
-_workspace_garmin_RideDashboard_source_RideData_mc_495_8_497_8_if_stmt:
-        symbol [ mTrack %tmp.22 495 12 18 ];
+        symbol [ longitude %longitude.3 507 12 21 ];
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 509 8 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_509_8_511_8_if_stmt:
+        symbol [ mTrack %tmp.22 509 12 18 ];
         %tmp.22 = getv ? :mTrack;
         %tmp.23 = null;
         %tmp.24 = eq %tmp.22 %tmp.23;
-        bf %tmp.24 @_workspace_garmin_RideDashboard_source_RideData_mc_495_8_497_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_495_8_497_8_if_true:
-_workspace_garmin_RideDashboard_source_RideData_mc_495_28_497_8_start:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 496 12 ]
+        bf %tmp.24 @_workspace_garmin_RideDashboard_source_RideData_mc_509_8_511_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_509_8_511_8_if_true:
+_workspace_garmin_RideDashboard_source_RideData_mc_509_28_511_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 510 12 ]
         %tmp.25 = newa 0;
-        symbol [ mTrack ? 496 12 18 ];
+        symbol [ mTrack ? 510 12 18 ];
         putv self :mTrack %tmp.25;
-_workspace_garmin_RideDashboard_source_RideData_mc_495_28_497_8_stop:
-        goto @_workspace_garmin_RideDashboard_source_RideData_mc_495_8_497_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_495_8_497_8_if_end:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 498 8 ]
-_workspace_garmin_RideDashboard_source_RideData_mc_498_8_501_8_if_stmt:
-        symbol [ mTrack %tmp.27 498 12 18 ];
+_workspace_garmin_RideDashboard_source_RideData_mc_509_28_511_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideData_mc_509_8_511_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_509_8_511_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 512 8 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_512_8_515_8_if_stmt:
+        symbol [ mTrack %tmp.27 512 12 18 ];
         %tmp.27 = getv ? :mTrack;
-        symbol [ size %tmp.28 498 19 23 ];
+        symbol [ size %tmp.28 512 19 23 ];
         %tmp.28 = getv function %tmp.27 :size;
         %tmp.29 = invoke %tmp.27 %tmp.28();
         %tmp.30 = 0;
         %tmp.31 = eq %tmp.29 %tmp.30;
-        bf %tmp.31 @_workspace_garmin_RideDashboard_source_RideData_mc_498_8_501_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_498_8_501_8_if_true:
-_workspace_garmin_RideDashboard_source_RideData_mc_498_32_501_8_start:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 500 12 ]
-        symbol [ Math %tmp.32 500 29 33 ];
+        bf %tmp.31 @_workspace_garmin_RideDashboard_source_RideData_mc_512_8_515_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_512_8_515_8_if_true:
+_workspace_garmin_RideDashboard_source_RideData_mc_512_32_515_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 514 12 ]
+        symbol [ Math %tmp.32 514 29 33 ];
         %tmp.32 = getm $.Toybox.Math;
-        symbol [ cos %tmp.33 500 34 37 ];
+        symbol [ cos %tmp.33 514 34 37 ];
         %tmp.33 = getv function %tmp.32 :cos;
         %tmp.34 = lgetv %latitude.2;
-        symbol [ latitude %tmp.34 500 38 46 ];
-        symbol [ Math %tmp.35 500 49 53 ];
+        symbol [ latitude %tmp.34 514 38 46 ];
+        symbol [ Math %tmp.35 514 49 53 ];
         %tmp.35 = getm $.Toybox.Math;
-        symbol [ PI %tmp.36 500 54 56 ];
+        symbol [ PI %tmp.36 514 54 56 ];
         %tmp.36 = getv %tmp.35 :PI;
         %tmp.37 = mul %tmp.34 %tmp.36;
         %tmp.38 = 180.0;
         %tmp.39 = div %tmp.37 %tmp.38;
         %tmp.40 = invoke %tmp.32 %tmp.33(%tmp.39);
-        symbol [ mLatitudeScale ? 500 12 26 ];
+        symbol [ mLatitudeScale ? 514 12 26 ];
         putv self :mLatitudeScale %tmp.40;
-_workspace_garmin_RideDashboard_source_RideData_mc_498_32_501_8_stop:
-        goto @_workspace_garmin_RideDashboard_source_RideData_mc_498_8_501_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_498_8_501_8_if_end:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 502 8 ]
-        symbol [ mTrack %tmp.42 502 8 14 ];
+_workspace_garmin_RideDashboard_source_RideData_mc_512_32_515_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideData_mc_512_8_515_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_512_8_515_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 516 8 ]
+        symbol [ mTrack %tmp.42 516 8 14 ];
         %tmp.42 = getv ? :mTrack;
-        symbol [ add %tmp.43 502 15 18 ];
+        symbol [ add %tmp.43 516 15 18 ];
         %tmp.43 = getv function %tmp.42 :add;
         %tmp.44 = newa 3;
         %tmp.45 = lgetv %longitude.3;
-        symbol [ longitude %tmp.45 502 20 29 ];
-        symbol [ mLatitudeScale %tmp.47 502 32 46 ];
+        symbol [ longitude %tmp.45 516 20 29 ];
+        symbol [ mLatitudeScale %tmp.47 516 32 46 ];
         %tmp.47 = getv ? :mLatitudeScale;
         %tmp.48 = mul %tmp.45 %tmp.47;
         %tmp.49 = dup %tmp.44;
         %tmp.50 = aputv %tmp.49 0 %tmp.48;
         %tmp.51 = lgetv %latitude.2;
-        symbol [ latitude %tmp.51 502 48 56 ];
+        symbol [ latitude %tmp.51 516 48 56 ];
         %tmp.52 = dup %tmp.50;
         %tmp.53 = aputv %tmp.52 1 %tmp.51;
         %tmp.54 = lgetv %longitude.3;
-        symbol [ longitude %tmp.54 502 58 67 ];
+        symbol [ longitude %tmp.54 516 58 67 ];
         %tmp.55 = dup %tmp.53;
         %tmp.56 = aputv %tmp.55 2 %tmp.54;
         invoke %tmp.42 %tmp.43(%tmp.56);
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 503 8 ]
-_workspace_garmin_RideDashboard_source_RideData_mc_503_8_505_8_if_stmt:
-        symbol [ mTrack %tmp.58 503 12 18 ];
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 517 8 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_517_8_519_8_if_stmt:
+        symbol [ mTrack %tmp.58 517 12 18 ];
         %tmp.58 = getv ? :mTrack;
-        symbol [ size %tmp.59 503 19 23 ];
+        symbol [ size %tmp.59 517 19 23 ];
         %tmp.59 = getv function %tmp.58 :size;
         %tmp.60 = invoke %tmp.58 %tmp.59();
-        symbol [ TRACK_CAPACITY %tmp.62 503 28 42 ];
+        symbol [ TRACK_CAPACITY %tmp.62 517 28 42 ];
         %tmp.62 = getv ? :TRACK_CAPACITY;
         %tmp.63 = gt %tmp.60 %tmp.62;
-        bf %tmp.63 @_workspace_garmin_RideDashboard_source_RideData_mc_503_8_505_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_503_8_505_8_if_true:
-_workspace_garmin_RideDashboard_source_RideData_mc_503_44_505_8_start:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 504 12 ]
-        symbol [ mTrack %tmp.65 504 21 27 ];
+        bf %tmp.63 @_workspace_garmin_RideDashboard_source_RideData_mc_517_8_519_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_517_8_519_8_if_true:
+_workspace_garmin_RideDashboard_source_RideData_mc_517_44_519_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 518 12 ]
+        symbol [ mTrack %tmp.65 518 21 27 ];
         %tmp.65 = getv ? :mTrack;
-        symbol [ slice %tmp.66 504 28 33 ];
+        symbol [ slice %tmp.66 518 28 33 ];
         %tmp.66 = getv function %tmp.65 :slice;
-        symbol [ mTrack %tmp.68 504 34 40 ];
+        symbol [ mTrack %tmp.68 518 34 40 ];
         %tmp.68 = getv ? :mTrack;
-        symbol [ size %tmp.69 504 41 45 ];
+        symbol [ size %tmp.69 518 41 45 ];
         %tmp.69 = getv function %tmp.68 :size;
         %tmp.70 = invoke %tmp.68 %tmp.69();
-        symbol [ TRACK_CAPACITY %tmp.72 504 50 64 ];
+        symbol [ TRACK_CAPACITY %tmp.72 518 50 64 ];
         %tmp.72 = getv ? :TRACK_CAPACITY;
         %tmp.73 = sub %tmp.70 %tmp.72;
-        symbol [ mTrack %tmp.75 504 66 72 ];
+        symbol [ mTrack %tmp.75 518 66 72 ];
         %tmp.75 = getv ? :mTrack;
-        symbol [ size %tmp.76 504 73 77 ];
+        symbol [ size %tmp.76 518 73 77 ];
         %tmp.76 = getv function %tmp.75 :size;
         %tmp.77 = invoke %tmp.75 %tmp.76();
         %tmp.78 = invoke %tmp.65 %tmp.66(%tmp.73, %tmp.77);
-        symbol [ mTrack ? 504 12 18 ];
+        symbol [ mTrack ? 518 12 18 ];
         putv self :mTrack %tmp.78;
-_workspace_garmin_RideDashboard_source_RideData_mc_503_44_505_8_stop:
-        goto @_workspace_garmin_RideDashboard_source_RideData_mc_503_8_505_8_if_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_503_8_505_8_if_end:
-_workspace_garmin_RideDashboard_source_RideData_mc_487_63_506_4_stop:
+_workspace_garmin_RideDashboard_source_RideData_mc_517_44_519_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideData_mc_517_8_519_8_if_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_517_8_519_8_if_end:
+_workspace_garmin_RideDashboard_source_RideData_mc_501_63_520_4_stop:
     }
-    [ @file = "/workspace/garmin/RideDashboard/source/RideData.mc"; @line = 508; @symbol_functiondef = [track,508,13,18]; @symbol_return<0> = [Lang,508,24,28]; @symbol_return<1> = [Array,508,29,34]; ]
+    [ @file = "/workspace/garmin/RideDashboard/source/RideData.mc"; @line = 522; @symbol_functiondef = [track,522,13,18]; @symbol_return<0> = [Lang,522,24,28]; @symbol_return<1> = [Array,522,29,34]; ]
     function track() as Lang.Array {
-_workspace_garmin_RideDashboard_source_RideData_mc_508_35_510_4_start:
-[ "/workspace/garmin/RideDashboard/source/RideData.mc" 509 8 ]
-_workspace_garmin_RideDashboard_source_RideData_mc_509_16_509_38_begin:
-        symbol [ mTrack %tmp.2 509 16 22 ];
+_workspace_garmin_RideDashboard_source_RideData_mc_522_35_524_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideData.mc" 523 8 ]
+_workspace_garmin_RideDashboard_source_RideData_mc_523_16_523_38_begin:
+        symbol [ mTrack %tmp.2 523 16 22 ];
         %tmp.2 = getv ? :mTrack;
         %tmp.3 = null;
         %tmp.4 = eq %tmp.2 %tmp.3;
-        bf %tmp.4 @_workspace_garmin_RideDashboard_source_RideData_mc_509_16_509_38_else_false;
-_workspace_garmin_RideDashboard_source_RideData_mc_509_16_509_38_true:
+        bf %tmp.4 @_workspace_garmin_RideDashboard_source_RideData_mc_523_16_523_38_else_false;
+_workspace_garmin_RideDashboard_source_RideData_mc_523_16_523_38_true:
         %tmp.5 = newa 0;
         push %tmp.5;
-        goto @_workspace_garmin_RideDashboard_source_RideData_mc_509_16_509_38_end;
-_workspace_garmin_RideDashboard_source_RideData_mc_509_16_509_38_else_false:
-        symbol [ mTrack %tmp.7 509 38 44 ];
+        goto @_workspace_garmin_RideDashboard_source_RideData_mc_523_16_523_38_end;
+_workspace_garmin_RideDashboard_source_RideData_mc_523_16_523_38_else_false:
+        symbol [ mTrack %tmp.7 523 38 44 ];
         %tmp.7 = getv ? :mTrack;
         %tmp.8 = as %tmp.7 { (!Null) };
         push %tmp.8;
-_workspace_garmin_RideDashboard_source_RideData_mc_509_16_509_38_end:
-        %tmp.9 = phi [%tmp.4 @_workspace_garmin_RideDashboard_source_RideData_mc_509_16_509_38_begin] [%tmp.5 @_workspace_garmin_RideDashboard_source_RideData_mc_509_16_509_38_true] [%tmp.8 @_workspace_garmin_RideDashboard_source_RideData_mc_509_16_509_38_else_false] [%tmp.9 @_workspace_garmin_RideDashboard_source_RideData_mc_509_16_509_38_end];
+_workspace_garmin_RideDashboard_source_RideData_mc_523_16_523_38_end:
+        %tmp.9 = phi [%tmp.4 @_workspace_garmin_RideDashboard_source_RideData_mc_523_16_523_38_begin] [%tmp.5 @_workspace_garmin_RideDashboard_source_RideData_mc_523_16_523_38_true] [%tmp.8 @_workspace_garmin_RideDashboard_source_RideData_mc_523_16_523_38_else_false] [%tmp.9 @_workspace_garmin_RideDashboard_source_RideData_mc_523_16_523_38_end];
         %tmp.10 = as %tmp.9 Lang.Array;
-        symbol [ Lang %tmp.10 509 49 53 ];
-        symbol [ Array %tmp.10 509 54 59 ];
+        symbol [ Lang %tmp.10 523 49 53 ];
+        symbol [ Array %tmp.10 523 54 59 ];
         ret %tmp.10;
-_workspace_garmin_RideDashboard_source_RideData_mc_508_35_510_4_stop:
+_workspace_garmin_RideDashboard_source_RideData_mc_522_35_524_4_stop:
     }
 }
 [ @file = "/workspace/garmin/RideDashboard/source/RideData.mc"; @line = 1; ]
