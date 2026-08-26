@@ -24,9 +24,9 @@ module RideData {
     var mShowWeather = true;
     var mUseMap = true;
     var mCockpitStyle = true;
-    var mUseLev = true;
-    var mLevDeviceNumber = 0;
-    var mLev = null;
+    var mUseLev as Lang.Boolean = true;
+    var mLevDeviceNumber as Lang.Number = 0;
+    var mLev as RideLev or Null = null;
     var mTrack = null;
     var mLatitudeScale = 1.0;
 
@@ -305,7 +305,8 @@ module RideData {
     }
 
     //! Režim asistence tak, jak mu říká výrobce - Giant hlásí ECO, ACTIVE nebo
-    //! SPORT, u neznámé značky zbude jen číslo stupně.
+    //! SPORT, Fazua BREEZE až ROCKET. U neznámé značky zbude číslo stupně,
+    //! a když kolo hlásí i počet svých režimů, tak "ASIST 3/5".
     function assistModeText() as Lang.String or Null {
         var bike = lev();
         if (bike == null) {
@@ -316,8 +317,12 @@ module RideData {
             return name;
         }
         var level = bike.assistLevel();
-        if (level == null || level == 0) {
+        if (level == null) {
             return null;
+        }
+        var total = bike.totalAssistModes();
+        if (total != null && total > 0) {
+            return "ASIST " + level.toString() + "/" + total.toString();
         }
         return "ASIST " + level.toString();
     }

@@ -93,14 +93,26 @@ type 20 (frekvence 57, perioda 8192 = 4 Hz) a datové stránky si rozebere sám.
 Kanál je jen poslouchající (`CHANNEL_TYPE_RX_ONLY`) — Giant RideControl jiný typ
 kanálu nepřijme a zároveň tím kolu nic neposíláme.
 
-Ze společné stránky 80 se přečte i **výrobce**, takže stupeň asistence 0–7 jde
-pojmenovat tak, jak svítí na displeji kola:
+Dojezd, baterie i spotřeba fungují na **jakémkoli kole s profilem LEV** — to je
+standard, ne značková věc. Značkové jsou jen názvy režimů asistence: profil
+posílá pouhé číslo stupně 0–7 a Garmin ho proto nativně ukazuje jen jako číslo
+nebo sloupečky. Ze společné stránky 80 se ale dá přečíst **výrobce** (číselník
+je stejný jako ve FIT), takže stupeň jde pojmenovat tak, jak svítí na kole:
 
-| Výrobce (ID) | Režimy pro stupně 0–7 |
-|---|---|
-| Giant (108) | VYPNUTO, ECO, BASIC, ACTIVE, AUTO, SPORT, POWER |
-| Specialized (63), Mahle (299) | VYPNUTO, ECO, TRAIL, TURBO |
-| Yamaha (304) | VYPNUTO, ECO+, ECO, STD, HIGH, EXPW |
+| Výrobce (ID) | Režimy | Poznámka |
+|---|---|---|
+| Giant (108) | ECO, BASIC, ACTIVE, AUTO, SPORT, POWER | ověřené rozprostření po stupních 0–7 |
+| Specialized (63), Mahle (299) | ECO, TRAIL, TURBO | ověřené |
+| Yamaha (304) | ECO+, ECO, STD, HIGH, EXPW | ověřené |
+| Fazua (318) | BREEZE, RIVER, ROCKET | jen když kolo hlásí tři stupně |
+| TQ (141) | ECO, MID, HIGH | jen když kolo hlásí tři stupně |
+
+U prvních tří značek je ověřené i to, jak se jejich režimy rozprostřou po sedmi
+stupních profilu (kola s méně režimy stupně zdvojují). U Fazuy a TQ známe jen
+pořadí režimů, takže je aplikace pojmenuje jen tehdy, když kolo na stránce 5
+hlásí přesně tolik stupňů, kolik jich značka má — pak je mapování jedna ku jedné
+a není co odhadovat. Jinak zůstane `ASIST 3/5`, tedy stupeň a počet režimů z kola.
+Vymyslet si jméno je horší než ho neukázat.
 
 Po prvním spárování se ANT+ ID kola uloží do nastavení, aby se kanál příště
 nechytil cizího kola, které jede kolem. Vynulováním pole se aplikace spáruje
@@ -121,8 +133,10 @@ naopak ukazuje i režim asistence (`E-BIKE · ACTIVE`).
 
 ![Dojezd jako odhad, když kolo LEV neumí](docs/preview/ride-cockpit-estimate.png)
 
-LEV umí Giant (RideControl), Specialized, Fazua, Mahle nebo Yamaha. Bosch
-a Shimano posílají data po svém, tam zůstane odhad.
+Profil LEV vysílá Giant (RideControl), Specialized, Yamaha, Mahle, Fazua Ride 60
+(od firmware bundle 007) a TQ HPR50 v Treku Fuel EXe. **Bosch** ANT+ ignoruje
+úplně a **Shimano STEPS** jede po Bluetooth, tam zůstane odhad. Ne každý systém
+posílá všechno — TQ třeba dojezd nehlásí, takže se počítá ze stavu baterie.
 
 **Pozor na nativní spárování:** na jednom kole může viset jen jeden posluchač.
 Když je e-bike připojený přes systémové menu *Senzory* nebo ho drží jiná

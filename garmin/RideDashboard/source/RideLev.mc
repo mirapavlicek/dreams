@@ -23,12 +23,15 @@ class RideLev extends Ant.GenericChannel {
     //: Po takhle dlouhém tichu považujeme hodnoty za neplatné.
     const STALE_MS = 6000;
 
-    //: Výrobci ze společné stránky 80. Stupně asistence 0-7 mají u každého
-    //: jiná jména, na displeji kola svítí ta, ne čísla.
-    const MANUFACTURER_GIANT = 108;
+    //: Výrobci ze společné stránky 80 (číselník je stejný jako v FIT). Stupně
+    //: asistence 0-7 mají u každého jiná jména a na displeji kola svítí ta,
+    //: ne čísla.
     const MANUFACTURER_SPECIALIZED = 63;
+    const MANUFACTURER_GIANT = 108;
+    const MANUFACTURER_TQ = 141;
     const MANUFACTURER_MAHLE = 299;
     const MANUFACTURER_YAMAHA = 304;
+    const MANUFACTURER_FAZUA = 318;
 
     var mAssign as Ant.ChannelAssignment or Null = null;
     var mSearching as Lang.Boolean = true;
@@ -225,21 +228,38 @@ class RideLev extends Ant.GenericChannel {
     }
 
     //! Jak se stupeň asistence jmenuje na displeji kola. Profil posílá jen
-    //! číslo 0-7, jména jsou věc výrobce - Giant má šest režimů plus vypnuto,
-    //! Specialized a Mahle po třech, takže se sousední stupně opakují.
+    //! číslo 0-7, jména jsou věc výrobce. Když značku neznáme nebo si nejsme
+    //! jistí, který stupeň je který, vrátíme null a nahoře se ukáže číslo -
+    //! vymýšlet si jméno je horší než ho neukázat.
     function assistModeName() as Lang.String or Null {
         var level = assistLevel();
         if (level == null) {
             return null;
         }
-        var names = assistModeNames();
-        if (names == null || level >= names.size()) {
+        if (level == 0) {
+            return "VYPNUTO";
+        }
+
+        var known = expandedModeNames();
+        if (known != null) {
+            return level < known.size() ? known[level] : null;
+        }
+
+        // U ostatních značek známe jen pořadí režimů, ne jejich rozprostření
+        // po sedmi stupních profilu. Pojmenujeme je proto jen tehdy, když kolo
+        // hlásí přesně tolik stupňů, kolik jich značka má - pak je to jedna
+        // ku jedné a není co odhadovat.
+        var ordered = orderedModeNames();
+        if (ordered == null || mTotalAssistModes == null ||
+            mTotalAssistModes != ordered.size() || level > ordered.size()) {
             return null;
         }
-        return names[level];
+        return ordered[level - 1];
     }
 
-    function assistModeNames() as Lang.Array<Lang.String> or Null {
+    //! Značky, u kterých je ověřené i rozprostření jmen po stupních 0-7.
+    //! Kola s méně režimy stupně zdvojují, proto se jména opakují.
+    function expandedModeNames() as Lang.Array<Lang.String> or Null {
         if (mManufacturer == MANUFACTURER_GIANT) {
             return ["VYPNUTO", "ECO", "BASIC", "ACTIVE", "AUTO", "SPORT", "POWER", "POWER"];
         }
@@ -248,6 +268,17 @@ class RideLev extends Ant.GenericChannel {
         }
         if (mManufacturer == MANUFACTURER_YAMAHA) {
             return ["VYPNUTO", "ECO+", "ECO", "STD", "HIGH", "HIGH", "EXPW", "EXPW"];
+        }
+        return null;
+    }
+
+    //! Značky, kde známe režimy v pořadí od nejslabšího.
+    function orderedModeNames() as Lang.Array<Lang.String> or Null {
+        if (mManufacturer == MANUFACTURER_FAZUA) {
+            return ["BREEZE", "RIVER", "ROCKET"];
+        }
+        if (mManufacturer == MANUFACTURER_TQ) {
+            return ["ECO", "MID", "HIGH"];
         }
         return null;
     }
