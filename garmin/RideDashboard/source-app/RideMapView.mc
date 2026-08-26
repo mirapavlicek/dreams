@@ -17,22 +17,34 @@ class RideMapView extends WatchUi.MapTrackView {
     hidden var mTimer as Timer.Timer?;
     //: Kolik bodů stopy už je v polyline - přerýsovává se, jen když přibyly.
     hidden var mTrackPoints as Lang.Number = 0;
+    //: Než proběhne onLayout, nemá view plochu a na mapu se sahat nesmí.
+    hidden var mReady as Lang.Boolean = false;
 
+    //! Konstruktor mapu **nenastavuje**. `setScreenVisibleArea()` ani
+    //! `setMapMode()` se nesmí volat na view, které ještě není připojené -
+    //! skončí to "Unexpected Type Error", tedy pádem aplikace. Simulátor to
+    //! přejde, protože kartografii jen předstírá, na přístroji ne.
+    //! Obojí proto patří až do onLayout(), kdy view plochu opravdu má.
     function initialize() {
         MapTrackView.initialize();
-
-        var settings = System.getDeviceSettings();
-        RideLayout.prepareSize(settings.screenWidth, settings.screenHeight);
-        applyWindow();
-        setMapMode(WatchUi.MAP_MODE_PREVIEW);
     }
 
     //! Zaostří mapu tam, kde ji nepřekrývá palubovka.
     function applyWindow() as Void {
+        if (!mReady) {
+            return;
+        }
         var rect = (RideData.cockpitStyle() ? RideLayout.cockpitMapRect() : RideLayout.mapRect())
             as Lang.Array;
         setScreenVisibleArea(rect[0] as Lang.Number, rect[1] as Lang.Number,
             rect[2] as Lang.Number, rect[3] as Lang.Number);
+    }
+
+    function onLayout(dc) {
+        RideLayout.prepare(dc);
+        mReady = true;
+        applyWindow();
+        setMapMode(WatchUi.MAP_MODE_PREVIEW);
     }
 
     function onShow() {
@@ -92,6 +104,9 @@ class RideMapView extends WatchUi.MapTrackView {
     //! procházení projde nedotčené, takže se po návratu mapa sama vrátí do okna
     //! mezi překryvy.
     function setBrowsing(browsing as Lang.Boolean) as Void {
+        if (!mReady) {
+            return;
+        }
         setMapMode(browsing ? WatchUi.MAP_MODE_BROWSE : WatchUi.MAP_MODE_PREVIEW);
         WatchUi.requestUpdate();
     }

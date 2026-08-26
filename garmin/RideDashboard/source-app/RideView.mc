@@ -7,10 +7,16 @@ module RideMaps {
 
     //: Uživatel se z mapy vrátil zpět - sami už mu ji nevnucujeme.
     var mWanted as Lang.Boolean = true;
+    //: Mapu se nepodařilo otevřít; podruhé to už nezkoušíme.
+    var mBroken as Lang.Boolean = false;
 
     //! Mapové view existuje jen na jednotkách s kartografií v paměti.
     function available() as Lang.Boolean {
-        return (WatchUi has :MapTrackView) as Lang.Boolean;
+        return !mBroken && (WatchUi has :MapTrackView) as Lang.Boolean;
+    }
+
+    function setBroken() as Void {
+        mBroken = true;
     }
 
     function wanted() as Lang.Boolean {
@@ -61,13 +67,23 @@ class RideView extends WatchUi.View {
         WatchUi.requestUpdate();
     }
 
+    //! Mapová obrazovka je to jediné, co může na cizím přístroji selhat způsobem,
+    //! na který nedohlédneme - kartografie je na každé jednotce jiná a chová se
+    //! jinak než v simulátoru. Když se otevřít nedá, palubovka zůstane
+    //! s drobečkovou stopou; přijít o mapu je lepší než přijít o celou aplikaci.
     function onOpenMap() as Void {
         mMapTimer = null;
         if (!RideMaps.wanted()) {
             return;
         }
-        var view = new RideMapView();
-        WatchUi.pushView(view, new RideMapDelegate(view), WatchUi.SLIDE_IMMEDIATE);
+        try {
+            var view = new RideMapView();
+            WatchUi.pushView(view, new RideMapDelegate(view), WatchUi.SLIDE_IMMEDIATE);
+        } catch (exception) {
+            RideMaps.setWanted(false);
+            RideMaps.setBroken();
+            WatchUi.requestUpdate();
+        }
     }
 
     function onUpdate(dc) {
