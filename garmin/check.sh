@@ -15,8 +15,8 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 
 PROJECTS=()
 case "${1:-}" in
-    QMailDashboard|RideDashboard|RideField) PROJECTS=("$1"); shift ;;
-    *) PROJECTS=(QMailDashboard RideDashboard RideField) ;;
+    QMailDashboard|RideDashboard|RideField|RideTrip) PROJECTS=("$1"); shift ;;
+    *) PROJECTS=(QMailDashboard RideDashboard RideField RideTrip) ;;
 esac
 
 check_project() {
@@ -27,6 +27,7 @@ check_project() {
         QMailDashboard) device="$(python3 "$HERE/tools/stub_device.py" --id qmailstub --shape round --width 454 --height 454)" ;;
         RideDashboard)  device="$(python3 "$HERE/tools/stub_device.py" --id ridestub --shape rectangle --width 480 --height 800)" ;;
         RideField)      device="$(python3 "$HERE/tools/stub_device.py" --id fieldstub --shape rectangle --width 480 --height 800)" ;;
+        RideTrip)       device="$(python3 "$HERE/tools/stub_device.py" --id tripstub --shape rectangle --width 480 --height 800)" ;;
     esac
 
     # Manifest smí obsahovat jen skutečně stažená zařízení, takže náhradní id

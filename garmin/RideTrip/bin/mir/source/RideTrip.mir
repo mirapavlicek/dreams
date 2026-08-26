@@ -1,0 +1,116 @@
+[ @file = "/workspace/garmin/RideTrip/source/RideTrip.mc"; @line = 1; @symbol_usingdef<0> = [Toybox,1,6,12]; @symbol_usingdef<1> = [Activity,1,13,21]; ]
+using Toybox.Activity;
+[ @file = "/workspace/garmin/RideTrip/source/RideTrip.mc"; @line = 2; @symbol_usingdef<0> = [Toybox,2,6,12]; @symbol_usingdef<1> = [WatchUi,2,13,20]; ]
+using Toybox.WatchUi;
+//! Pruh s údaji o trase. Senzory kola neotevírá - ty drží první pole, a na
+//! jednom ANT+ kanálu může viset jen jeden posluchač.
+[ @file = "/workspace/garmin/RideTrip/source/RideTrip.mc"; @line = 6; @symbol_classdef = [RideTrip,6,6,14]; @symbol_extends<0> = [WatchUi,6,23,30]; @symbol_extends<1> = [DataField,6,31,40]; ]
+class RideTrip extends WatchUi.DataField {
+    [ @file = "/workspace/garmin/RideTrip/source/RideTrip.mc"; @line = 6; ]
+    <init> {
+    }
+    [ @file = "/workspace/garmin/RideTrip/source/RideTrip.mc"; @line = 6; ]
+    static
+    <init> {
+    }
+    [ @file = "/workspace/garmin/RideTrip/source/RideTrip.mc"; @line = 8; @symbol_functiondef = [initialize,8,13,23]; ]
+    function initialize() as Void {
+_workspace_garmin_RideTrip_source_RideTrip_mc_8_26_10_4_start:
+[ "/workspace/garmin/RideTrip/source/RideTrip.mc" 9 8 ]
+        symbol [ DataField %tmp.2 9 8 17 ];
+        %tmp.2 = getv ? :DataField;
+        symbol [ initialize %tmp.3 9 18 28 ];
+        %tmp.3 = getv function %tmp.2 :initialize;
+        invoke %tmp.2 %tmp.3();
+_workspace_garmin_RideTrip_source_RideTrip_mc_8_26_10_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideTrip/source/RideTrip.mc"; @line = 12; @symbol_functiondef = [compute,12,13,20]; @symbol_param<0> = [info,12,21,25]; @symbol_param<0>_type<0> = [Activity,12,29,37]; @symbol_param<0>_type<1> = [Info,12,38,42]; ]
+    function compute(info as Activity.Info) as Void {
+    }
+    [ @file = "/workspace/garmin/RideTrip/source/RideTrip.mc"; @line = 15; @symbol_functiondef = [onUpdate,15,13,21]; @symbol_param<0> = [dc,15,22,24]; ]
+    function onUpdate(dc) as Void {
+_workspace_garmin_RideTrip_source_RideTrip_mc_15_34_28_4_start:
+[ "/workspace/garmin/RideTrip/source/RideTrip.mc" 16 8 ]
+_workspace_garmin_RideTrip_source_RideTrip_mc_16_8_19_8_if_stmt:
+        symbol [ RideTrouble %tmp.2 16 12 23 ];
+        %tmp.2 = getv ? :RideTrouble;
+        symbol [ caught %tmp.3 16 24 30 ];
+        %tmp.3 = getv function %tmp.2 :caught;
+        %tmp.4 = invoke %tmp.2 %tmp.3();
+        bf %tmp.4 @_workspace_garmin_RideTrip_source_RideTrip_mc_16_8_19_8_if_end;
+_workspace_garmin_RideTrip_source_RideTrip_mc_16_8_19_8_if_true:
+_workspace_garmin_RideTrip_source_RideTrip_mc_16_34_19_8_start:
+[ "/workspace/garmin/RideTrip/source/RideTrip.mc" 17 12 ]
+        symbol [ RideTrouble %tmp.6 17 12 23 ];
+        %tmp.6 = getv ? :RideTrouble;
+        symbol [ draw %tmp.7 17 24 28 ];
+        %tmp.7 = getv function %tmp.6 :draw;
+        %tmp.8 = lgetv %dc;
+        symbol [ dc %tmp.8 17 29 31 ];
+        invoke %tmp.6 %tmp.7(%tmp.8);
+[ "/workspace/garmin/RideTrip/source/RideTrip.mc" 18 12 ]
+        ret ?;
+_workspace_garmin_RideTrip_source_RideTrip_mc_16_34_19_8_stop:
+        goto @_workspace_garmin_RideTrip_source_RideTrip_mc_16_8_19_8_if_end;
+_workspace_garmin_RideTrip_source_RideTrip_mc_16_8_19_8_if_end:
+[ "/workspace/garmin/RideTrip/source/RideTrip.mc" 20 8 ]
+        try @_workspace_garmin_RideTrip_source_RideTrip_mc_20_8_27_8_beginTry @_workspace_garmin_RideTrip_source_RideTrip_mc_20_8_27_8_endTry @_workspace_garmin_RideTrip_source_RideTrip_mc_20_8_27_8_catch @_workspace_garmin_RideTrip_source_RideTrip_mc_20_8_27_8_finally;
+_workspace_garmin_RideTrip_source_RideTrip_mc_20_8_27_8_beginTry:
+_workspace_garmin_RideTrip_source_RideTrip_mc_20_12_24_8_start:
+[ "/workspace/garmin/RideTrip/source/RideTrip.mc" 23 12 ]
+        symbol [ RideCockpit %tmp.10 23 12 23 ];
+        %tmp.10 = getv ? :RideCockpit;
+        symbol [ drawBottomBand %tmp.11 23 24 38 ];
+        %tmp.11 = getv function %tmp.10 :drawBottomBand;
+        %tmp.12 = lgetv %dc;
+        symbol [ dc %tmp.12 23 39 41 ];
+        invoke %tmp.10 %tmp.11(%tmp.12);
+_workspace_garmin_RideTrip_source_RideTrip_mc_20_12_24_8_stop:
+_workspace_garmin_RideTrip_source_RideTrip_mc_20_8_27_8_endTry:
+        jsr @_workspace_garmin_RideTrip_source_RideTrip_mc_20_8_27_8_finally;
+        goto @_workspace_garmin_RideTrip_source_RideTrip_mc_20_8_27_8_end;
+_workspace_garmin_RideTrip_source_RideTrip_mc_20_8_27_8_catch:
+        %tmp.13 = exception;
+        push %tmp.13;
+[ "/workspace/garmin/RideTrip/source/RideTrip.mc" 24 10 ]
+        [ "_workspace_garmin_RideTrip_source_RideTrip_mc_20_8_27_8_catch" "_workspace_garmin_RideTrip_source_RideTrip_mc_24_10_27_8_end" ]
+        %exception.1 = local;
+        symbol [ exception %exception.1 24 17 26 ];
+        %tmp.14 = dup %tmp.13;
+        lputv %exception.1 %tmp.14;
+        symbol [ exception %exception.1 24 17 26 ];
+_workspace_garmin_RideTrip_source_RideTrip_mc_24_28_27_8_start:
+[ "/workspace/garmin/RideTrip/source/RideTrip.mc" 25 12 ]
+        symbol [ RideTrouble %tmp.16 25 12 23 ];
+        %tmp.16 = getv ? :RideTrouble;
+        symbol [ note %tmp.17 25 24 28 ];
+        %tmp.17 = getv function %tmp.16 :note;
+        %tmp.18 = "pruh s trasou";
+        %tmp.19 = lgetv %exception.1;
+        symbol [ exception %tmp.19 25 46 55 ];
+        invoke %tmp.16 %tmp.17(%tmp.18, %tmp.19);
+[ "/workspace/garmin/RideTrip/source/RideTrip.mc" 26 12 ]
+        symbol [ RideTrouble %tmp.21 26 12 23 ];
+        %tmp.21 = getv ? :RideTrouble;
+        symbol [ draw %tmp.22 26 24 28 ];
+        %tmp.22 = getv function %tmp.21 :draw;
+        %tmp.23 = lgetv %dc;
+        symbol [ dc %tmp.23 26 29 31 ];
+        invoke %tmp.21 %tmp.22(%tmp.23);
+_workspace_garmin_RideTrip_source_RideTrip_mc_24_28_27_8_stop:
+        jsr @_workspace_garmin_RideTrip_source_RideTrip_mc_20_8_27_8_finally;
+        pop;
+        goto @_workspace_garmin_RideTrip_source_RideTrip_mc_20_8_27_8_end;
+_workspace_garmin_RideTrip_source_RideTrip_mc_24_10_27_8_end:
+        try @_workspace_garmin_RideTrip_source_RideTrip_mc_20_8_27_8_catch @_workspace_garmin_RideTrip_source_RideTrip_mc_24_10_27_8_end @_workspace_garmin_RideTrip_source_RideTrip_mc_24_10_27_8_end @_workspace_garmin_RideTrip_source_RideTrip_mc_20_8_27_8_finally;
+        jsr @_workspace_garmin_RideTrip_source_RideTrip_mc_20_8_27_8_finally;
+        throw %tmp.13;
+_workspace_garmin_RideTrip_source_RideTrip_mc_20_8_27_8_finally:
+        jsrret;
+_workspace_garmin_RideTrip_source_RideTrip_mc_20_8_27_8_end:
+_workspace_garmin_RideTrip_source_RideTrip_mc_15_34_28_4_stop:
+    }
+}
+[ @file = "/workspace/garmin/RideTrip/source/RideTrip.mc"; @line = 1; ]
+<init> {
+}

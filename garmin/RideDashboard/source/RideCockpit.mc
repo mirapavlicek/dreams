@@ -55,13 +55,20 @@ module RideCockpit {
     //! Překryv nad mapou, který se na jedné straně rozplyne. Průhlednost umí až
     //! API 4.0; bez ní zůstane prostý neprůhledný pruh.
     function scrim(dc, y, height, fadeAtBottom as Lang.Boolean) as Void {
+        if (RideLayout.band()) {
+            // V datovém poli je pod námi vlastní pozadí, ne mapa; rozplývat se
+            // není do čeho.
+            dc.setColor(RideLayout.color("background"), RideLayout.color("background"));
+            dc.clear();
+            return;
+        }
         var spec = RideLayout.group("cockpit", "scrim");
         var color = spec["color"] as Lang.Number;
         var width = dc.getWidth();
 
         if (!(Graphics has :createColor)) {
             dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-            dc.fillRectangle(0, RideLayout.y(y), width, RideLayout.y(height));
+            dc.fillRectangle(0, RideLayout.y(y), width, RideLayout.dy(height));
             return;
         }
 
@@ -73,7 +80,7 @@ module RideCockpit {
 
         dc.setColor(Graphics.createColor(alpha, red, green, blue), Graphics.COLOR_TRANSPARENT);
         dc.fillRectangle(0, RideLayout.y(fadeAtBottom ? y : y + fade), width,
-            RideLayout.y(height - fade));
+            RideLayout.dy(height - fade));
 
         var step = fade / SCRIM_STEPS;
         for (var i = 0; i < SCRIM_STEPS; i += 1) {
@@ -83,14 +90,14 @@ module RideCockpit {
                 ? y + height - fade + i * step
                 : y + fade - (i + 1) * step;
             dc.setColor(Graphics.createColor(bandAlpha, red, green, blue), Graphics.COLOR_TRANSPARENT);
-            dc.fillRectangle(0, RideLayout.y(top), width, RideLayout.y(step) + 1);
+            dc.fillRectangle(0, RideLayout.y(top), width, RideLayout.dy(step) + 1);
         }
     }
 
     function card(dc, x, y, width, height, radius) as Void {
         dc.setColor(RideLayout.color("panel"), Graphics.COLOR_TRANSPARENT);
         dc.fillRoundedRectangle(RideLayout.x(x), RideLayout.y(y),
-            RideLayout.x(width), RideLayout.y(height), RideLayout.s(radius));
+            RideLayout.x(width), RideLayout.dy(height), RideLayout.s(radius));
     }
 
     function pill(dc, x, y, width, height) as Void {
@@ -134,6 +141,21 @@ module RideCockpit {
     function cap(dc, cx, cy, radius, pen, degrees) as Void {
         var radians = degrees * Math.PI / 180.0;
         dc.fillCircle(cx + radius * Math.cos(radians), cy - radius * Math.sin(radians), pen / 2.0);
+    }
+
+    //! Horní překryv palubovky do vlastního rámečku - pro datové pole nad
+    //! nativní mapou. Kreslí se týmž kódem jako v aplikaci, jen se roztáhne
+    //! pruh návrhu místo celého plátna.
+    function drawTopBand(dc) as Void {
+        RideLayout.prepareBand(dc, 0, RideLayout.at(RideLayout.group("cockpit", "top"), "height"));
+        drawTop(dc);
+    }
+
+    //! Spodní překryv do vlastního rámečku - dojezd, stav a proužek baterie.
+    function drawBottomBand(dc) as Void {
+        var spec = RideLayout.group("cockpit", "bottom");
+        RideLayout.prepareBand(dc, RideLayout.at(spec, "y"), RideLayout.number("canvas", "height"));
+        drawBottom(dc);
     }
 
     // --- horní překryv ------------------------------------------------------

@@ -1,0 +1,95 @@
+[ @file = "/workspace/garmin/RideDashboard/source/RideCompact.mc"; @line = 1; @symbol_usingdef<0> = [Toybox,1,6,12]; @symbol_usingdef<1> = [Lang,1,13,17]; ]
+using Toybox.Lang;
+//! Rozpozná, jestli má kreslení k dispozici celý displej, nebo jen pruh.
+//!
+//! Datové pole nedostane vždycky celou obrazovku - typicky je to pruh nad nebo
+//! pod nativní mapou. Celá palubovka by se do něj jen svisle zmáčkla, takže se
+//! místo ní kreslí jen ten překryv původního návrhu, který do pruhu patří
+//! (viz RideCockpit.drawTopBand a drawBottomBand).
+[ @file = "/workspace/garmin/RideDashboard/source/RideCompact.mc"; @line = 9; @symbol_moduledef = [RideCompact,9,7,18]; ]
+module RideCompact {
+    [ @file = "/workspace/garmin/RideDashboard/source/RideCompact.mc"; @line = 9; ]
+    <init> {
+    }
+    //! Rozhoduje poměr stran proti návrhovému plátnu: když je rámeček výrazně
+    //! plošší, je to podíl na datové obrazovce, ne celý displej.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideCompact.mc"; @line = 13; @symbol_functiondef = [band,13,13,17]; @symbol_param<0> = [dc,13,18,20]; @symbol_return<0> = [Lang,13,25,29]; @symbol_return<1> = [Boolean,13,30,37]; ]
+    function band(dc) as Lang.Boolean {
+_workspace_garmin_RideDashboard_source_RideCompact_mc_13_38_19_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideCompact.mc" 14 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideCompact_mc_13_38_19_4_start" "_workspace_garmin_RideDashboard_source_RideCompact_mc_13_38_19_4_stop" ]
+        %canvas.1 = local;
+        symbol [ canvas %canvas.1 14 12 18 ];
+        symbol [ RideLayout %tmp.2 14 21 31 ];
+        %tmp.2 = getv ? :RideLayout;
+        symbol [ section %tmp.3 14 32 39 ];
+        %tmp.3 = getv function %tmp.2 :section;
+        %tmp.4 = "canvas";
+        %tmp.5 = invoke %tmp.2 %tmp.3(%tmp.4);
+        lputv %canvas.1 %tmp.5;
+        symbol [ canvas %canvas.1 14 12 18 ];
+[ "/workspace/garmin/RideDashboard/source/RideCompact.mc" 15 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideCompact_mc_13_38_19_4_start" "_workspace_garmin_RideDashboard_source_RideCompact_mc_13_38_19_4_stop" ]
+        %designed.2 = local;
+        symbol [ designed %designed.2 15 12 20 ];
+        %tmp.6 = lgetv %canvas.1;
+        symbol [ canvas %tmp.6 15 24 30 ];
+        %tmp.7 = "height";
+        %tmp.8 = agetv %tmp.6 %tmp.7;
+        %tmp.9 = as %tmp.8 Lang.Number;
+        symbol [ Lang %tmp.9 15 44 48 ];
+        symbol [ Number %tmp.9 15 49 55 ];
+        symbol [ toFloat %tmp.10 15 57 64 ];
+        %tmp.10 = getv function %tmp.9 :toFloat;
+        %tmp.11 = invoke %tmp.9 %tmp.10();
+        %tmp.12 = lgetv %canvas.1;
+        symbol [ canvas %tmp.12 16 13 19 ];
+        %tmp.13 = "width";
+        %tmp.14 = agetv %tmp.12 %tmp.13;
+        %tmp.15 = as %tmp.14 Lang.Number;
+        symbol [ Lang %tmp.15 16 32 36 ];
+        symbol [ Number %tmp.15 16 37 43 ];
+        symbol [ toFloat %tmp.16 16 45 52 ];
+        %tmp.16 = getv function %tmp.15 :toFloat;
+        %tmp.17 = invoke %tmp.15 %tmp.16();
+        %tmp.18 = div %tmp.11 %tmp.17;
+        lputv %designed.2 %tmp.18;
+        symbol [ designed %designed.2 15 12 20 ];
+[ "/workspace/garmin/RideDashboard/source/RideCompact.mc" 17 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideCompact_mc_13_38_19_4_start" "_workspace_garmin_RideDashboard_source_RideCompact_mc_13_38_19_4_stop" ]
+        %actual.3 = local;
+        symbol [ actual %actual.3 17 12 18 ];
+        %tmp.19 = lgetv %dc;
+        symbol [ dc %tmp.19 17 21 23 ];
+        symbol [ getHeight %tmp.20 17 24 33 ];
+        %tmp.20 = getv function %tmp.19 :getHeight;
+        %tmp.21 = invoke %tmp.19 %tmp.20();
+        symbol [ toFloat %tmp.22 17 36 43 ];
+        %tmp.22 = getv function %tmp.21 :toFloat;
+        %tmp.23 = invoke %tmp.21 %tmp.22();
+        %tmp.24 = lgetv %dc;
+        symbol [ dc %tmp.24 17 48 50 ];
+        symbol [ getWidth %tmp.25 17 51 59 ];
+        %tmp.25 = getv function %tmp.24 :getWidth;
+        %tmp.26 = invoke %tmp.24 %tmp.25();
+        symbol [ toFloat %tmp.27 17 62 69 ];
+        %tmp.27 = getv function %tmp.26 :toFloat;
+        %tmp.28 = invoke %tmp.26 %tmp.27();
+        %tmp.29 = div %tmp.23 %tmp.28;
+        lputv %actual.3 %tmp.29;
+        symbol [ actual %actual.3 17 12 18 ];
+[ "/workspace/garmin/RideDashboard/source/RideCompact.mc" 18 8 ]
+        %tmp.30 = lgetv %actual.3;
+        symbol [ actual %tmp.30 18 15 21 ];
+        %tmp.31 = lgetv %designed.2;
+        symbol [ designed %tmp.31 18 24 32 ];
+        %tmp.32 = 0.75;
+        %tmp.33 = mul %tmp.31 %tmp.32;
+        %tmp.34 = lt %tmp.30 %tmp.33;
+        ret %tmp.34;
+_workspace_garmin_RideDashboard_source_RideCompact_mc_13_38_19_4_stop:
+    }
+}
+[ @file = "/workspace/garmin/RideDashboard/source/RideCompact.mc"; @line = 1; ]
+<init> {
+}

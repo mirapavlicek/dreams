@@ -59,14 +59,42 @@ module RideLayout {
         return value == null ? true : value as Lang.Boolean;
     }
 
+    //: Posun návrhu, když se kreslí jen jeho pruh (viz prepareBand).
+    var mOffsetY = 0.0;
+    var mBand = false;
+
     //! Přepočítá měřítko podle skutečné velikosti displeje.
     function prepare(dc) as Void {
+        mOffsetY = 0.0;
+        mBand = false;
         prepareSize(dc.getWidth(), dc.getHeight());
+    }
+
+    //! Roztáhne **jen pruh návrhu** na celou plochu.
+    //!
+    //! Datové pole dostane úzký rámeček nad nebo pod nativní mapou. Původní
+    //! palubovka je přitom právě dva takové pruhy - horní překryv s kadencí
+    //! a tachometrem a spodní s dojezdem a stavem. Tímhle se dá každý z nich
+    //! nakreslit beze změny kódu, jen do svého rámečku.
+    function prepareBand(dc, designTop, designBottom) as Void {
+        var canvas = section("canvas");
+        mScaleX = dc.getWidth() / (canvas["width"] as Lang.Number).toFloat();
+        mScaleY = dc.getHeight() / (designBottom - designTop).toFloat();
+        mScale = mScaleX < mScaleY ? mScaleX : mScaleY;
+        mOffsetY = -designTop * mScaleY;
+        mBand = true;
+    }
+
+    //! Kreslí se zrovna jen pruh návrhu?
+    function band() as Lang.Boolean {
+        return mBand;
     }
 
     //! Totéž bez kreslicího kontextu - mapové view potřebuje rozměry okna už
     //! v konstruktoru, kde žádné dc není.
     function prepareSize(width, height) as Void {
+        mOffsetY = 0.0;
+        mBand = false;
         var canvas = section("canvas");
         mScaleX = width / (canvas["width"] as Lang.Number).toFloat();
         mScaleY = height / (canvas["height"] as Lang.Number).toFloat();
@@ -114,7 +142,16 @@ module RideLayout {
     }
 
     function y(designY) {
-        return designY * mScaleY;
+        return designY * mScaleY + mOffsetY;
+    }
+
+    //! Svislá **délka** v pixelech, tedy výška nebo rozestup.
+    //!
+    //! Musí být oddělená od y(): ta k souřadnici přičítá posun pruhu, kdežto
+    //! délka se posunout nesmí. Když se to plete, výšky vyjdou nesmyslně
+    //! (a proužek baterie zmizí z obrazovky).
+    function dy(length) {
+        return length * mScaleY;
     }
 
     //! Zpátky z pixelů displeje do návrhových - pro dopočty, které vycházejí
@@ -191,6 +228,21 @@ module RideLayout {
             font = candidates[index];
         }
         return font;
+    }
+
+    //! Největší font ze seznamu, do kterého se text vejde na šířku i na výšku.
+    //! Pro datové pole, kde rámeček určuje přístroj a návrhová velikost nemá
+    //! co říct.
+    function fitBox(dc, candidates as Lang.Array, text, maxWidth, maxHeight) {
+        var best = candidates[0];
+        for (var i = 0; i < candidates.size(); i += 1) {
+            var font = candidates[i];
+            if (dc.getFontHeight(font) <= maxHeight &&
+                dc.getTextWidthInPixels(text, font) <= maxWidth) {
+                best = font;
+            }
+        }
+        return best;
     }
 
     function fitFont(dc, text, maxWidth, designSize) {

@@ -33,8 +33,10 @@ class RideField extends WatchUi.DataField {
             // Pole nemusí dostat celou obrazovku. Na podílu datové obrazovky
             // by se návrh počítaný na celý displej jen svisle zmáčkl, takže se
             // místo něj kreslí mřížka metrik.
-            if (RideCompact.needed(dc)) {
-                RideCompact.draw(dc);
+            if (RideCompact.band(dc)) {
+                // Horní překryv původní palubovky - kadence v ciferníku,
+                // tachometr, hodiny a pilulky s průměrem a maximem.
+                RideCockpit.drawTopBand(dc);
             } else if (RideData.cockpitStyle()) {
                 RideCockpit.draw(dc, false);
             } else {

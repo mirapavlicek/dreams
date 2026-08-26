@@ -433,12 +433,28 @@ Exception: Page control not allowed in current app type (or mode) - Data Field
 Mapu vedle palubovky dá nativní mapové datové pole přístroje, a je lepší než
 cokoli, co jde z Connect IQ postavit.
 
-### Když pole nedostane celou obrazovku
+### Dvě pole a mezi nimi mapa
 
-Na podílu datové obrazovky (vedle nativní mapy nebo Bosch polí) by se návrh
-počítaný na celý displej jen svisle zmáčkl. Když je rámeček výrazně plošší než
-návrhové plátno, kreslí se místo něj **mřížka metrik** ve dvou sloupcích -
-tolik údajů, kolik se vejde čitelně, od rychlosti a kadence po převýšení.
+Palubovka ve stylu přístrojového štítu je vlastně **dva pruhy nad mapou**.
+Když se každý z nich dá do vlastního datového pole a mezi ně nativní mapa
+přístroje, složí se zpátky celý původní dashboard - jen s opravdovou
+kartografií, kterou by Connect IQ nikdy nenakreslil:
+
+| Datová obrazovka | Co tam patří |
+|---|---|
+| horní pole | **RideField** - kompasová páska, ciferník kadence, tachometr, hodiny, pilulky s průměrem a maximem |
+| prostřední | **nativní mapa přístroje** |
+| spodní pole | **RideTrip** - dojezd e-biku, do cíle, najeto, stavový řádek a proužek baterie |
+
+Kreslí to týž kód jako aplikace. `RideLayout.prepareBand()` jen roztáhne pruh
+návrhu na celý rámeček místo celého plátna, takže se obojí nemůže rozejít.
+
+Pozor na rozdíl mezi souřadnicí a délkou: `y()` k souřadnici přičítá posun
+pruhu, kdežto výška se posunout nesmí a má vlastní `dy()`. Když se to plete,
+výšky vyjdou nesmyslně a třeba proužek baterie zmizí z obrazovky.
+
+Senzory kola drží jen `RideField`; `RideTrip` je neotevírá, protože na jednom
+ANT+ kanálu smí viset jen jeden posluchač.
 
 ```bash
 ./garmin/build_all.sh RideField            # všechny jednotky do garmin/dist

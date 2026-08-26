@@ -1,0 +1,77 @@
+[ @file = "/workspace/garmin/RideTrip/source/RideTripApp.mc"; @line = 1; @symbol_usingdef<0> = [Toybox,1,6,12]; @symbol_usingdef<1> = [Application,1,13,24]; ]
+using Toybox.Application;
+[ @file = "/workspace/garmin/RideTrip/source/RideTripApp.mc"; @line = 2; @symbol_usingdef<0> = [Toybox,2,6,12]; @symbol_usingdef<1> = [WatchUi,2,13,20]; ]
+using Toybox.WatchUi;
+//! Druhé datové pole: údaje o trase do pruhu pod mapou.
+//!
+//! Kreslení i data sdílí s ../RideDashboard, jen ukazuje jiné údaje než
+//! RideField. Smysl dává ve dvojici: nahoře rychlost a kadence, uprostřed
+//! nativní mapa přístroje, dole tohle.
+[ @file = "/workspace/garmin/RideTrip/source/RideTripApp.mc"; @line = 9; @symbol_classdef = [RideTripApp,9,6,17]; @symbol_extends<0> = [Application,9,26,37]; @symbol_extends<1> = [AppBase,9,38,45]; ]
+class RideTripApp extends Application.AppBase {
+    [ @file = "/workspace/garmin/RideTrip/source/RideTripApp.mc"; @line = 9; ]
+    <init> {
+    }
+    [ @file = "/workspace/garmin/RideTrip/source/RideTripApp.mc"; @line = 9; ]
+    static
+    <init> {
+    }
+    [ @file = "/workspace/garmin/RideTrip/source/RideTripApp.mc"; @line = 11; @symbol_functiondef = [initialize,11,13,23]; ]
+    function initialize() as Void {
+_workspace_garmin_RideTrip_source_RideTripApp_mc_11_26_13_4_start:
+[ "/workspace/garmin/RideTrip/source/RideTripApp.mc" 12 8 ]
+        symbol [ AppBase %tmp.2 12 8 15 ];
+        %tmp.2 = getv ? :AppBase;
+        symbol [ initialize %tmp.3 12 16 26 ];
+        %tmp.3 = getv function %tmp.2 :initialize;
+        invoke %tmp.2 %tmp.3();
+_workspace_garmin_RideTrip_source_RideTripApp_mc_11_26_13_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideTrip/source/RideTripApp.mc"; @line = 15; @symbol_functiondef = [onStart,15,13,20]; @symbol_param<0> = [state,15,21,26]; ]
+    function onStart(state) {
+_workspace_garmin_RideTrip_source_RideTripApp_mc_15_28_17_4_start:
+[ "/workspace/garmin/RideTrip/source/RideTripApp.mc" 16 8 ]
+        symbol [ RideData %tmp.2 16 8 16 ];
+        %tmp.2 = getv ? :RideData;
+        symbol [ reloadSettings %tmp.3 16 17 31 ];
+        %tmp.3 = getv function %tmp.2 :reloadSettings;
+        invoke %tmp.2 %tmp.3();
+_workspace_garmin_RideTrip_source_RideTripApp_mc_15_28_17_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideTrip/source/RideTripApp.mc"; @line = 19; @symbol_functiondef = [onStop,19,13,19]; @symbol_param<0> = [state,19,20,25]; ]
+    function onStop(state) {
+    }
+    [ @file = "/workspace/garmin/RideTrip/source/RideTripApp.mc"; @line = 22; @symbol_functiondef = [getInitialView,22,13,27]; ]
+    function getInitialView() {
+_workspace_garmin_RideTrip_source_RideTripApp_mc_22_30_24_4_start:
+[ "/workspace/garmin/RideTrip/source/RideTripApp.mc" 23 8 ]
+        %tmp.1 = newa 1;
+        symbol [ RideTrip %tmp.5 23 20 28 ];
+        %tmp.5 = getv ? :RideTrip;
+        %tmp.2 = newc %tmp.5 ();
+        %tmp.6 = dup %tmp.1;
+        %tmp.7 = aputv %tmp.6 0 %tmp.2;
+        ret %tmp.7;
+_workspace_garmin_RideTrip_source_RideTripApp_mc_22_30_24_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideTrip/source/RideTripApp.mc"; @line = 26; @symbol_functiondef = [onSettingsChanged,26,13,30]; ]
+    function onSettingsChanged() {
+_workspace_garmin_RideTrip_source_RideTripApp_mc_26_33_29_4_start:
+[ "/workspace/garmin/RideTrip/source/RideTripApp.mc" 27 8 ]
+        symbol [ RideData %tmp.2 27 8 16 ];
+        %tmp.2 = getv ? :RideData;
+        symbol [ reloadSettings %tmp.3 27 17 31 ];
+        %tmp.3 = getv function %tmp.2 :reloadSettings;
+        invoke %tmp.2 %tmp.3();
+[ "/workspace/garmin/RideTrip/source/RideTripApp.mc" 28 8 ]
+        symbol [ WatchUi %tmp.4 28 8 15 ];
+        %tmp.4 = getm $.Toybox.WatchUi;
+        symbol [ requestUpdate %tmp.5 28 16 29 ];
+        %tmp.5 = getv function %tmp.4 :requestUpdate;
+        invoke %tmp.4 %tmp.5();
+_workspace_garmin_RideTrip_source_RideTripApp_mc_26_33_29_4_stop:
+    }
+}
+[ @file = "/workspace/garmin/RideTrip/source/RideTripApp.mc"; @line = 1; ]
+<init> {
+}

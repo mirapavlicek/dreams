@@ -62,7 +62,7 @@ module RideChrome {
         var px = RideLayout.x(x);
         var py = RideLayout.y(y);
         var pw = RideLayout.x(width);
-        var ph = RideLayout.y(height);
+        var ph = RideLayout.dy(height);
         var pr = RideLayout.s(radius);
 
         dc.setColor(RideLayout.color("panel"), Graphics.COLOR_TRANSPARENT);
@@ -140,10 +140,10 @@ module RideChrome {
             filled = 1.0;
         }
         dc.setColor(RideLayout.color("panelEdge"), Graphics.COLOR_TRANSPARENT);
-        dc.fillRectangle(RideLayout.x(x), RideLayout.y(y), RideLayout.x(width), RideLayout.y(height));
+        dc.fillRectangle(RideLayout.x(x), RideLayout.y(y), RideLayout.x(width), RideLayout.dy(height));
         if (filled > 0.0) {
             dc.setColor(RideLayout.color(colorName), Graphics.COLOR_TRANSPARENT);
-            dc.fillRectangle(RideLayout.x(x), RideLayout.y(y), RideLayout.x(width * filled), RideLayout.y(height));
+            dc.fillRectangle(RideLayout.x(x), RideLayout.y(y), RideLayout.x(width * filled), RideLayout.dy(height));
         }
     }
 
@@ -390,7 +390,7 @@ module RideChrome {
             rows.add([RideLayout.fitFont(dc, texts[3], room, 12), texts[3], "textDim"]);
         }
 
-        var barHeight = RideLayout.y(6);
+        var barHeight = RideLayout.dy(6);
         var total = 0.0;
         var heights = [];
         for (var i = 0; i < rows.size(); i += 1) {
@@ -402,7 +402,7 @@ module RideChrome {
 
         // Odspodu ubíráme, dokud se sloupeček do buňky nevejde - poznámka je
         // postradatelnější než hodnota.
-        var boxHeight = RideLayout.y(height) - RideLayout.y(8);
+        var boxHeight = RideLayout.dy(height) - RideLayout.dy(8);
         while (rows.size() > 2 && total > boxHeight) {
             total -= (heights[heights.size() - 1] as Lang.Float) + gap;
             rows = rows.slice(0, rows.size() - 1);
@@ -442,10 +442,10 @@ module RideChrome {
         // Slovo KOMPAS je postradatelné - směr říká šipka i údaj pod ní.
         var labelHeight = dc.getFontHeight(RideLayout.textFont(dc, 12));
         var top = RideLayout.y(y);
-        var titled = RideLayout.y(height) > labelHeight * 5;
+        var titled = RideLayout.dy(height) > labelHeight * 5;
         if (titled) {
             labelIn(dc, x + width / 2.0, y + 16, width - 8, "KOMPAS", 12, "textDim");
-            top += RideLayout.y(26);
+            top += RideLayout.dy(26);
         } else {
             top += labelHeight / 3;
         }
@@ -504,7 +504,7 @@ module RideChrome {
 
         dc.setColor(RideLayout.color("panel"), Graphics.COLOR_TRANSPARENT);
         dc.fillRectangle(RideLayout.x(x + 1), RideLayout.y(y + height - strip),
-            RideLayout.x(width - 2), RideLayout.y(strip - 1));
+            RideLayout.x(width - 2), RideLayout.dy(strip - 1));
 
         dc.setColor(RideLayout.color("textDim"), Graphics.COLOR_TRANSPARENT);
         dc.drawText(RideLayout.x(x + width / 2.0), RideLayout.y(y + height - strip / 2.0),
@@ -512,7 +512,7 @@ module RideChrome {
 
         dc.setColor(RideLayout.color("panelEdge"), Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(2);
-        dc.drawRectangle(RideLayout.x(x), RideLayout.y(y), RideLayout.x(width), RideLayout.y(height));
+        dc.drawRectangle(RideLayout.x(x), RideLayout.y(y), RideLayout.x(width), RideLayout.dy(height));
     }
 
     //! Drobečková mapa z GPS bodů pro jednotky bez kartografie.
@@ -575,7 +575,7 @@ module RideChrome {
         }
 
         var boxWidth = RideLayout.x(width - 2 * padding);
-        var boxHeight = RideLayout.y(height - 2 * padding);
+        var boxHeight = RideLayout.dy(height - 2 * padding);
         var box = boxWidth < boxHeight ? boxWidth : boxHeight;
         var scale = box / span;
         var offsetX = RideLayout.x(x + padding) + (boxWidth - spanX * scale) / 2;
@@ -633,7 +633,7 @@ module RideChrome {
         // Titulek a hodnota se staví od středu buňky podle změřených výšek;
         // u baterie se pod ně vejde ještě proužek. Pevné odsazení od horní
         // hrany fungovalo jen pro vysokou buňku z Edge 1050.
-        var barHeight = RideLayout.y(4);
+        var barHeight = RideLayout.dy(4);
         var rowGap = RideLayout.y(3);
 
         for (var i = 0; i < titles.size(); i += 1) {

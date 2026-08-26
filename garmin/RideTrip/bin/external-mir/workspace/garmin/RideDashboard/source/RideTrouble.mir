@@ -1,0 +1,565 @@
+[ @file = "/workspace/garmin/RideDashboard/source/RideTrouble.mc"; @line = 1; @symbol_usingdef<0> = [Toybox,1,6,12]; @symbol_usingdef<1> = [Graphics,1,13,21]; ]
+using Toybox.Graphics;
+[ @file = "/workspace/garmin/RideDashboard/source/RideTrouble.mc"; @line = 2; @symbol_usingdef<0> = [Toybox,2,6,12]; @symbol_usingdef<1> = [Lang,2,13,17]; ]
+using Toybox.Lang;
+//! Záchranná síť pro chyby, které se projeví až na přístroji.
+//!
+//! Ručně nahraná aplikace nemá kam vypsat log a `CIQ_LOG.YML` na přístroji
+//! zůstává bez zásobníku, dokud si k němu uživatel nezkopíruje ladicí symboly.
+//! Když tedy kreslení spadne, je lepší chybu vypsat rovnou na displej: jedna
+//! fotka pak řekne víc než hodina hádání.
+//!
+//! Zachytávat výjimky kolem kreslení není hezké a v běžné aplikaci by to bylo
+//! zakrývání problémů. Tady je to schválně - palubovka běží na firmwaru, na
+//! který nemáme jak dosáhnout, a přijít o obrazovku je horší než ji mít
+//! s poznámkou.
+[ @file = "/workspace/garmin/RideDashboard/source/RideTrouble.mc"; @line = 15; @symbol_moduledef = [RideTrouble,15,7,18]; ]
+module RideTrouble {
+    [ @file = "/workspace/garmin/RideDashboard/source/RideTrouble.mc"; @line = 15; ]
+    <init> {
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideTrouble.mc"; @line = 18; @position = 8; @symbol_vardef = [mMessage,18,8,16]; @symbol_type<0> = [Lang,18,20,24]; @symbol_type<1> = [String,18,25,31]; ]
+    var mMessage as Lang.String or Null = null;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideTrouble.mc"; @line = 19; @position = 8; @symbol_vardef = [mWhere,19,8,14]; @symbol_type<0> = [Lang,19,18,22]; @symbol_type<1> = [String,19,23,29]; ]
+    var mWhere as Lang.String = "";
+    [ @file = "/workspace/garmin/RideDashboard/source/RideTrouble.mc"; @line = 21; @symbol_functiondef = [note,21,13,17]; @symbol_param<0> = [where,21,18,23]; @symbol_param<0>_type<0> = [Lang,21,27,31]; @symbol_param<0>_type<1> = [String,21,32,38]; @symbol_param<1> = [exception,21,40,49]; ]
+    function note(where as Lang.String, exception) as Void {
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_21_59_30_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 22 8 ]
+        %tmp.1 = lgetv %where;
+        symbol [ where %tmp.1 22 17 22 ];
+        symbol [ mWhere ? 22 8 14 ];
+        putv self :mWhere %tmp.1;
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 23 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideTrouble_mc_21_59_30_4_start" "_workspace_garmin_RideDashboard_source_RideTrouble_mc_21_59_30_4_stop" ]
+        %message.1 = local;
+        symbol [ message %message.1 23 12 19 ];
+        %tmp.2 = null;
+        lputv %message.1 %tmp.2;
+        symbol [ message %message.1 23 12 19 ];
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 24 8 ]
+        try @_workspace_garmin_RideDashboard_source_RideTrouble_mc_24_8_28_8_beginTry @_workspace_garmin_RideDashboard_source_RideTrouble_mc_24_8_28_8_endTry @_workspace_garmin_RideDashboard_source_RideTrouble_mc_24_8_28_8_catch @_workspace_garmin_RideDashboard_source_RideTrouble_mc_24_8_28_8_finally;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_24_8_28_8_beginTry:
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_24_12_26_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 25 12 ]
+        %tmp.3 = lgetv %exception;
+        symbol [ exception %tmp.3 25 22 31 ];
+        symbol [ getErrorMessage %tmp.4 25 32 47 ];
+        %tmp.4 = getv function %tmp.3 :getErrorMessage;
+        %tmp.5 = invoke %tmp.3 %tmp.4();
+        lputv %message.1 %tmp.5;
+        symbol [ message %message.1 25 12 19 ];
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_24_12_26_8_stop:
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_24_8_28_8_endTry:
+        jsr @_workspace_garmin_RideDashboard_source_RideTrouble_mc_24_8_28_8_finally;
+        goto @_workspace_garmin_RideDashboard_source_RideTrouble_mc_24_8_28_8_end;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_24_8_28_8_catch:
+        %tmp.6 = exception;
+        push %tmp.6;
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 26 10 ]
+        [ "_workspace_garmin_RideDashboard_source_RideTrouble_mc_24_8_28_8_catch" "_workspace_garmin_RideDashboard_source_RideTrouble_mc_26_10_28_8_end" ]
+        %inner.2 = local;
+        symbol [ inner %inner.2 26 17 22 ];
+        %tmp.7 = dup %tmp.6;
+        lputv %inner.2 %tmp.7;
+        symbol [ inner %inner.2 26 17 22 ];
+        jsr @_workspace_garmin_RideDashboard_source_RideTrouble_mc_24_8_28_8_finally;
+        pop;
+        goto @_workspace_garmin_RideDashboard_source_RideTrouble_mc_24_8_28_8_end;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_26_10_28_8_end:
+        try @_workspace_garmin_RideDashboard_source_RideTrouble_mc_24_8_28_8_catch @_workspace_garmin_RideDashboard_source_RideTrouble_mc_26_10_28_8_end @_workspace_garmin_RideDashboard_source_RideTrouble_mc_26_10_28_8_end @_workspace_garmin_RideDashboard_source_RideTrouble_mc_24_8_28_8_finally;
+        jsr @_workspace_garmin_RideDashboard_source_RideTrouble_mc_24_8_28_8_finally;
+        throw %tmp.6;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_24_8_28_8_finally:
+        jsrret;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_24_8_28_8_end:
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 29 8 ]
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_29_19_29_52_begin:
+        %tmp.8 = lgetv %message.1;
+        symbol [ message %tmp.8 29 19 26 ];
+        %tmp.9 = null;
+        %tmp.10 = eq %tmp.8 %tmp.9;
+        bf %tmp.10 @_workspace_garmin_RideDashboard_source_RideTrouble_mc_29_19_29_52_else_false;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_29_19_29_52_true:
+        %tmp.11 = "bez popisu";
+        push %tmp.11;
+        goto @_workspace_garmin_RideDashboard_source_RideTrouble_mc_29_19_29_52_end;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_29_19_29_52_else_false:
+        %tmp.12 = lgetv %message.1;
+        symbol [ message %tmp.12 29 52 59 ];
+        %tmp.13 = as %tmp.12 { (!Null) };
+        push %tmp.13;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_29_19_29_52_end:
+        %tmp.14 = phi [%tmp.10 @_workspace_garmin_RideDashboard_source_RideTrouble_mc_29_19_29_52_begin] [%tmp.11 @_workspace_garmin_RideDashboard_source_RideTrouble_mc_29_19_29_52_true] [%tmp.13 @_workspace_garmin_RideDashboard_source_RideTrouble_mc_29_19_29_52_else_false] [%tmp.14 @_workspace_garmin_RideDashboard_source_RideTrouble_mc_29_19_29_52_end];
+        symbol [ mMessage ? 29 8 16 ];
+        putv self :mMessage %tmp.14;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_21_59_30_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideTrouble.mc"; @line = 32; @symbol_functiondef = [caught,32,13,19]; @symbol_return<0> = [Lang,32,25,29]; @symbol_return<1> = [Boolean,32,30,37]; ]
+    function caught() as Lang.Boolean {
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_32_38_34_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 33 8 ]
+        symbol [ mMessage %tmp.2 33 15 23 ];
+        %tmp.2 = getv ? :mMessage;
+        %tmp.3 = null;
+        %tmp.4 = ne %tmp.2 %tmp.3;
+        ret %tmp.4;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_32_38_34_4_stop:
+    }
+    //! Vykreslí chybu přes celou plochu. Používá jen holé dc, žádné rozvržení
+    //! ani fonty z layoutu - to všechno mohlo být příčinou pádu.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideTrouble.mc"; @line = 38; @symbol_functiondef = [draw,38,13,17]; @symbol_param<0> = [dc,38,18,20]; ]
+    function draw(dc) as Void {
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_38_30_81_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 39 8 ]
+        %tmp.1 = lgetv %dc;
+        symbol [ dc %tmp.1 39 8 10 ];
+        symbol [ setColor %tmp.2 39 11 19 ];
+        %tmp.2 = getv function %tmp.1 :setColor;
+        symbol [ Graphics %tmp.3 39 20 28 ];
+        %tmp.3 = getm $.Toybox.Graphics;
+        symbol [ COLOR_BLACK %tmp.4 39 29 40 ];
+        %tmp.4 = getv %tmp.3 :COLOR_BLACK;
+        symbol [ Graphics %tmp.5 39 42 50 ];
+        %tmp.5 = getm $.Toybox.Graphics;
+        symbol [ COLOR_BLACK %tmp.6 39 51 62 ];
+        %tmp.6 = getv %tmp.5 :COLOR_BLACK;
+        invoke %tmp.1 %tmp.2(%tmp.4, %tmp.6);
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 40 8 ]
+        %tmp.7 = lgetv %dc;
+        symbol [ dc %tmp.7 40 8 10 ];
+        symbol [ clear %tmp.8 40 11 16 ];
+        %tmp.8 = getv function %tmp.7 :clear;
+        invoke %tmp.7 %tmp.8();
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 42 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideTrouble_mc_38_30_81_4_start" "_workspace_garmin_RideDashboard_source_RideTrouble_mc_38_30_81_4_stop" ]
+        %width.1 = local;
+        symbol [ width %width.1 42 12 17 ];
+        %tmp.9 = lgetv %dc;
+        symbol [ dc %tmp.9 42 20 22 ];
+        symbol [ getWidth %tmp.10 42 23 31 ];
+        %tmp.10 = getv function %tmp.9 :getWidth;
+        %tmp.11 = invoke %tmp.9 %tmp.10();
+        lputv %width.1 %tmp.11;
+        symbol [ width %width.1 42 12 17 ];
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 43 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideTrouble_mc_38_30_81_4_start" "_workspace_garmin_RideDashboard_source_RideTrouble_mc_38_30_81_4_stop" ]
+        %font.2 = local;
+        symbol [ font %font.2 43 12 16 ];
+        symbol [ Graphics %tmp.12 43 19 27 ];
+        %tmp.12 = getm $.Toybox.Graphics;
+        symbol [ FONT_XTINY %tmp.13 43 28 38 ];
+        %tmp.13 = getv %tmp.12 :FONT_XTINY;
+        lputv %font.2 %tmp.13;
+        symbol [ font %font.2 43 12 16 ];
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 44 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideTrouble_mc_38_30_81_4_start" "_workspace_garmin_RideDashboard_source_RideTrouble_mc_38_30_81_4_stop" ]
+        %height.3 = local;
+        symbol [ height %height.3 44 12 18 ];
+        %tmp.14 = lgetv %dc;
+        symbol [ dc %tmp.14 44 21 23 ];
+        symbol [ getFontHeight %tmp.15 44 24 37 ];
+        %tmp.15 = getv function %tmp.14 :getFontHeight;
+        %tmp.16 = lgetv %font.2;
+        symbol [ font %tmp.16 44 38 42 ];
+        %tmp.17 = invoke %tmp.14 %tmp.15(%tmp.16);
+        lputv %height.3 %tmp.17;
+        symbol [ height %height.3 44 12 18 ];
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 45 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideTrouble_mc_38_30_81_4_start" "_workspace_garmin_RideDashboard_source_RideTrouble_mc_38_30_81_4_stop" ]
+        %y.4 = local;
+        symbol [ y %y.4 45 12 13 ];
+        %tmp.18 = lgetv %dc;
+        symbol [ dc %tmp.18 45 16 18 ];
+        symbol [ getHeight %tmp.19 45 19 28 ];
+        %tmp.19 = getv function %tmp.18 :getHeight;
+        %tmp.20 = invoke %tmp.18 %tmp.19();
+        %tmp.21 = 2;
+        %tmp.22 = div %tmp.20 %tmp.21;
+        %tmp.23 = lgetv %height.3;
+        symbol [ height %tmp.23 45 37 43 ];
+        %tmp.24 = 2;
+        %tmp.25 = mul %tmp.23 %tmp.24;
+        %tmp.26 = sub %tmp.22 %tmp.25;
+        lputv %y.4 %tmp.26;
+        symbol [ y %y.4 45 12 13 ];
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 47 8 ]
+        %tmp.27 = lgetv %dc;
+        symbol [ dc %tmp.27 47 8 10 ];
+        symbol [ setColor %tmp.28 47 11 19 ];
+        %tmp.28 = getv function %tmp.27 :setColor;
+        symbol [ Graphics %tmp.29 47 20 28 ];
+        %tmp.29 = getm $.Toybox.Graphics;
+        symbol [ COLOR_RED %tmp.30 47 29 38 ];
+        %tmp.30 = getv %tmp.29 :COLOR_RED;
+        symbol [ Graphics %tmp.31 47 40 48 ];
+        %tmp.31 = getm $.Toybox.Graphics;
+        symbol [ COLOR_TRANSPARENT %tmp.32 47 49 66 ];
+        %tmp.32 = getv %tmp.31 :COLOR_TRANSPARENT;
+        invoke %tmp.27 %tmp.28(%tmp.30, %tmp.32);
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 48 8 ]
+        %tmp.33 = lgetv %dc;
+        symbol [ dc %tmp.33 48 8 10 ];
+        symbol [ drawText %tmp.34 48 11 19 ];
+        %tmp.34 = getv function %tmp.33 :drawText;
+        %tmp.35 = lgetv %width.1;
+        symbol [ width %tmp.35 48 20 25 ];
+        %tmp.36 = 2;
+        %tmp.37 = div %tmp.35 %tmp.36;
+        %tmp.38 = lgetv %y.4;
+        symbol [ y %tmp.38 48 31 32 ];
+        %tmp.39 = lgetv %font.2;
+        symbol [ font %tmp.39 48 34 38 ];
+        %tmp.40 = "CHYBA PALUBOVKY";
+        symbol [ Graphics %tmp.41 49 12 20 ];
+        %tmp.41 = getm $.Toybox.Graphics;
+        symbol [ TEXT_JUSTIFY_CENTER %tmp.42 49 21 40 ];
+        %tmp.42 = getv %tmp.41 :TEXT_JUSTIFY_CENTER;
+        symbol [ Graphics %tmp.43 49 43 51 ];
+        %tmp.43 = getm $.Toybox.Graphics;
+        symbol [ TEXT_JUSTIFY_VCENTER %tmp.44 49 52 72 ];
+        %tmp.44 = getv %tmp.43 :TEXT_JUSTIFY_VCENTER;
+        %tmp.45 = bitor %tmp.42 %tmp.44;
+        invoke %tmp.33 %tmp.34(%tmp.37, %tmp.38, %tmp.39, %tmp.40, %tmp.45);
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 51 8 ]
+        %tmp.46 = lgetv %dc;
+        symbol [ dc %tmp.46 51 8 10 ];
+        symbol [ setColor %tmp.47 51 11 19 ];
+        %tmp.47 = getv function %tmp.46 :setColor;
+        symbol [ Graphics %tmp.48 51 20 28 ];
+        %tmp.48 = getm $.Toybox.Graphics;
+        symbol [ COLOR_WHITE %tmp.49 51 29 40 ];
+        %tmp.49 = getv %tmp.48 :COLOR_WHITE;
+        symbol [ Graphics %tmp.50 51 42 50 ];
+        %tmp.50 = getm $.Toybox.Graphics;
+        symbol [ COLOR_TRANSPARENT %tmp.51 51 51 68 ];
+        %tmp.51 = getv %tmp.50 :COLOR_TRANSPARENT;
+        invoke %tmp.46 %tmp.47(%tmp.49, %tmp.51);
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 52 8 ]
+        %tmp.52 = lgetv %dc;
+        symbol [ dc %tmp.52 52 8 10 ];
+        symbol [ drawText %tmp.53 52 11 19 ];
+        %tmp.53 = getv function %tmp.52 :drawText;
+        %tmp.54 = lgetv %width.1;
+        symbol [ width %tmp.54 52 20 25 ];
+        %tmp.55 = 2;
+        %tmp.56 = div %tmp.54 %tmp.55;
+        %tmp.57 = lgetv %y.4;
+        symbol [ y %tmp.57 52 31 32 ];
+        %tmp.58 = lgetv %height.3;
+        symbol [ height %tmp.58 52 35 41 ];
+        %tmp.59 = add %tmp.57 %tmp.58;
+        %tmp.60 = lgetv %font.2;
+        symbol [ font %tmp.60 52 43 47 ];
+        symbol [ mWhere %tmp.62 52 49 55 ];
+        %tmp.62 = getv ? :mWhere;
+        symbol [ Graphics %tmp.63 53 12 20 ];
+        %tmp.63 = getm $.Toybox.Graphics;
+        symbol [ TEXT_JUSTIFY_CENTER %tmp.64 53 21 40 ];
+        %tmp.64 = getv %tmp.63 :TEXT_JUSTIFY_CENTER;
+        symbol [ Graphics %tmp.65 53 43 51 ];
+        %tmp.65 = getm $.Toybox.Graphics;
+        symbol [ TEXT_JUSTIFY_VCENTER %tmp.66 53 52 72 ];
+        %tmp.66 = getv %tmp.65 :TEXT_JUSTIFY_VCENTER;
+        %tmp.67 = bitor %tmp.64 %tmp.66;
+        invoke %tmp.52 %tmp.53(%tmp.56, %tmp.59, %tmp.60, %tmp.62, %tmp.67);
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 55 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideTrouble_mc_38_30_81_4_start" "_workspace_garmin_RideDashboard_source_RideTrouble_mc_38_30_81_4_stop" ]
+        %message.5 = local;
+        symbol [ message %message.5 55 12 19 ];
+        symbol [ mMessage %tmp.69 55 22 30 ];
+        %tmp.69 = getv ? :mMessage;
+        %tmp.70 = as %tmp.69 Lang.String;
+        symbol [ Lang %tmp.70 55 34 38 ];
+        symbol [ String %tmp.70 55 39 45 ];
+        lputv %message.5 %tmp.70;
+        symbol [ message %message.5 55 12 19 ];
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 56 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideTrouble_mc_38_30_81_4_start" "_workspace_garmin_RideDashboard_source_RideTrouble_mc_38_30_81_4_stop" ]
+        %line.6 = local;
+        symbol [ line %line.6 56 12 16 ];
+        %tmp.71 = "";
+        lputv %line.6 %tmp.71;
+        symbol [ line %line.6 56 12 16 ];
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 57 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideTrouble_mc_38_30_81_4_start" "_workspace_garmin_RideDashboard_source_RideTrouble_mc_38_30_81_4_stop" ]
+        %row.7 = local;
+        symbol [ row %row.7 57 12 15 ];
+        %tmp.72 = 2;
+        lputv %row.7 %tmp.72;
+        symbol [ row %row.7 57 12 15 ];
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 59 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideTrouble_mc_38_30_81_4_start" "_workspace_garmin_RideDashboard_source_RideTrouble_mc_38_30_81_4_stop" ]
+        %words.8 = local;
+        symbol [ words %words.8 59 12 17 ];
+        %tmp.73 = lgetv %message.5;
+        symbol [ message %tmp.73 59 20 27 ];
+        symbol [ substring %tmp.74 59 28 37 ];
+        %tmp.74 = getv function %tmp.73 :substring;
+        %tmp.75 = 0;
+        %tmp.76 = lgetv %message.5;
+        symbol [ message %tmp.76 59 41 48 ];
+        symbol [ length %tmp.77 59 49 55 ];
+        %tmp.77 = getv function %tmp.76 :length;
+        %tmp.78 = invoke %tmp.76 %tmp.77();
+        %tmp.79 = invoke %tmp.73 %tmp.74(%tmp.75, %tmp.78);
+        %tmp.80 = " ";
+        %tmp.81 = add %tmp.79 %tmp.80;
+        lputv %words.8 %tmp.81;
+        symbol [ words %words.8 59 12 17 ];
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 60 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideTrouble_mc_38_30_81_4_start" "_workspace_garmin_RideDashboard_source_RideTrouble_mc_38_30_81_4_stop" ]
+        %start.9 = local;
+        symbol [ start %start.9 60 12 17 ];
+        %tmp.82 = 0;
+        lputv %start.9 %tmp.82;
+        symbol [ start %start.9 60 12 17 ];
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 61 8 ]
+        for @_workspace_garmin_RideDashboard_source_RideTrouble_mc_61_8_76_8_for_test @_workspace_garmin_RideDashboard_source_RideTrouble_mc_61_8_76_8_for_incr @_workspace_garmin_RideDashboard_source_RideTrouble_mc_61_8_76_8_for_end;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_61_8_76_8_for_init:
+        [ "_workspace_garmin_RideDashboard_source_RideTrouble_mc_61_8_76_8_for_begin" "_workspace_garmin_RideDashboard_source_RideTrouble_mc_61_8_76_8_for_end" ]
+        %i.10 = local;
+        symbol [ i %i.10 61 17 18 ];
+        %tmp.83 = 0;
+        lputv %i.10 %tmp.83;
+        symbol [ i %i.10 61 17 18 ];
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_61_8_76_8_for_test:
+        %tmp.84 = lgetv %i.10;
+        symbol [ i %tmp.84 61 24 25 ];
+        %tmp.85 = lgetv %words.8;
+        symbol [ words %tmp.85 61 28 33 ];
+        symbol [ length %tmp.86 61 34 40 ];
+        %tmp.86 = getv function %tmp.85 :length;
+        %tmp.87 = invoke %tmp.85 %tmp.86();
+        %tmp.88 = lt %tmp.84 %tmp.87;
+        bf %tmp.88 @_workspace_garmin_RideDashboard_source_RideTrouble_mc_61_8_76_8_for_end;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_61_8_76_8_for_begin:
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_61_52_76_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 62 12 ]
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_62_12_64_12_if_stmt:
+        %tmp.89 = lgetv %words.8;
+        symbol [ words %tmp.89 62 17 22 ];
+        symbol [ substring %tmp.90 62 23 32 ];
+        %tmp.90 = getv function %tmp.89 :substring;
+        %tmp.91 = lgetv %i.10;
+        symbol [ i %tmp.91 62 33 34 ];
+        %tmp.92 = lgetv %i.10;
+        symbol [ i %tmp.92 62 36 37 ];
+        %tmp.93 = 1;
+        %tmp.94 = add %tmp.92 %tmp.93;
+        %tmp.95 = invoke %tmp.89 %tmp.90(%tmp.91, %tmp.94);
+        symbol [ equals %tmp.96 62 43 49 ];
+        %tmp.96 = getv function %tmp.95 :equals;
+        %tmp.97 = " ";
+        %tmp.98 = invoke %tmp.95 %tmp.96(%tmp.97);
+        %tmp.99 = not %tmp.98;
+        bf %tmp.99 @_workspace_garmin_RideDashboard_source_RideTrouble_mc_62_12_64_12_if_end;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_62_12_64_12_if_true:
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_62_56_64_12_start:
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 63 16 ]
+        goto break @_workspace_garmin_RideDashboard_source_RideTrouble_mc_61_8_76_8_for_incr;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_62_56_64_12_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideTrouble_mc_62_12_64_12_if_end;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_62_12_64_12_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 65 12 ]
+        [ "_workspace_garmin_RideDashboard_source_RideTrouble_mc_61_52_76_8_start" "_workspace_garmin_RideDashboard_source_RideTrouble_mc_61_52_76_8_stop" ]
+        %word.11 = local;
+        symbol [ word %word.11 65 16 20 ];
+        %tmp.100 = lgetv %words.8;
+        symbol [ words %tmp.100 65 23 28 ];
+        symbol [ substring %tmp.101 65 29 38 ];
+        %tmp.101 = getv function %tmp.100 :substring;
+        %tmp.102 = lgetv %start.9;
+        symbol [ start %tmp.102 65 39 44 ];
+        %tmp.103 = lgetv %i.10;
+        symbol [ i %tmp.103 65 46 47 ];
+        %tmp.104 = invoke %tmp.100 %tmp.101(%tmp.102, %tmp.103);
+        lputv %word.11 %tmp.104;
+        symbol [ word %word.11 65 16 20 ];
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 66 12 ]
+        %tmp.105 = lgetv %i.10;
+        symbol [ i %tmp.105 66 20 21 ];
+        %tmp.106 = 1;
+        %tmp.107 = add %tmp.105 %tmp.106;
+        lputv %start.9 %tmp.107;
+        symbol [ start %start.9 66 12 17 ];
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 67 12 ]
+        [ "_workspace_garmin_RideDashboard_source_RideTrouble_mc_61_52_76_8_start" "_workspace_garmin_RideDashboard_source_RideTrouble_mc_61_52_76_8_stop" ]
+        %candidate.12 = local;
+        symbol [ candidate %candidate.12 67 16 25 ];
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_67_28_67_69_begin:
+        %tmp.108 = lgetv %line.6;
+        symbol [ line %tmp.108 67 28 32 ];
+        symbol [ length %tmp.109 67 33 39 ];
+        %tmp.109 = getv function %tmp.108 :length;
+        %tmp.110 = invoke %tmp.108 %tmp.109();
+        %tmp.111 = 0;
+        %tmp.112 = eq %tmp.110 %tmp.111;
+        bf %tmp.112 @_workspace_garmin_RideDashboard_source_RideTrouble_mc_67_28_67_69_else_false;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_67_28_67_69_true:
+        %tmp.113 = lgetv %word.11;
+        symbol [ word %tmp.113 67 49 53 ];
+        push %tmp.113;
+        goto @_workspace_garmin_RideDashboard_source_RideTrouble_mc_67_28_67_69_end;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_67_28_67_69_else_false:
+        %tmp.114 = lgetv %line.6;
+        symbol [ line %tmp.114 67 56 60 ];
+        %tmp.115 = " ";
+        %tmp.116 = add %tmp.114 %tmp.115;
+        %tmp.117 = lgetv %word.11;
+        symbol [ word %tmp.117 67 69 73 ];
+        %tmp.118 = add %tmp.116 %tmp.117;
+        push %tmp.118;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_67_28_67_69_end:
+        %tmp.119 = phi [%tmp.112 @_workspace_garmin_RideDashboard_source_RideTrouble_mc_67_28_67_69_begin] [%tmp.113 @_workspace_garmin_RideDashboard_source_RideTrouble_mc_67_28_67_69_true] [%tmp.118 @_workspace_garmin_RideDashboard_source_RideTrouble_mc_67_28_67_69_else_false] [%tmp.119 @_workspace_garmin_RideDashboard_source_RideTrouble_mc_67_28_67_69_end];
+        lputv %candidate.12 %tmp.119;
+        symbol [ candidate %candidate.12 67 16 25 ];
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 68 12 ]
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_68_12_75_12_if_stmt:
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_68_16_68_88_begin:
+        %tmp.120 = lgetv %dc;
+        symbol [ dc %tmp.120 68 16 18 ];
+        symbol [ getTextWidthInPixels %tmp.121 68 19 39 ];
+        %tmp.121 = getv function %tmp.120 :getTextWidthInPixels;
+        %tmp.122 = lgetv %candidate.12;
+        symbol [ candidate %tmp.122 68 40 49 ];
+        %tmp.123 = lgetv %font.2;
+        symbol [ font %tmp.123 68 51 55 ];
+        %tmp.124 = invoke %tmp.120 %tmp.121(%tmp.122, %tmp.123);
+        %tmp.125 = lgetv %width.1;
+        symbol [ width %tmp.125 68 59 64 ];
+        %tmp.126 = 8;
+        %tmp.127 = sub %tmp.125 %tmp.126;
+        %tmp.128 = gt %tmp.124 %tmp.127;
+        bf %tmp.128 @_workspace_garmin_RideDashboard_source_RideTrouble_mc_68_12_75_12_if_else_false;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_68_72_68_88_true:
+        %tmp.129 = lgetv %line.6;
+        symbol [ line %tmp.129 68 72 76 ];
+        symbol [ length %tmp.130 68 77 83 ];
+        %tmp.130 = getv function %tmp.129 :length;
+        %tmp.131 = invoke %tmp.129 %tmp.130();
+        %tmp.132 = 0;
+        %tmp.133 = gt %tmp.131 %tmp.132;
+        push %tmp.133;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_68_72_68_88_end:
+        %tmp.134 = phi [%tmp.128 @_workspace_garmin_RideDashboard_source_RideTrouble_mc_68_16_68_88_begin] [%tmp.133 @_workspace_garmin_RideDashboard_source_RideTrouble_mc_68_72_68_88_true] [%tmp.134 @_workspace_garmin_RideDashboard_source_RideTrouble_mc_68_72_68_88_end];
+        bf %tmp.134 @_workspace_garmin_RideDashboard_source_RideTrouble_mc_68_12_75_12_if_else_false;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_68_12_75_12_if_true:
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_68_91_73_12_start:
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 69 16 ]
+        %tmp.135 = lgetv %dc;
+        symbol [ dc %tmp.135 69 16 18 ];
+        symbol [ drawText %tmp.136 69 19 27 ];
+        %tmp.136 = getv function %tmp.135 :drawText;
+        %tmp.137 = lgetv %width.1;
+        symbol [ width %tmp.137 69 28 33 ];
+        %tmp.138 = 2;
+        %tmp.139 = div %tmp.137 %tmp.138;
+        %tmp.140 = lgetv %y.4;
+        symbol [ y %tmp.140 69 39 40 ];
+        %tmp.141 = lgetv %height.3;
+        symbol [ height %tmp.141 69 43 49 ];
+        %tmp.142 = lgetv %row.7;
+        symbol [ row %tmp.142 69 52 55 ];
+        %tmp.143 = mul %tmp.141 %tmp.142;
+        %tmp.144 = add %tmp.140 %tmp.143;
+        %tmp.145 = lgetv %font.2;
+        symbol [ font %tmp.145 69 57 61 ];
+        %tmp.146 = lgetv %line.6;
+        symbol [ line %tmp.146 69 63 67 ];
+        symbol [ Graphics %tmp.147 70 20 28 ];
+        %tmp.147 = getm $.Toybox.Graphics;
+        symbol [ TEXT_JUSTIFY_CENTER %tmp.148 70 29 48 ];
+        %tmp.148 = getv %tmp.147 :TEXT_JUSTIFY_CENTER;
+        symbol [ Graphics %tmp.149 70 51 59 ];
+        %tmp.149 = getm $.Toybox.Graphics;
+        symbol [ TEXT_JUSTIFY_VCENTER %tmp.150 70 60 80 ];
+        %tmp.150 = getv %tmp.149 :TEXT_JUSTIFY_VCENTER;
+        %tmp.151 = bitor %tmp.148 %tmp.150;
+        invoke %tmp.135 %tmp.136(%tmp.139, %tmp.144, %tmp.145, %tmp.146, %tmp.151);
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 71 16 ]
+        %tmp.152 = lgetv %row.7;
+        symbol [ row %tmp.152 71 16 19 ];
+        %tmp.153 = 1;
+        %tmp.154 = add %tmp.152 %tmp.153;
+        lputv %row.7 %tmp.154;
+        symbol [ row %row.7 71 16 19 ];
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 72 16 ]
+        %tmp.155 = lgetv %word.11;
+        symbol [ word %tmp.155 72 23 27 ];
+        lputv %line.6 %tmp.155;
+        symbol [ line %line.6 72 16 20 ];
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_68_91_73_12_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideTrouble_mc_68_12_75_12_if_end;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_68_12_75_12_if_else_false:
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_73_19_75_12_start:
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 74 16 ]
+        %tmp.156 = lgetv %candidate.12;
+        symbol [ candidate %tmp.156 74 23 32 ];
+        lputv %line.6 %tmp.156;
+        symbol [ line %line.6 74 16 20 ];
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_73_19_75_12_stop:
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_68_12_75_12_if_end:
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_61_52_76_8_stop:
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_61_8_76_8_for_incr:
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 61 ]
+        %tmp.157 = lgetv %i.10;
+        symbol [ i %tmp.157 61 44 45 ];
+        %tmp.158 = 1;
+        %tmp.159 = add %tmp.157 %tmp.158;
+        lputv %i.10 %tmp.159;
+        symbol [ i %i.10 61 44 45 ];
+        goto @_workspace_garmin_RideDashboard_source_RideTrouble_mc_61_8_76_8_for_test;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_61_8_76_8_for_end:
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 77 8 ]
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_77_8_80_8_if_stmt:
+        %tmp.160 = lgetv %line.6;
+        symbol [ line %tmp.160 77 12 16 ];
+        symbol [ length %tmp.161 77 17 23 ];
+        %tmp.161 = getv function %tmp.160 :length;
+        %tmp.162 = invoke %tmp.160 %tmp.161();
+        %tmp.163 = 0;
+        %tmp.164 = gt %tmp.162 %tmp.163;
+        bf %tmp.164 @_workspace_garmin_RideDashboard_source_RideTrouble_mc_77_8_80_8_if_end;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_77_8_80_8_if_true:
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_77_31_80_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideTrouble.mc" 78 12 ]
+        %tmp.165 = lgetv %dc;
+        symbol [ dc %tmp.165 78 12 14 ];
+        symbol [ drawText %tmp.166 78 15 23 ];
+        %tmp.166 = getv function %tmp.165 :drawText;
+        %tmp.167 = lgetv %width.1;
+        symbol [ width %tmp.167 78 24 29 ];
+        %tmp.168 = 2;
+        %tmp.169 = div %tmp.167 %tmp.168;
+        %tmp.170 = lgetv %y.4;
+        symbol [ y %tmp.170 78 35 36 ];
+        %tmp.171 = lgetv %height.3;
+        symbol [ height %tmp.171 78 39 45 ];
+        %tmp.172 = lgetv %row.7;
+        symbol [ row %tmp.172 78 48 51 ];
+        %tmp.173 = mul %tmp.171 %tmp.172;
+        %tmp.174 = add %tmp.170 %tmp.173;
+        %tmp.175 = lgetv %font.2;
+        symbol [ font %tmp.175 78 53 57 ];
+        %tmp.176 = lgetv %line.6;
+        symbol [ line %tmp.176 78 59 63 ];
+        symbol [ Graphics %tmp.177 79 16 24 ];
+        %tmp.177 = getm $.Toybox.Graphics;
+        symbol [ TEXT_JUSTIFY_CENTER %tmp.178 79 25 44 ];
+        %tmp.178 = getv %tmp.177 :TEXT_JUSTIFY_CENTER;
+        symbol [ Graphics %tmp.179 79 47 55 ];
+        %tmp.179 = getm $.Toybox.Graphics;
+        symbol [ TEXT_JUSTIFY_VCENTER %tmp.180 79 56 76 ];
+        %tmp.180 = getv %tmp.179 :TEXT_JUSTIFY_VCENTER;
+        %tmp.181 = bitor %tmp.178 %tmp.180;
+        invoke %tmp.165 %tmp.166(%tmp.169, %tmp.174, %tmp.175, %tmp.176, %tmp.181);
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_77_31_80_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideTrouble_mc_77_8_80_8_if_end;
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_77_8_80_8_if_end:
+_workspace_garmin_RideDashboard_source_RideTrouble_mc_38_30_81_4_stop:
+    }
+}
+[ @file = "/workspace/garmin/RideDashboard/source/RideTrouble.mc"; @line = 1; ]
+<init> {
+}

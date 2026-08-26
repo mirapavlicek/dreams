@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+    Druhé datové pole. Do jedné datové obrazovky se dají dát obě - nahoře
+    RideField s rychlostí a kadencí, uprostřed nativní mapa, dole tohle
+    s údaji o trase. Seznam <iq:product> se dá přegenerovat skriptem
+    garmin/tools/sync_devices.py.
+-->
+<iq:manifest xmlns:iq="http://www.garmin.com/xml/connectiq" version="3">
+    <iq:application entry="RideTripApp" id="c5920ae4318f4d67ab1e6d03f27c8514" launcherIcon="@Drawables.LauncherIcon" minApiLevel="3.2.0" name="@Strings.AppName" type="datafield">
+        <iq:products>
+            <iq:product id="edge1030"/>
+            <iq:product id="edge1030bontrager"/>
+            <iq:product id="edge1030plus"/>
+            <iq:product id="edge1040"/>
+            <iq:product id="edge1050"/>
+            <iq:product id="edge530"/>
+            <iq:product id="edge540"/>
+            <iq:product id="edge550"/>
+            <iq:product id="edge830"/>
+            <iq:product id="edge840"/>
+            <iq:product id="edge850"/>
+            <iq:product id="edgeexplore2"/>
+            <iq:product id="edgemtb"/>
+        </iq:products>
+        <iq:permissions>
+            <!-- Kanály kola tohle pole neotevírá, drží je RideField - na jednom
+                 ANT+ kanálu smí viset jen jeden posluchač. Oprávnění tu jsou
+                 proto, že sdílený kód s obsluhou senzorů se bez nich nepřeloží. -->
+            <iq:uses-permission id="Ant"/>
+            <iq:uses-permission id="BluetoothLowEnergy"/>
+        </iq:permissions>
+        <iq:languages>
+            <iq:language>eng</iq:language>
+        </iq:languages>
+        <iq:barrels/>
+    </iq:application>
+</iq:manifest>

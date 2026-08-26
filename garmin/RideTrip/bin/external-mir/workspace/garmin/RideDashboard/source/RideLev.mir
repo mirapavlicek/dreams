@@ -1,0 +1,2018 @@
+[ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 1; @symbol_usingdef<0> = [Toybox,1,6,12]; @symbol_usingdef<1> = [Ant,1,13,16]; ]
+using Toybox.Ant;
+[ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 2; @symbol_usingdef<0> = [Toybox,2,6,12]; @symbol_usingdef<1> = [Application,2,13,24]; ]
+using Toybox.Application;
+[ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 3; @symbol_usingdef<0> = [Toybox,3,6,12]; @symbol_usingdef<1> = [Lang,3,13,17]; ]
+using Toybox.Lang;
+[ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 4; @symbol_usingdef<0> = [Toybox,4,6,12]; @symbol_usingdef<1> = [System,4,13,19]; ]
+using Toybox.System;
+//! Elektrokolo přes ANT+ profil LEV (Light Electric Vehicle, device type 20).
+//!
+//! Edge sám dojezd i stav baterie kola zobrazuje, jenže Connect IQ na to nemá
+//! hotovou třídu jako na pulsy nebo výkon - v Toybox.AntPlus profil LEV chybí.
+//! Otevřeme si tedy vlastní generický kanál a bajty datových stránek
+//! dekódujeme ručně podle profilu. Kanál je jen poslouchající (RX_ONLY), takže
+//! kolu nic neposíláme a nemluvíme mu do toho, co si s ním řeší přístroj.
+//!
+//! Kolo musí LEV umět - Specialized, Fazua, Giant nebo Mahle ano, Bosch a
+//! Shimano po svém, tam zůstane odhad v RideData.
+[ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 16; @symbol_classdef = [RideLev,16,6,13]; @symbol_extends<0> = [Ant,16,22,25]; @symbol_extends<1> = [GenericChannel,16,26,40]; ]
+class RideLev extends Ant.GenericChannel {
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 16; ]
+    <init> {
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 16; ]
+    static
+    <init> {
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 19; @position = 10; @symbol_constdef = [DEVICE_TYPE,19,10,21]; ]
+    const DEVICE_TYPE = 20;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 20; @position = 10; @symbol_constdef = [PERIOD,20,10,16]; ]
+    const PERIOD = 8192;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 21; @position = 10; @symbol_constdef = [FREQUENCY,21,10,19]; ]
+    const FREQUENCY = 57;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 25; @position = 10; @symbol_constdef = [PAGE_DISPLAY,25,10,22]; ]
+    const PAGE_DISPLAY = 16;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 29; @position = 10; @symbol_constdef = [DISPLAY_MANUFACTURER,29,10,30]; ]
+    const DISPLAY_MANUFACTURER = 255;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 32; @position = 10; @symbol_constdef = [WHEEL_UNSET,32,10,21]; ]
+    const WHEEL_UNSET = 0xFFF;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 35; @position = 10; @symbol_constdef = [STALE_MS,35,10,18]; ]
+    const STALE_MS = 6000;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 40; @position = 10; @symbol_constdef = [MANUFACTURER_SPECIALIZED,40,10,34]; ]
+    const MANUFACTURER_SPECIALIZED = 63;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 41; @position = 10; @symbol_constdef = [MANUFACTURER_GIANT,41,10,28]; ]
+    const MANUFACTURER_GIANT = 108;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 42; @position = 10; @symbol_constdef = [MANUFACTURER_TQ,42,10,25]; ]
+    const MANUFACTURER_TQ = 141;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 43; @position = 10; @symbol_constdef = [MANUFACTURER_MAHLE,43,10,28]; ]
+    const MANUFACTURER_MAHLE = 299;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 44; @position = 10; @symbol_constdef = [MANUFACTURER_YAMAHA,44,10,29]; ]
+    const MANUFACTURER_YAMAHA = 304;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 45; @position = 10; @symbol_constdef = [MANUFACTURER_FAZUA,45,10,28]; ]
+    const MANUFACTURER_FAZUA = 318;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 47; @position = 8; @symbol_vardef = [mAssign,47,8,15]; @symbol_type<0> = [Ant,47,19,22]; @symbol_type<1> = [ChannelAssignment,47,23,40]; ]
+    var mAssign as Ant.ChannelAssignment or Null = null;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 48; @position = 8; @symbol_vardef = [mSearching,48,8,18]; @symbol_type<0> = [Lang,48,22,26]; @symbol_type<1> = [Boolean,48,27,34]; ]
+    var mSearching as Lang.Boolean = true;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 49; @position = 8; @symbol_vardef = [mLastMessage,49,8,20]; @symbol_type<0> = [Lang,49,24,28]; @symbol_type<1> = [Number,49,29,35]; ]
+    var mLastMessage as Lang.Number or Null = null;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 51; @position = 8; @symbol_vardef = [mSoc,51,8,12]; @symbol_type<0> = [Lang,51,16,20]; @symbol_type<1> = [Number,51,21,27]; ]
+    var mSoc as Lang.Number or Null = null;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 52; @position = 8; @symbol_vardef = [mBatteryWarning,52,8,23]; @symbol_type<0> = [Lang,52,27,31]; @symbol_type<1> = [Boolean,52,32,39]; ]
+    var mBatteryWarning as Lang.Boolean = false;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 53; @position = 8; @symbol_vardef = [mRangeKm,53,8,16]; @symbol_type<0> = [Lang,53,20,24]; @symbol_type<1> = [Float,53,25,30]; ]
+    var mRangeKm as Lang.Float or Null = null;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 54; @position = 8; @symbol_vardef = [mConsumption,54,8,20]; @symbol_type<0> = [Lang,54,24,28]; @symbol_type<1> = [Float,54,29,34]; ]
+    var mConsumption as Lang.Float or Null = null;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 55; @position = 8; @symbol_vardef = [mChargeDistanceKm,55,8,25]; @symbol_type<0> = [Lang,55,29,33]; @symbol_type<1> = [Float,55,34,39]; ]
+    var mChargeDistanceKm as Lang.Float or Null = null;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 56; @position = 8; @symbol_vardef = [mAssistLevel,56,8,20]; @symbol_type<0> = [Lang,56,24,28]; @symbol_type<1> = [Number,56,29,35]; ]
+    var mAssistLevel as Lang.Number or Null = null;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 57; @position = 8; @symbol_vardef = [mAssistPercent,57,8,22]; @symbol_type<0> = [Lang,57,26,30]; @symbol_type<1> = [Number,57,31,37]; ]
+    var mAssistPercent as Lang.Number or Null = null;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 58; @position = 8; @symbol_vardef = [mSpeedKmh,58,8,17]; @symbol_type<0> = [Lang,58,21,25]; @symbol_type<1> = [Float,58,26,31]; ]
+    var mSpeedKmh as Lang.Float or Null = null;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 59; @position = 8; @symbol_vardef = [mManufacturer,59,8,21]; @symbol_type<0> = [Lang,59,25,29]; @symbol_type<1> = [Number,59,30,36]; ]
+    var mManufacturer as Lang.Number or Null = null;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 60; @position = 8; @symbol_vardef = [mTotalAssistModes,60,8,25]; @symbol_type<0> = [Lang,60,29,33]; @symbol_type<1> = [Number,60,34,40]; ]
+    var mTotalAssistModes as Lang.Number or Null = null;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 65; @position = 8; @symbol_vardef = [mSystemState,65,8,20]; @symbol_type<0> = [Lang,65,24,28]; @symbol_type<1> = [Number,65,29,35]; ]
+    var mSystemState as Lang.Number = 0;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 66; @position = 8; @symbol_vardef = [mGearState,66,8,18]; @symbol_type<0> = [Lang,66,22,26]; @symbol_type<1> = [Number,66,27,33]; ]
+    var mGearState as Lang.Number = 0;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 67; @position = 8; @symbol_vardef = [mRegenLevel,67,8,19]; @symbol_type<0> = [Lang,67,23,27]; @symbol_type<1> = [Number,67,28,34]; ]
+    var mRegenLevel as Lang.Number = 0;
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 70; @position = 8; @symbol_vardef = [mRequestedAssist,70,8,24]; @symbol_type<0> = [Lang,70,28,32]; @symbol_type<1> = [Number,70,33,39]; ]
+    var mRequestedAssist as Lang.Number or Null = null;
+    //! @param deviceNumber ANT+ ID kola, nula hledá první, které se ozve.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 73; @symbol_functiondef = [initialize,73,13,23]; @symbol_param<0> = [deviceNumber,73,24,36]; @symbol_param<0>_type<0> = [Lang,73,40,44]; @symbol_param<0>_type<1> = [Number,73,45,51]; ]
+    function initialize(deviceNumber as Lang.Number) as Void {
+_workspace_garmin_RideDashboard_source_RideLev_mc_73_53_88_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 77 8 ]
+        symbol [ Ant %tmp.3 77 22 25 ];
+        %tmp.3 = getm $.Toybox.Ant;
+        symbol [ ChannelAssignment %tmp.4 77 26 43 ];
+        %tmp.4 = getv function ? %tmp.3 :ChannelAssignment;
+        symbol [ Ant %tmp.5 77 44 47 ];
+        %tmp.5 = getm $.Toybox.Ant;
+        symbol [ CHANNEL_TYPE_RX_NOT_TX %tmp.6 77 48 70 ];
+        %tmp.6 = getv %tmp.5 :CHANNEL_TYPE_RX_NOT_TX;
+        symbol [ Ant %tmp.7 77 72 75 ];
+        %tmp.7 = getm $.Toybox.Ant;
+        symbol [ NETWORK_PLUS %tmp.8 77 76 88 ];
+        %tmp.8 = getv %tmp.7 :NETWORK_PLUS;
+        %tmp.1 = newc %tmp.4 (%tmp.6, %tmp.8);
+        symbol [ mAssign ? 77 8 15 ];
+        putv self :mAssign %tmp.1;
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 78 8 ]
+        symbol [ GenericChannel %tmp.10 78 8 22 ];
+        %tmp.10 = getv ? :GenericChannel;
+        symbol [ initialize %tmp.11 78 23 33 ];
+        %tmp.11 = getv function %tmp.10 :initialize;
+        %tmp.12 = self;
+        symbol [ method %tmp.13 78 34 40 ];
+        %tmp.13 = getv function %tmp.12 :method;
+        %tmp.15 = const :onMessage;
+        symbol [ onMessage %tmp.15 78 42 51 const ];
+        %tmp.16 = invoke %tmp.12 %tmp.13(%tmp.15);
+        symbol [ mAssign %tmp.18 78 54 61 ];
+        %tmp.18 = getv ? :mAssign;
+        invoke %tmp.10 %tmp.11(%tmp.16, %tmp.18);
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 79 8 ]
+        symbol [ GenericChannel %tmp.20 79 8 22 ];
+        %tmp.20 = getv ? :GenericChannel;
+        symbol [ setDeviceConfig %tmp.21 79 23 38 ];
+        %tmp.21 = getv function %tmp.20 :setDeviceConfig;
+        symbol [ Ant %tmp.24 79 43 46 ];
+        %tmp.24 = getm $.Toybox.Ant;
+        symbol [ DeviceConfig %tmp.25 79 47 59 ];
+        %tmp.25 = getv function ? %tmp.24 :DeviceConfig;
+        %tmp.26 = newd 7;
+        %tmp.28 = const :deviceNumber;
+        symbol [ deviceNumber %tmp.28 80 13 25 const ];
+        %tmp.29 = lgetv %deviceNumber;
+        symbol [ deviceNumber %tmp.29 80 29 41 ];
+        %tmp.30 = dup %tmp.26;
+        %tmp.31 = aputv %tmp.30 %tmp.28 %tmp.29;
+        %tmp.33 = const :deviceType;
+        symbol [ deviceType %tmp.33 81 13 23 const ];
+        symbol [ DEVICE_TYPE %tmp.35 81 27 38 ];
+        %tmp.35 = getv ? :DEVICE_TYPE;
+        %tmp.36 = dup %tmp.31;
+        %tmp.37 = aputv %tmp.36 %tmp.33 %tmp.35;
+        %tmp.39 = const :transmissionType;
+        symbol [ transmissionType %tmp.39 82 13 29 const ];
+        %tmp.40 = 0;
+        %tmp.41 = dup %tmp.37;
+        %tmp.42 = aputv %tmp.41 %tmp.39 %tmp.40;
+        %tmp.44 = const :messagePeriod;
+        symbol [ messagePeriod %tmp.44 83 13 26 const ];
+        symbol [ PERIOD %tmp.46 83 30 36 ];
+        %tmp.46 = getv ? :PERIOD;
+        %tmp.47 = dup %tmp.42;
+        %tmp.48 = aputv %tmp.47 %tmp.44 %tmp.46;
+        %tmp.50 = const :radioFrequency;
+        symbol [ radioFrequency %tmp.50 84 13 27 const ];
+        symbol [ FREQUENCY %tmp.52 84 31 40 ];
+        %tmp.52 = getv ? :FREQUENCY;
+        %tmp.53 = dup %tmp.48;
+        %tmp.54 = aputv %tmp.53 %tmp.50 %tmp.52;
+        %tmp.56 = const :searchTimeoutLowPriority;
+        symbol [ searchTimeoutLowPriority %tmp.56 85 13 37 const ];
+        %tmp.57 = 12;
+        %tmp.58 = dup %tmp.54;
+        %tmp.59 = aputv %tmp.58 %tmp.56 %tmp.57;
+        %tmp.61 = const :searchThreshold;
+        symbol [ searchThreshold %tmp.61 86 13 28 const ];
+        %tmp.62 = 0;
+        %tmp.63 = dup %tmp.59;
+        %tmp.64 = aputv %tmp.63 %tmp.61 %tmp.62;
+        %tmp.22 = newc %tmp.25 (%tmp.64);
+        invoke %tmp.20 %tmp.21(%tmp.22);
+_workspace_garmin_RideDashboard_source_RideLev_mc_73_53_88_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 90; @symbol_functiondef = [open,90,13,17]; @symbol_return<0> = [Lang,90,23,27]; @symbol_return<1> = [Boolean,90,28,35]; ]
+    function open() as Lang.Boolean {
+_workspace_garmin_RideDashboard_source_RideLev_mc_90_36_93_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 91 8 ]
+        %tmp.1 = true;
+        symbol [ mSearching ? 91 8 18 ];
+        putv self :mSearching %tmp.1;
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 92 8 ]
+        symbol [ GenericChannel %tmp.3 92 15 29 ];
+        %tmp.3 = getv ? :GenericChannel;
+        symbol [ open %tmp.4 92 30 34 ];
+        %tmp.4 = getv function %tmp.3 :open;
+        %tmp.5 = invoke %tmp.3 %tmp.4();
+        ret %tmp.5;
+_workspace_garmin_RideDashboard_source_RideLev_mc_90_36_93_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 95; @symbol_functiondef = [shutdown,95,13,21]; ]
+    function shutdown() as Void {
+_workspace_garmin_RideDashboard_source_RideLev_mc_95_32_98_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 96 8 ]
+        symbol [ GenericChannel %tmp.2 96 8 22 ];
+        %tmp.2 = getv ? :GenericChannel;
+        symbol [ close %tmp.3 96 23 28 ];
+        %tmp.3 = getv function %tmp.2 :close;
+        invoke %tmp.2 %tmp.3();
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 97 8 ]
+        symbol [ GenericChannel %tmp.5 97 8 22 ];
+        %tmp.5 = getv ? :GenericChannel;
+        symbol [ release %tmp.6 97 23 30 ];
+        %tmp.6 = getv function %tmp.5 :release;
+        invoke %tmp.5 %tmp.6();
+_workspace_garmin_RideDashboard_source_RideLev_mc_95_32_98_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 102; @symbol_functiondef = [onMessage,102,13,22]; @symbol_param<0> = [message,102,23,30]; @symbol_param<0>_type<0> = [Ant,102,34,37]; @symbol_param<0>_type<1> = [Message,102,38,45]; ]
+    function onMessage(message as Ant.Message) as Void {
+_workspace_garmin_RideDashboard_source_RideLev_mc_102_55_111_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 103 8 ]
+        try @_workspace_garmin_RideDashboard_source_RideLev_mc_103_8_110_8_beginTry @_workspace_garmin_RideDashboard_source_RideLev_mc_103_8_110_8_endTry @_workspace_garmin_RideDashboard_source_RideLev_mc_103_8_110_8_catch @_workspace_garmin_RideDashboard_source_RideLev_mc_103_8_110_8_finally;
+_workspace_garmin_RideDashboard_source_RideLev_mc_103_8_110_8_beginTry:
+_workspace_garmin_RideDashboard_source_RideLev_mc_103_12_105_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 104 12 ]
+        %tmp.1 = self;
+        symbol [ handle %tmp.2 104 12 18 ];
+        %tmp.2 = getv function %tmp.1 :handle;
+        %tmp.3 = lgetv %message;
+        symbol [ message %tmp.3 104 19 26 ];
+        invoke %tmp.1 %tmp.2(%tmp.3);
+_workspace_garmin_RideDashboard_source_RideLev_mc_103_12_105_8_stop:
+_workspace_garmin_RideDashboard_source_RideLev_mc_103_8_110_8_endTry:
+        jsr @_workspace_garmin_RideDashboard_source_RideLev_mc_103_8_110_8_finally;
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_103_8_110_8_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_103_8_110_8_catch:
+        %tmp.4 = exception;
+        push %tmp.4;
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 105 10 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_103_8_110_8_catch" "_workspace_garmin_RideDashboard_source_RideLev_mc_105_10_110_8_end" ]
+        %exception.1 = local;
+        symbol [ exception %exception.1 105 17 26 ];
+        %tmp.5 = dup %tmp.4;
+        lputv %exception.1 %tmp.5;
+        symbol [ exception %exception.1 105 17 26 ];
+_workspace_garmin_RideDashboard_source_RideLev_mc_105_28_110_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 109 12 ]
+        symbol [ RideTrouble %tmp.7 109 12 23 ];
+        %tmp.7 = getv ? :RideTrouble;
+        symbol [ note %tmp.8 109 24 28 ];
+        %tmp.8 = getv function %tmp.7 :note;
+        %tmp.9 = "data z kola (ANT+)";
+        %tmp.10 = lgetv %exception.1;
+        symbol [ exception %tmp.10 109 51 60 ];
+        invoke %tmp.7 %tmp.8(%tmp.9, %tmp.10);
+_workspace_garmin_RideDashboard_source_RideLev_mc_105_28_110_8_stop:
+        jsr @_workspace_garmin_RideDashboard_source_RideLev_mc_103_8_110_8_finally;
+        pop;
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_103_8_110_8_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_105_10_110_8_end:
+        try @_workspace_garmin_RideDashboard_source_RideLev_mc_103_8_110_8_catch @_workspace_garmin_RideDashboard_source_RideLev_mc_105_10_110_8_end @_workspace_garmin_RideDashboard_source_RideLev_mc_105_10_110_8_end @_workspace_garmin_RideDashboard_source_RideLev_mc_103_8_110_8_finally;
+        jsr @_workspace_garmin_RideDashboard_source_RideLev_mc_103_8_110_8_finally;
+        throw %tmp.4;
+_workspace_garmin_RideDashboard_source_RideLev_mc_103_8_110_8_finally:
+        jsrret;
+_workspace_garmin_RideDashboard_source_RideLev_mc_103_8_110_8_end:
+_workspace_garmin_RideDashboard_source_RideLev_mc_102_55_111_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 113; @symbol_functiondef = [handle,113,13,19]; @symbol_param<0> = [message,113,20,27]; @symbol_param<0>_type<0> = [Ant,113,31,34]; @symbol_param<0>_type<1> = [Message,113,35,42]; ]
+    function handle(message as Ant.Message) as Void {
+_workspace_garmin_RideDashboard_source_RideLev_mc_113_52_136_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 114 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_113_52_136_4_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_113_52_136_4_stop" ]
+        %payload.1 = local;
+        symbol [ payload %payload.1 114 12 19 ];
+        %tmp.1 = lgetv %message;
+        symbol [ message %tmp.1 114 22 29 ];
+        symbol [ getPayload %tmp.2 114 30 40 ];
+        %tmp.2 = getv function %tmp.1 :getPayload;
+        %tmp.3 = invoke %tmp.1 %tmp.2();
+        lputv %payload.1 %tmp.3;
+        symbol [ payload %payload.1 114 12 19 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 116 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_116_8_124_8_if_stmt:
+        symbol [ Ant %tmp.4 116 12 15 ];
+        %tmp.4 = getm $.Toybox.Ant;
+        symbol [ MSG_ID_BROADCAST_DATA %tmp.5 116 16 37 ];
+        %tmp.5 = getv %tmp.4 :MSG_ID_BROADCAST_DATA;
+        %tmp.6 = lgetv %message;
+        symbol [ message %tmp.6 116 41 48 ];
+        symbol [ messageId %tmp.7 116 49 58 ];
+        %tmp.7 = getv %tmp.6 :messageId;
+        %tmp.8 = eq %tmp.5 %tmp.7;
+        bf %tmp.8 @_workspace_garmin_RideDashboard_source_RideLev_mc_116_8_124_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_116_8_124_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_116_60_124_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 117 12 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_117_12_120_12_if_stmt:
+        symbol [ mSearching %tmp.10 117 16 26 ];
+        %tmp.10 = getv ? :mSearching;
+        bf %tmp.10 @_workspace_garmin_RideDashboard_source_RideLev_mc_117_12_120_12_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_117_12_120_12_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_117_28_120_12_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 118 16 ]
+        %tmp.11 = false;
+        symbol [ mSearching ? 118 16 26 ];
+        putv self :mSearching %tmp.11;
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 119 16 ]
+        %tmp.12 = self;
+        symbol [ rememberDeviceNumber %tmp.13 119 16 36 ];
+        %tmp.13 = getv function %tmp.12 :rememberDeviceNumber;
+        invoke %tmp.12 %tmp.13();
+_workspace_garmin_RideDashboard_source_RideLev_mc_117_28_120_12_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_117_12_120_12_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_117_12_120_12_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 121 12 ]
+        symbol [ System %tmp.14 121 27 33 ];
+        %tmp.14 = getm $.Toybox.System;
+        symbol [ getTimer %tmp.15 121 34 42 ];
+        %tmp.15 = getv function %tmp.14 :getTimer;
+        %tmp.16 = invoke %tmp.14 %tmp.15();
+        symbol [ mLastMessage ? 121 12 24 ];
+        putv self :mLastMessage %tmp.16;
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 122 12 ]
+        %tmp.17 = self;
+        symbol [ parse %tmp.18 122 12 17 ];
+        %tmp.18 = getv function %tmp.17 :parse;
+        %tmp.19 = lgetv %payload.1;
+        symbol [ payload %tmp.19 122 18 25 ];
+        invoke %tmp.17 %tmp.18(%tmp.19);
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 123 12 ]
+        ret ?;
+_workspace_garmin_RideDashboard_source_RideLev_mc_116_60_124_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_116_8_124_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_116_8_124_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 126 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_126_8_135_8_if_stmt:
+_workspace_garmin_RideDashboard_source_RideLev_mc_126_12_127_53_begin:
+        symbol [ Ant %tmp.20 126 12 15 ];
+        %tmp.20 = getm $.Toybox.Ant;
+        symbol [ MSG_ID_CHANNEL_RESPONSE_EVENT %tmp.21 126 16 45 ];
+        %tmp.21 = getv %tmp.20 :MSG_ID_CHANNEL_RESPONSE_EVENT;
+        %tmp.22 = lgetv %message;
+        symbol [ message %tmp.22 126 49 56 ];
+        symbol [ messageId %tmp.23 126 57 66 ];
+        %tmp.23 = getv %tmp.22 :messageId;
+        %tmp.24 = eq %tmp.21 %tmp.23;
+        bf %tmp.24 @_workspace_garmin_RideDashboard_source_RideLev_mc_126_8_135_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_127_12_127_53_true:
+        symbol [ Ant %tmp.25 127 12 15 ];
+        %tmp.25 = getm $.Toybox.Ant;
+        symbol [ MSG_ID_RF_EVENT %tmp.26 127 16 31 ];
+        %tmp.26 = getv %tmp.25 :MSG_ID_RF_EVENT;
+        %tmp.27 = lgetv %payload.1;
+        symbol [ payload %tmp.27 127 36 43 ];
+        %tmp.28 = 0;
+        %tmp.29 = agetv %tmp.27 %tmp.28;
+        %tmp.30 = 0xFF;
+        %tmp.31 = bitand %tmp.29 %tmp.30;
+        %tmp.32 = eq %tmp.26 %tmp.31;
+        push %tmp.32;
+_workspace_garmin_RideDashboard_source_RideLev_mc_127_12_127_53_end:
+        %tmp.33 = phi [%tmp.24 @_workspace_garmin_RideDashboard_source_RideLev_mc_126_12_127_53_begin] [%tmp.32 @_workspace_garmin_RideDashboard_source_RideLev_mc_127_12_127_53_true] [%tmp.33 @_workspace_garmin_RideDashboard_source_RideLev_mc_127_12_127_53_end];
+        bf %tmp.33 @_workspace_garmin_RideDashboard_source_RideLev_mc_126_8_135_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_126_8_135_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_127_56_135_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 128 12 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_127_56_135_8_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_127_56_135_8_stop" ]
+        %code.2 = local;
+        symbol [ code %code.2 128 16 20 ];
+        %tmp.34 = lgetv %payload.1;
+        symbol [ payload %tmp.34 128 23 30 ];
+        %tmp.35 = 1;
+        %tmp.36 = agetv %tmp.34 %tmp.35;
+        %tmp.37 = 0xFF;
+        %tmp.38 = bitand %tmp.36 %tmp.37;
+        lputv %code.2 %tmp.38;
+        symbol [ code %code.2 128 16 20 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 129 12 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_129_12_134_12_if_stmt:
+        symbol [ Ant %tmp.39 129 16 19 ];
+        %tmp.39 = getm $.Toybox.Ant;
+        symbol [ MSG_CODE_EVENT_CHANNEL_CLOSED %tmp.40 129 20 49 ];
+        %tmp.40 = getv %tmp.39 :MSG_CODE_EVENT_CHANNEL_CLOSED;
+        %tmp.41 = lgetv %code.2;
+        symbol [ code %tmp.41 129 53 57 ];
+        %tmp.42 = eq %tmp.40 %tmp.41;
+        bf %tmp.42 @_workspace_garmin_RideDashboard_source_RideLev_mc_129_12_134_12_if_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_129_12_134_12_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_129_59_132_12_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 131 16 ]
+        %tmp.43 = self;
+        symbol [ open %tmp.44 131 16 20 ];
+        %tmp.44 = getv function %tmp.43 :open;
+        invoke %tmp.43 %tmp.44();
+_workspace_garmin_RideDashboard_source_RideLev_mc_129_59_132_12_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_129_12_134_12_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_129_12_134_12_if_false:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 132 19 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_132_19_134_12_if_stmt:
+        symbol [ Ant %tmp.45 132 23 26 ];
+        %tmp.45 = getm $.Toybox.Ant;
+        symbol [ MSG_CODE_EVENT_RX_FAIL_GO_TO_SEARCH %tmp.46 132 27 62 ];
+        %tmp.46 = getv %tmp.45 :MSG_CODE_EVENT_RX_FAIL_GO_TO_SEARCH;
+        %tmp.47 = lgetv %code.2;
+        symbol [ code %tmp.47 132 66 70 ];
+        %tmp.48 = eq %tmp.46 %tmp.47;
+        bf %tmp.48 @_workspace_garmin_RideDashboard_source_RideLev_mc_132_19_134_12_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_132_19_134_12_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_132_72_134_12_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 133 16 ]
+        %tmp.49 = true;
+        symbol [ mSearching ? 133 16 26 ];
+        putv self :mSearching %tmp.49;
+_workspace_garmin_RideDashboard_source_RideLev_mc_132_72_134_12_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_132_19_134_12_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_132_19_134_12_if_end:
+_workspace_garmin_RideDashboard_source_RideLev_mc_129_12_134_12_if_end:
+_workspace_garmin_RideDashboard_source_RideLev_mc_127_56_135_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_126_8_135_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_126_8_135_8_if_end:
+_workspace_garmin_RideDashboard_source_RideLev_mc_113_52_136_4_stop:
+    }
+    //! Rozdělení bajtů podle profilu LEV. Stránky 1-3 chodí každou vteřinu,
+    //! stránka 4 a 5 jen občas nebo na vyžádání.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 140; @symbol_functiondef = [parse,140,13,18]; @symbol_param<0> = [payload,140,19,26]; @symbol_param<0>_type<0> = [Lang,140,30,34]; @symbol_param<0>_type<1> = [Array,140,35,40]; @symbol_param<0>_type<2> = [Lang,140,41,45]; @symbol_param<0>_type<3> = [Number,140,46,52]; ]
+    function parse(payload as Lang.Array<Lang.Number>) as Void {
+_workspace_garmin_RideDashboard_source_RideLev_mc_140_63_187_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 141 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_140_63_187_4_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_140_63_187_4_stop" ]
+        %page.1 = local;
+        symbol [ page %page.1 141 12 16 ];
+        %tmp.1 = lgetv %payload;
+        symbol [ payload %tmp.1 141 19 26 ];
+        %tmp.2 = 0;
+        %tmp.3 = agetv %tmp.1 %tmp.2;
+        %tmp.4 = 0xFF;
+        %tmp.5 = bitand %tmp.3 %tmp.4;
+        lputv %page.1 %tmp.5;
+        symbol [ page %page.1 141 12 16 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 143 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_143_8_186_8_if_stmt:
+        %tmp.6 = lgetv %page.1;
+        symbol [ page %tmp.6 143 12 16 ];
+        %tmp.7 = 1;
+        %tmp.8 = eq %tmp.6 %tmp.7;
+        bf %tmp.8 @_workspace_garmin_RideDashboard_source_RideLev_mc_143_8_186_8_if_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_143_8_186_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_143_23_150_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 144 12 ]
+        %tmp.9 = self;
+        symbol [ setAssistLevel %tmp.10 144 12 26 ];
+        %tmp.10 = getv function %tmp.9 :setAssistLevel;
+        %tmp.11 = lgetv %payload;
+        symbol [ payload %tmp.11 144 28 35 ];
+        %tmp.12 = 2;
+        %tmp.13 = agetv %tmp.11 %tmp.12;
+        %tmp.14 = 3;
+        %tmp.15 = shr %tmp.13 %tmp.14;
+        %tmp.16 = 0x07;
+        %tmp.17 = bitand %tmp.15 %tmp.16;
+        invoke %tmp.9 %tmp.10(%tmp.17);
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 145 12 ]
+        %tmp.18 = lgetv %payload;
+        symbol [ payload %tmp.18 145 26 33 ];
+        %tmp.19 = 2;
+        %tmp.20 = agetv %tmp.18 %tmp.19;
+        %tmp.21 = 0x07;
+        %tmp.22 = bitand %tmp.20 %tmp.21;
+        symbol [ mRegenLevel ? 145 12 23 ];
+        putv self :mRegenLevel %tmp.22;
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 146 12 ]
+        %tmp.23 = lgetv %payload;
+        symbol [ payload %tmp.23 146 27 34 ];
+        %tmp.24 = 3;
+        %tmp.25 = agetv %tmp.23 %tmp.24;
+        %tmp.26 = 0xFF;
+        %tmp.27 = bitand %tmp.25 %tmp.26;
+        symbol [ mSystemState ? 146 12 24 ];
+        putv self :mSystemState %tmp.27;
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 147 12 ]
+        %tmp.28 = lgetv %payload;
+        symbol [ payload %tmp.28 147 25 32 ];
+        %tmp.29 = 4;
+        %tmp.30 = agetv %tmp.28 %tmp.29;
+        %tmp.31 = 0xFF;
+        %tmp.32 = bitand %tmp.30 %tmp.31;
+        symbol [ mGearState ? 147 12 22 ];
+        putv self :mGearState %tmp.32;
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 148 12 ]
+        %tmp.33 = self;
+        symbol [ speedFrom %tmp.34 148 24 33 ];
+        %tmp.34 = getv function %tmp.33 :speedFrom;
+        %tmp.35 = lgetv %payload;
+        symbol [ payload %tmp.35 148 34 41 ];
+        %tmp.36 = invoke %tmp.33 %tmp.34(%tmp.35);
+        symbol [ mSpeedKmh ? 148 12 21 ];
+        putv self :mSpeedKmh %tmp.36;
+_workspace_garmin_RideDashboard_source_RideLev_mc_143_23_150_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_143_8_186_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_143_8_186_8_if_false:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 150 15 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_150_15_186_8_if_stmt:
+        %tmp.37 = lgetv %page.1;
+        symbol [ page %tmp.37 150 19 23 ];
+        %tmp.38 = 2;
+        %tmp.39 = eq %tmp.37 %tmp.38;
+        bf %tmp.39 @_workspace_garmin_RideDashboard_source_RideLev_mc_150_15_186_8_if_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_150_15_186_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_150_30_156_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 152 12 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_150_30_156_8_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_150_30_156_8_stop" ]
+        %range.2 = local;
+        symbol [ range %range.2 152 16 21 ];
+        %tmp.40 = lgetv %payload;
+        symbol [ payload %tmp.40 152 25 32 ];
+        %tmp.41 = 4;
+        %tmp.42 = agetv %tmp.40 %tmp.41;
+        %tmp.43 = 0xFF;
+        %tmp.44 = bitand %tmp.42 %tmp.43;
+        %tmp.45 = lgetv %payload;
+        symbol [ payload %tmp.45 152 48 55 ];
+        %tmp.46 = 5;
+        %tmp.47 = agetv %tmp.45 %tmp.46;
+        %tmp.48 = 0x0F;
+        %tmp.49 = bitand %tmp.47 %tmp.48;
+        %tmp.50 = 8;
+        %tmp.51 = shl %tmp.49 %tmp.50;
+        %tmp.52 = bitor %tmp.44 %tmp.51;
+        lputv %range.2 %tmp.52;
+        symbol [ range %range.2 152 16 21 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 153 12 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_153_23_153_57_begin:
+        %tmp.53 = lgetv %range.2;
+        symbol [ range %tmp.53 153 23 28 ];
+        %tmp.54 = 0;
+        %tmp.55 = eq %tmp.53 %tmp.54;
+        bf %tmp.55 @_workspace_garmin_RideDashboard_source_RideLev_mc_153_23_153_57_else_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_153_23_153_57_true:
+        %tmp.56 = null;
+        push %tmp.56;
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_153_23_153_57_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_153_23_153_57_else_false:
+        %tmp.57 = lgetv %range.2;
+        symbol [ range %tmp.57 153 43 48 ];
+        symbol [ toFloat %tmp.58 153 49 56 ];
+        %tmp.58 = getv function %tmp.57 :toFloat;
+        %tmp.59 = invoke %tmp.57 %tmp.58();
+        push %tmp.59;
+_workspace_garmin_RideDashboard_source_RideLev_mc_153_23_153_57_end:
+        %tmp.60 = phi [%tmp.55 @_workspace_garmin_RideDashboard_source_RideLev_mc_153_23_153_57_begin] [%tmp.56 @_workspace_garmin_RideDashboard_source_RideLev_mc_153_23_153_57_true] [%tmp.59 @_workspace_garmin_RideDashboard_source_RideLev_mc_153_23_153_57_else_false] [%tmp.60 @_workspace_garmin_RideDashboard_source_RideLev_mc_153_23_153_57_end];
+        symbol [ mRangeKm ? 153 12 20 ];
+        putv self :mRangeKm %tmp.60;
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 154 12 ]
+        %tmp.61 = self;
+        symbol [ speedFrom %tmp.62 154 24 33 ];
+        %tmp.62 = getv function %tmp.61 :speedFrom;
+        %tmp.63 = lgetv %payload;
+        symbol [ payload %tmp.63 154 34 41 ];
+        %tmp.64 = invoke %tmp.61 %tmp.62(%tmp.63);
+        symbol [ mSpeedKmh ? 154 12 21 ];
+        putv self :mSpeedKmh %tmp.64;
+_workspace_garmin_RideDashboard_source_RideLev_mc_150_30_156_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_150_15_186_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_150_15_186_8_if_false:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 156 15 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_156_15_186_8_if_stmt:
+        %tmp.65 = lgetv %page.1;
+        symbol [ page %tmp.65 156 19 23 ];
+        %tmp.66 = 3;
+        %tmp.67 = eq %tmp.65 %tmp.66;
+        bf %tmp.67 @_workspace_garmin_RideDashboard_source_RideLev_mc_156_15_186_8_if_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_156_15_186_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_156_30_167_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 158 12 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_156_30_167_8_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_156_30_167_8_stop" ]
+        %soc.3 = local;
+        symbol [ soc %soc.3 158 16 19 ];
+        %tmp.68 = lgetv %payload;
+        symbol [ payload %tmp.68 158 22 29 ];
+        %tmp.69 = 1;
+        %tmp.70 = agetv %tmp.68 %tmp.69;
+        %tmp.71 = 0x7F;
+        %tmp.72 = bitand %tmp.70 %tmp.71;
+        lputv %soc.3 %tmp.72;
+        symbol [ soc %soc.3 158 16 19 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 159 12 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_159_19_159_38_begin:
+        %tmp.73 = lgetv %soc.3;
+        symbol [ soc %tmp.73 159 19 22 ];
+        %tmp.74 = 100;
+        %tmp.75 = gt %tmp.73 %tmp.74;
+        bf %tmp.75 @_workspace_garmin_RideDashboard_source_RideLev_mc_159_19_159_38_else_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_159_19_159_38_true:
+        %tmp.76 = null;
+        push %tmp.76;
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_159_19_159_38_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_159_19_159_38_else_false:
+        %tmp.77 = lgetv %soc.3;
+        symbol [ soc %tmp.77 159 38 41 ];
+        push %tmp.77;
+_workspace_garmin_RideDashboard_source_RideLev_mc_159_19_159_38_end:
+        %tmp.78 = phi [%tmp.75 @_workspace_garmin_RideDashboard_source_RideLev_mc_159_19_159_38_begin] [%tmp.76 @_workspace_garmin_RideDashboard_source_RideLev_mc_159_19_159_38_true] [%tmp.77 @_workspace_garmin_RideDashboard_source_RideLev_mc_159_19_159_38_else_false] [%tmp.78 @_workspace_garmin_RideDashboard_source_RideLev_mc_159_19_159_38_end];
+        symbol [ mSoc ? 159 12 16 ];
+        putv self :mSoc %tmp.78;
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 160 12 ]
+        %tmp.79 = lgetv %payload;
+        symbol [ payload %tmp.79 160 32 39 ];
+        %tmp.80 = 1;
+        %tmp.81 = agetv %tmp.79 %tmp.80;
+        %tmp.82 = 7;
+        %tmp.83 = shr %tmp.81 %tmp.82;
+        %tmp.84 = 0x01;
+        %tmp.85 = bitand %tmp.83 %tmp.84;
+        %tmp.86 = 1;
+        %tmp.87 = eq %tmp.85 %tmp.86;
+        symbol [ mBatteryWarning ? 160 12 27 ];
+        putv self :mBatteryWarning %tmp.87;
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 161 12 ]
+        %tmp.88 = self;
+        symbol [ setAssistLevel %tmp.89 161 12 26 ];
+        %tmp.89 = getv function %tmp.88 :setAssistLevel;
+        %tmp.90 = lgetv %payload;
+        symbol [ payload %tmp.90 161 28 35 ];
+        %tmp.91 = 2;
+        %tmp.92 = agetv %tmp.90 %tmp.91;
+        %tmp.93 = 3;
+        %tmp.94 = shr %tmp.92 %tmp.93;
+        %tmp.95 = 0x07;
+        %tmp.96 = bitand %tmp.94 %tmp.95;
+        invoke %tmp.88 %tmp.89(%tmp.96);
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 162 12 ]
+        %tmp.97 = lgetv %payload;
+        symbol [ payload %tmp.97 162 26 33 ];
+        %tmp.98 = 2;
+        %tmp.99 = agetv %tmp.97 %tmp.98;
+        %tmp.100 = 0x07;
+        %tmp.101 = bitand %tmp.99 %tmp.100;
+        symbol [ mRegenLevel ? 162 12 23 ];
+        putv self :mRegenLevel %tmp.101;
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 163 12 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_156_30_167_8_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_156_30_167_8_stop" ]
+        %assist.4 = local;
+        symbol [ assist %assist.4 163 16 22 ];
+        %tmp.102 = lgetv %payload;
+        symbol [ payload %tmp.102 163 25 32 ];
+        %tmp.103 = 5;
+        %tmp.104 = agetv %tmp.102 %tmp.103;
+        %tmp.105 = 0xFF;
+        %tmp.106 = bitand %tmp.104 %tmp.105;
+        lputv %assist.4 %tmp.106;
+        symbol [ assist %assist.4 163 16 22 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 164 12 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_164_29_164_53_begin:
+        %tmp.107 = lgetv %assist.4;
+        symbol [ assist %tmp.107 164 29 35 ];
+        %tmp.108 = 0xFF;
+        %tmp.109 = eq %tmp.107 %tmp.108;
+        bf %tmp.109 @_workspace_garmin_RideDashboard_source_RideLev_mc_164_29_164_53_else_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_164_29_164_53_true:
+        %tmp.110 = null;
+        push %tmp.110;
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_164_29_164_53_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_164_29_164_53_else_false:
+        %tmp.111 = lgetv %assist.4;
+        symbol [ assist %tmp.111 164 53 59 ];
+        push %tmp.111;
+_workspace_garmin_RideDashboard_source_RideLev_mc_164_29_164_53_end:
+        %tmp.112 = phi [%tmp.109 @_workspace_garmin_RideDashboard_source_RideLev_mc_164_29_164_53_begin] [%tmp.110 @_workspace_garmin_RideDashboard_source_RideLev_mc_164_29_164_53_true] [%tmp.111 @_workspace_garmin_RideDashboard_source_RideLev_mc_164_29_164_53_else_false] [%tmp.112 @_workspace_garmin_RideDashboard_source_RideLev_mc_164_29_164_53_end];
+        symbol [ mAssistPercent ? 164 12 26 ];
+        putv self :mAssistPercent %tmp.112;
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 165 12 ]
+        %tmp.113 = self;
+        symbol [ speedFrom %tmp.114 165 24 33 ];
+        %tmp.114 = getv function %tmp.113 :speedFrom;
+        %tmp.115 = lgetv %payload;
+        symbol [ payload %tmp.115 165 34 41 ];
+        %tmp.116 = invoke %tmp.113 %tmp.114(%tmp.115);
+        symbol [ mSpeedKmh ? 165 12 21 ];
+        putv self :mSpeedKmh %tmp.116;
+_workspace_garmin_RideDashboard_source_RideLev_mc_156_30_167_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_156_15_186_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_156_15_186_8_if_false:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 167 15 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_167_15_186_8_if_stmt:
+        %tmp.117 = lgetv %page.1;
+        symbol [ page %tmp.117 167 19 23 ];
+        %tmp.118 = 4;
+        %tmp.119 = eq %tmp.117 %tmp.118;
+        bf %tmp.119 @_workspace_garmin_RideDashboard_source_RideLev_mc_167_15_186_8_if_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_167_15_186_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_167_30_174_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 169 12 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_167_30_174_8_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_167_30_174_8_stop" ]
+        %consumption.5 = local;
+        symbol [ consumption %consumption.5 169 16 27 ];
+        %tmp.120 = lgetv %payload;
+        symbol [ payload %tmp.120 169 31 38 ];
+        %tmp.121 = 4;
+        %tmp.122 = agetv %tmp.120 %tmp.121;
+        %tmp.123 = 0xFF;
+        %tmp.124 = bitand %tmp.122 %tmp.123;
+        %tmp.125 = lgetv %payload;
+        symbol [ payload %tmp.125 169 55 62 ];
+        %tmp.126 = 3;
+        %tmp.127 = agetv %tmp.125 %tmp.126;
+        %tmp.128 = 4;
+        %tmp.129 = shr %tmp.127 %tmp.128;
+        %tmp.130 = 0x0F;
+        %tmp.131 = bitand %tmp.129 %tmp.130;
+        %tmp.132 = 8;
+        %tmp.133 = shl %tmp.131 %tmp.132;
+        %tmp.134 = bitor %tmp.124 %tmp.133;
+        lputv %consumption.5 %tmp.134;
+        symbol [ consumption %consumption.5 169 16 27 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 170 12 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_170_27_170_67_begin:
+        %tmp.135 = lgetv %consumption.5;
+        symbol [ consumption %tmp.135 170 27 38 ];
+        %tmp.136 = 0;
+        %tmp.137 = eq %tmp.135 %tmp.136;
+        bf %tmp.137 @_workspace_garmin_RideDashboard_source_RideLev_mc_170_27_170_67_else_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_170_27_170_67_true:
+        %tmp.138 = null;
+        push %tmp.138;
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_170_27_170_67_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_170_27_170_67_else_false:
+        %tmp.139 = lgetv %consumption.5;
+        symbol [ consumption %tmp.139 170 53 64 ];
+        %tmp.140 = 10.0;
+        %tmp.141 = div %tmp.139 %tmp.140;
+        push %tmp.141;
+_workspace_garmin_RideDashboard_source_RideLev_mc_170_27_170_67_end:
+        %tmp.142 = phi [%tmp.137 @_workspace_garmin_RideDashboard_source_RideLev_mc_170_27_170_67_begin] [%tmp.138 @_workspace_garmin_RideDashboard_source_RideLev_mc_170_27_170_67_true] [%tmp.141 @_workspace_garmin_RideDashboard_source_RideLev_mc_170_27_170_67_else_false] [%tmp.142 @_workspace_garmin_RideDashboard_source_RideLev_mc_170_27_170_67_end];
+        symbol [ mConsumption ? 170 12 24 ];
+        putv self :mConsumption %tmp.142;
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 171 12 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_167_30_174_8_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_167_30_174_8_stop" ]
+        %charged.6 = local;
+        symbol [ charged %charged.6 171 16 23 ];
+        %tmp.143 = lgetv %payload;
+        symbol [ payload %tmp.143 171 27 34 ];
+        %tmp.144 = 6;
+        %tmp.145 = agetv %tmp.143 %tmp.144;
+        %tmp.146 = 0xFF;
+        %tmp.147 = bitand %tmp.145 %tmp.146;
+        %tmp.148 = lgetv %payload;
+        symbol [ payload %tmp.148 171 50 57 ];
+        %tmp.149 = 7;
+        %tmp.150 = agetv %tmp.148 %tmp.149;
+        %tmp.151 = 0xFF;
+        %tmp.152 = bitand %tmp.150 %tmp.151;
+        %tmp.153 = 8;
+        %tmp.154 = shl %tmp.152 %tmp.153;
+        %tmp.155 = bitor %tmp.147 %tmp.154;
+        lputv %charged.6 %tmp.155;
+        symbol [ charged %charged.6 171 16 23 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 172 12 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_172_32_172_64_begin:
+        %tmp.156 = lgetv %charged.6;
+        symbol [ charged %tmp.156 172 32 39 ];
+        %tmp.157 = 0;
+        %tmp.158 = eq %tmp.156 %tmp.157;
+        bf %tmp.158 @_workspace_garmin_RideDashboard_source_RideLev_mc_172_32_172_64_else_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_172_32_172_64_true:
+        %tmp.159 = null;
+        push %tmp.159;
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_172_32_172_64_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_172_32_172_64_else_false:
+        %tmp.160 = lgetv %charged.6;
+        symbol [ charged %tmp.160 172 54 61 ];
+        %tmp.161 = 10.0;
+        %tmp.162 = div %tmp.160 %tmp.161;
+        push %tmp.162;
+_workspace_garmin_RideDashboard_source_RideLev_mc_172_32_172_64_end:
+        %tmp.163 = phi [%tmp.158 @_workspace_garmin_RideDashboard_source_RideLev_mc_172_32_172_64_begin] [%tmp.159 @_workspace_garmin_RideDashboard_source_RideLev_mc_172_32_172_64_true] [%tmp.162 @_workspace_garmin_RideDashboard_source_RideLev_mc_172_32_172_64_else_false] [%tmp.163 @_workspace_garmin_RideDashboard_source_RideLev_mc_172_32_172_64_end];
+        symbol [ mChargeDistanceKm ? 172 12 29 ];
+        putv self :mChargeDistanceKm %tmp.163;
+_workspace_garmin_RideDashboard_source_RideLev_mc_167_30_174_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_167_15_186_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_167_15_186_8_if_false:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 174 15 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_174_15_186_8_if_stmt:
+        %tmp.164 = lgetv %page.1;
+        symbol [ page %tmp.164 174 19 23 ];
+        %tmp.165 = 34;
+        %tmp.166 = eq %tmp.164 %tmp.165;
+        bf %tmp.166 @_workspace_garmin_RideDashboard_source_RideLev_mc_174_15_186_8_if_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_174_15_186_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_174_31_180_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 176 12 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_174_31_180_8_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_174_31_180_8_stop" ]
+        %alternate.7 = local;
+        symbol [ alternate %alternate.7 176 16 25 ];
+        %tmp.167 = lgetv %payload;
+        symbol [ payload %tmp.167 176 29 36 ];
+        %tmp.168 = 4;
+        %tmp.169 = agetv %tmp.167 %tmp.168;
+        %tmp.170 = 0xFF;
+        %tmp.171 = bitand %tmp.169 %tmp.170;
+        %tmp.172 = lgetv %payload;
+        symbol [ payload %tmp.172 176 52 59 ];
+        %tmp.173 = 5;
+        %tmp.174 = agetv %tmp.172 %tmp.173;
+        %tmp.175 = 0x0F;
+        %tmp.176 = bitand %tmp.174 %tmp.175;
+        %tmp.177 = 8;
+        %tmp.178 = shl %tmp.176 %tmp.177;
+        %tmp.179 = bitor %tmp.171 %tmp.178;
+        lputv %alternate.7 %tmp.179;
+        symbol [ alternate %alternate.7 176 16 25 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 177 12 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_177_27_177_63_begin:
+        %tmp.180 = lgetv %alternate.7;
+        symbol [ alternate %tmp.180 177 27 36 ];
+        %tmp.181 = 0;
+        %tmp.182 = eq %tmp.180 %tmp.181;
+        bf %tmp.182 @_workspace_garmin_RideDashboard_source_RideLev_mc_177_27_177_63_else_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_177_27_177_63_true:
+        %tmp.183 = null;
+        push %tmp.183;
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_177_27_177_63_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_177_27_177_63_else_false:
+        %tmp.184 = lgetv %alternate.7;
+        symbol [ alternate %tmp.184 177 51 60 ];
+        %tmp.185 = 10.0;
+        %tmp.186 = div %tmp.184 %tmp.185;
+        push %tmp.186;
+_workspace_garmin_RideDashboard_source_RideLev_mc_177_27_177_63_end:
+        %tmp.187 = phi [%tmp.182 @_workspace_garmin_RideDashboard_source_RideLev_mc_177_27_177_63_begin] [%tmp.183 @_workspace_garmin_RideDashboard_source_RideLev_mc_177_27_177_63_true] [%tmp.186 @_workspace_garmin_RideDashboard_source_RideLev_mc_177_27_177_63_else_false] [%tmp.187 @_workspace_garmin_RideDashboard_source_RideLev_mc_177_27_177_63_end];
+        symbol [ mConsumption ? 177 12 24 ];
+        putv self :mConsumption %tmp.187;
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 178 12 ]
+        %tmp.188 = self;
+        symbol [ speedFrom %tmp.189 178 24 33 ];
+        %tmp.189 = getv function %tmp.188 :speedFrom;
+        %tmp.190 = lgetv %payload;
+        symbol [ payload %tmp.190 178 34 41 ];
+        %tmp.191 = invoke %tmp.188 %tmp.189(%tmp.190);
+        symbol [ mSpeedKmh ? 178 12 21 ];
+        putv self :mSpeedKmh %tmp.191;
+_workspace_garmin_RideDashboard_source_RideLev_mc_174_31_180_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_174_15_186_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_174_15_186_8_if_false:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 180 15 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_180_15_186_8_if_stmt:
+        %tmp.192 = lgetv %page.1;
+        symbol [ page %tmp.192 180 19 23 ];
+        %tmp.193 = 5;
+        %tmp.194 = eq %tmp.192 %tmp.193;
+        bf %tmp.194 @_workspace_garmin_RideDashboard_source_RideLev_mc_180_15_186_8_if_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_180_15_186_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_180_30_183_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 181 12 ]
+        %tmp.195 = lgetv %payload;
+        symbol [ payload %tmp.195 181 33 40 ];
+        %tmp.196 = 2;
+        %tmp.197 = agetv %tmp.195 %tmp.196;
+        %tmp.198 = 3;
+        %tmp.199 = shr %tmp.197 %tmp.198;
+        %tmp.200 = 0x07;
+        %tmp.201 = bitand %tmp.199 %tmp.200;
+        symbol [ mTotalAssistModes ? 181 12 29 ];
+        putv self :mTotalAssistModes %tmp.201;
+_workspace_garmin_RideDashboard_source_RideLev_mc_180_30_183_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_180_15_186_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_180_15_186_8_if_false:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 183 15 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_183_15_186_8_if_stmt:
+        %tmp.202 = lgetv %page.1;
+        symbol [ page %tmp.202 183 19 23 ];
+        %tmp.203 = 80;
+        %tmp.204 = eq %tmp.202 %tmp.203;
+        bf %tmp.204 @_workspace_garmin_RideDashboard_source_RideLev_mc_183_15_186_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_183_15_186_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_183_31_186_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 185 12 ]
+        %tmp.205 = lgetv %payload;
+        symbol [ payload %tmp.205 185 29 36 ];
+        %tmp.206 = 4;
+        %tmp.207 = agetv %tmp.205 %tmp.206;
+        %tmp.208 = 0xFF;
+        %tmp.209 = bitand %tmp.207 %tmp.208;
+        %tmp.210 = lgetv %payload;
+        symbol [ payload %tmp.210 185 52 59 ];
+        %tmp.211 = 5;
+        %tmp.212 = agetv %tmp.210 %tmp.211;
+        %tmp.213 = 0xFF;
+        %tmp.214 = bitand %tmp.212 %tmp.213;
+        %tmp.215 = 8;
+        %tmp.216 = shl %tmp.214 %tmp.215;
+        %tmp.217 = bitor %tmp.209 %tmp.216;
+        symbol [ mManufacturer ? 185 12 25 ];
+        putv self :mManufacturer %tmp.217;
+_workspace_garmin_RideDashboard_source_RideLev_mc_183_31_186_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_183_15_186_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_183_15_186_8_if_end:
+_workspace_garmin_RideDashboard_source_RideLev_mc_180_15_186_8_if_end:
+_workspace_garmin_RideDashboard_source_RideLev_mc_174_15_186_8_if_end:
+_workspace_garmin_RideDashboard_source_RideLev_mc_167_15_186_8_if_end:
+_workspace_garmin_RideDashboard_source_RideLev_mc_156_15_186_8_if_end:
+_workspace_garmin_RideDashboard_source_RideLev_mc_150_15_186_8_if_end:
+_workspace_garmin_RideDashboard_source_RideLev_mc_143_8_186_8_if_end:
+_workspace_garmin_RideDashboard_source_RideLev_mc_140_63_187_4_stop:
+    }
+    //! Stupeň z kola. Když dorazil ten, o který jsme si řekli, požadavek
+    //! splnil účel a zahodí se; do té doby ukazujeme dál kolem hlášenou
+    //! skutečnost, ne naše přání.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 192; @symbol_functiondef = [setAssistLevel,192,13,27]; @symbol_param<0> = [level,192,28,33]; @symbol_param<0>_type<0> = [Lang,192,37,41]; @symbol_param<0>_type<1> = [Number,192,42,48]; ]
+    function setAssistLevel(level as Lang.Number) as Void {
+_workspace_garmin_RideDashboard_source_RideLev_mc_192_58_197_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 193 8 ]
+        %tmp.1 = lgetv %level;
+        symbol [ level %tmp.1 193 23 28 ];
+        symbol [ mAssistLevel ? 193 8 20 ];
+        putv self :mAssistLevel %tmp.1;
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 194 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_194_8_196_8_if_stmt:
+_workspace_garmin_RideDashboard_source_RideLev_mc_194_12_194_60_begin:
+        symbol [ mRequestedAssist %tmp.3 194 12 28 ];
+        %tmp.3 = getv ? :mRequestedAssist;
+        %tmp.4 = null;
+        %tmp.5 = ne %tmp.3 %tmp.4;
+        bf %tmp.5 @_workspace_garmin_RideDashboard_source_RideLev_mc_194_8_196_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_194_40_194_60_true:
+        symbol [ mRequestedAssist %tmp.7 194 40 56 ];
+        %tmp.7 = getv ? :mRequestedAssist;
+        %tmp.8 = as %tmp.7 { (!Null) };
+        %tmp.9 = lgetv %level;
+        symbol [ level %tmp.9 194 60 65 ];
+        %tmp.10 = eq %tmp.8 %tmp.9;
+        push %tmp.10;
+_workspace_garmin_RideDashboard_source_RideLev_mc_194_40_194_60_end:
+        %tmp.11 = phi [%tmp.5 @_workspace_garmin_RideDashboard_source_RideLev_mc_194_12_194_60_begin] [%tmp.10 @_workspace_garmin_RideDashboard_source_RideLev_mc_194_40_194_60_true] [%tmp.11 @_workspace_garmin_RideDashboard_source_RideLev_mc_194_40_194_60_end];
+        bf %tmp.11 @_workspace_garmin_RideDashboard_source_RideLev_mc_194_8_196_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_194_8_196_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_194_67_196_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 195 12 ]
+        %tmp.12 = null;
+        symbol [ mRequestedAssist ? 195 12 28 ];
+        putv self :mRequestedAssist %tmp.12;
+_workspace_garmin_RideDashboard_source_RideLev_mc_194_67_196_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_194_8_196_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_194_8_196_8_if_end:
+_workspace_garmin_RideDashboard_source_RideLev_mc_192_58_197_4_stop:
+    }
+    //! Požádá kolo o jiný stupeň asistence (datová stránka 16 profilu LEV).
+    //!
+    //! Stránka nenese jen asistenci - v bajtech 4 a 5 je "desired state" pro
+    //! převody, světla, dálková a blinkry. Posílají se proto zpátky přesně tak,
+    //! jak je kolo naposledy hlásilo ve stránce 1; jinak by změna stupně
+    //! zároveň zhasla světla. Rekuperace se ze stejného důvodu opisuje.
+    //!
+    //! @return true, když se zprávu podařilo předat rádiu
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 209; @symbol_functiondef = [requestAssist,209,13,26]; @symbol_param<0> = [level,209,27,32]; @symbol_param<0>_type<0> = [Lang,209,36,40]; @symbol_param<0>_type<1> = [Number,209,41,47]; @symbol_return<0> = [Lang,209,52,56]; @symbol_return<1> = [Boolean,209,57,64]; ]
+    function requestAssist(level as Lang.Number) as Lang.Boolean {
+_workspace_garmin_RideDashboard_source_RideLev_mc_209_65_234_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 210 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_210_8_212_8_if_stmt:
+_workspace_garmin_RideDashboard_source_RideLev_mc_210_12_210_49_begin:
+_workspace_garmin_RideDashboard_source_RideLev_mc_210_12_210_36_begin:
+        %tmp.1 = self;
+        symbol [ connected %tmp.2 210 13 22 ];
+        %tmp.2 = getv function %tmp.1 :connected;
+        %tmp.3 = invoke %tmp.1 %tmp.2();
+        %tmp.4 = not %tmp.3;
+        bt %tmp.4 @_workspace_garmin_RideDashboard_source_RideLev_mc_210_8_212_8_if_true;
+_workspace_garmin_RideDashboard_source_RideLev_mc_210_28_210_36_false:
+        %tmp.5 = lgetv %level;
+        symbol [ level %tmp.5 210 28 33 ];
+        %tmp.6 = 0;
+        %tmp.7 = lt %tmp.5 %tmp.6;
+        push %tmp.7;
+_workspace_garmin_RideDashboard_source_RideLev_mc_210_28_210_36_end:
+        %tmp.8 = phi [%tmp.4 @_workspace_garmin_RideDashboard_source_RideLev_mc_210_12_210_36_begin] [%tmp.7 @_workspace_garmin_RideDashboard_source_RideLev_mc_210_28_210_36_false] [%tmp.8 @_workspace_garmin_RideDashboard_source_RideLev_mc_210_28_210_36_end];
+        bt %tmp.8 @_workspace_garmin_RideDashboard_source_RideLev_mc_210_8_212_8_if_true;
+_workspace_garmin_RideDashboard_source_RideLev_mc_210_41_210_49_false:
+        %tmp.9 = lgetv %level;
+        symbol [ level %tmp.9 210 41 46 ];
+        %tmp.10 = 7;
+        %tmp.11 = gt %tmp.9 %tmp.10;
+        push %tmp.11;
+_workspace_garmin_RideDashboard_source_RideLev_mc_210_41_210_49_end:
+        %tmp.12 = phi [%tmp.8 @_workspace_garmin_RideDashboard_source_RideLev_mc_210_12_210_49_begin] [%tmp.11 @_workspace_garmin_RideDashboard_source_RideLev_mc_210_41_210_49_false] [%tmp.12 @_workspace_garmin_RideDashboard_source_RideLev_mc_210_41_210_49_end];
+        bf %tmp.12 @_workspace_garmin_RideDashboard_source_RideLev_mc_210_8_212_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_210_8_212_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_210_52_212_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 211 12 ]
+        %tmp.13 = false;
+        ret %tmp.13;
+_workspace_garmin_RideDashboard_source_RideLev_mc_210_52_212_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_210_8_212_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_210_8_212_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 214 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_209_65_234_4_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_209_65_234_4_stop" ]
+        %command.1 = local;
+        symbol [ command %command.1 214 12 19 ];
+        %tmp.14 = self;
+        symbol [ displayCommand %tmp.15 214 22 36 ];
+        %tmp.15 = getv function %tmp.14 :displayCommand;
+        %tmp.16 = invoke %tmp.14 %tmp.15();
+        lputv %command.1 %tmp.16;
+        symbol [ command %command.1 214 12 19 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 215 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_209_65_234_4_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_209_65_234_4_stop" ]
+        %payload.2 = local;
+        symbol [ payload %payload.2 215 12 19 ];
+        %tmp.17 = newa 8;
+        symbol [ PAGE_DISPLAY %tmp.19 216 12 24 ];
+        %tmp.19 = getv ? :PAGE_DISPLAY;
+        %tmp.20 = dup %tmp.17;
+        %tmp.21 = aputv %tmp.20 0 %tmp.19;
+        symbol [ WHEEL_UNSET %tmp.23 217 12 23 ];
+        %tmp.23 = getv ? :WHEEL_UNSET;
+        %tmp.24 = 0xFF;
+        %tmp.25 = bitand %tmp.23 %tmp.24;
+        %tmp.26 = dup %tmp.21;
+        %tmp.27 = aputv %tmp.26 1 %tmp.25;
+        %tmp.28 = 0xF0;
+        symbol [ WHEEL_UNSET %tmp.30 218 21 32 ];
+        %tmp.30 = getv ? :WHEEL_UNSET;
+        %tmp.31 = 8;
+        %tmp.32 = shr %tmp.30 %tmp.31;
+        %tmp.33 = 0x0F;
+        %tmp.34 = bitand %tmp.32 %tmp.33;
+        %tmp.35 = bitor %tmp.28 %tmp.34;
+        %tmp.36 = dup %tmp.27;
+        %tmp.37 = aputv %tmp.36 2 %tmp.35;
+        %tmp.38 = lgetv %level;
+        symbol [ level %tmp.38 219 14 19 ];
+        %tmp.39 = 0x07;
+        %tmp.40 = bitand %tmp.38 %tmp.39;
+        %tmp.41 = 3;
+        %tmp.42 = shl %tmp.40 %tmp.41;
+        symbol [ mRegenLevel %tmp.44 219 37 48 ];
+        %tmp.44 = getv ? :mRegenLevel;
+        %tmp.45 = 0x07;
+        %tmp.46 = bitand %tmp.44 %tmp.45;
+        %tmp.47 = bitor %tmp.42 %tmp.46;
+        %tmp.48 = dup %tmp.37;
+        %tmp.49 = aputv %tmp.48 3 %tmp.47;
+        %tmp.50 = lgetv %command.1;
+        symbol [ command %tmp.50 220 12 19 ];
+        %tmp.51 = 0xFF;
+        %tmp.52 = bitand %tmp.50 %tmp.51;
+        %tmp.53 = dup %tmp.49;
+        %tmp.54 = aputv %tmp.53 4 %tmp.52;
+        %tmp.55 = lgetv %command.1;
+        symbol [ command %tmp.55 221 13 20 ];
+        %tmp.56 = 8;
+        %tmp.57 = shr %tmp.55 %tmp.56;
+        %tmp.58 = 0xFF;
+        %tmp.59 = bitand %tmp.57 %tmp.58;
+        %tmp.60 = dup %tmp.54;
+        %tmp.61 = aputv %tmp.60 5 %tmp.59;
+        symbol [ DISPLAY_MANUFACTURER %tmp.63 222 12 32 ];
+        %tmp.63 = getv ? :DISPLAY_MANUFACTURER;
+        %tmp.64 = 0xFF;
+        %tmp.65 = bitand %tmp.63 %tmp.64;
+        %tmp.66 = dup %tmp.61;
+        %tmp.67 = aputv %tmp.66 6 %tmp.65;
+        symbol [ DISPLAY_MANUFACTURER %tmp.69 223 13 33 ];
+        %tmp.69 = getv ? :DISPLAY_MANUFACTURER;
+        %tmp.70 = 8;
+        %tmp.71 = shr %tmp.69 %tmp.70;
+        %tmp.72 = 0xFF;
+        %tmp.73 = bitand %tmp.71 %tmp.72;
+        %tmp.74 = dup %tmp.67;
+        %tmp.75 = aputv %tmp.74 7 %tmp.73;
+        lputv %payload.2 %tmp.75;
+        symbol [ payload %payload.2 215 12 19 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 226 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_209_65_234_4_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_209_65_234_4_stop" ]
+        %message.3 = local;
+        symbol [ message %message.3 226 12 19 ];
+        symbol [ Ant %tmp.78 226 26 29 ];
+        %tmp.78 = getm $.Toybox.Ant;
+        symbol [ Message %tmp.79 226 30 37 ];
+        %tmp.79 = getv function ? %tmp.78 :Message;
+        %tmp.76 = newc %tmp.79 ();
+        lputv %message.3 %tmp.76;
+        symbol [ message %message.3 226 12 19 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 227 8 ]
+        %tmp.80 = lgetv %message.3;
+        symbol [ message %tmp.80 227 8 15 ];
+        symbol [ setPayload %tmp.81 227 16 26 ];
+        %tmp.81 = getv function %tmp.80 :setPayload;
+        %tmp.82 = lgetv %payload.2;
+        symbol [ payload %tmp.82 227 27 34 ];
+        invoke %tmp.80 %tmp.81(%tmp.82);
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 229 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_209_65_234_4_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_209_65_234_4_stop" ]
+        %sent.4 = local;
+        symbol [ sent %sent.4 229 12 16 ];
+        symbol [ GenericChannel %tmp.84 229 19 33 ];
+        %tmp.84 = getv ? :GenericChannel;
+        symbol [ sendAcknowledge %tmp.85 229 34 49 ];
+        %tmp.85 = getv function %tmp.84 :sendAcknowledge;
+        %tmp.86 = lgetv %message.3;
+        symbol [ message %tmp.86 229 50 57 ];
+        %tmp.87 = invoke %tmp.84 %tmp.85(%tmp.86);
+        lputv %sent.4 %tmp.87;
+        symbol [ sent %sent.4 229 12 16 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 230 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_230_8_232_8_if_stmt:
+        %tmp.88 = lgetv %sent.4;
+        symbol [ sent %tmp.88 230 12 16 ];
+        bf %tmp.88 @_workspace_garmin_RideDashboard_source_RideLev_mc_230_8_232_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_230_8_232_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_230_18_232_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 231 12 ]
+        %tmp.89 = lgetv %level;
+        symbol [ level %tmp.89 231 31 36 ];
+        symbol [ mRequestedAssist ? 231 12 28 ];
+        putv self :mRequestedAssist %tmp.89;
+_workspace_garmin_RideDashboard_source_RideLev_mc_230_18_232_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_230_8_232_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_230_8_232_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 233 8 ]
+        %tmp.90 = lgetv %sent.4;
+        symbol [ sent %tmp.90 233 15 19 ];
+        ret %tmp.90;
+_workspace_garmin_RideDashboard_source_RideLev_mc_209_65_234_4_stop:
+    }
+    //! Bity převodů, světel a blinkrů pro ovládací stránku, poskládané ze
+    //! stavu, který kolo hlásí. Rozložení bitů se mezi stránkou 1 a stránkou 16
+    //! liší, proto se převádí a neopisuje.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 239; @symbol_functiondef = [displayCommand,239,13,27]; @symbol_return<0> = [Lang,239,33,37]; @symbol_return<1> = [Number,239,38,44]; ]
+    function displayCommand() as Lang.Number {
+_workspace_garmin_RideDashboard_source_RideLev_mc_239_45_244_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 240 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_239_45_244_4_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_239_45_244_4_stop" ]
+        %rearGear.1 = local;
+        symbol [ rearGear %rearGear.1 240 12 20 ];
+        symbol [ mGearState %tmp.2 240 24 34 ];
+        %tmp.2 = getv ? :mGearState;
+        %tmp.3 = 2;
+        %tmp.4 = shr %tmp.2 %tmp.3;
+        %tmp.5 = 0x0F;
+        %tmp.6 = bitand %tmp.4 %tmp.5;
+        lputv %rearGear.1 %tmp.6;
+        symbol [ rearGear %rearGear.1 240 12 20 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 241 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_239_45_244_4_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_239_45_244_4_stop" ]
+        %frontGear.2 = local;
+        symbol [ frontGear %frontGear.2 241 12 21 ];
+        symbol [ mGearState %tmp.8 241 24 34 ];
+        %tmp.8 = getv ? :mGearState;
+        %tmp.9 = 0x03;
+        %tmp.10 = bitand %tmp.8 %tmp.9;
+        lputv %frontGear.2 %tmp.10;
+        symbol [ frontGear %frontGear.2 241 12 21 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 242 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_239_45_244_4_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_239_45_244_4_stop" ]
+        %lights.3 = local;
+        symbol [ lights %lights.3 242 12 18 ];
+        symbol [ mSystemState %tmp.12 242 21 33 ];
+        %tmp.12 = getv ? :mSystemState;
+        %tmp.13 = 0x0F;
+        %tmp.14 = bitand %tmp.12 %tmp.13;
+        lputv %lights.3 %tmp.14;
+        symbol [ lights %lights.3 242 12 18 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 243 8 ]
+        %tmp.15 = lgetv %rearGear.1;
+        symbol [ rearGear %tmp.15 243 17 25 ];
+        %tmp.16 = 0x0F;
+        %tmp.17 = bitand %tmp.15 %tmp.16;
+        %tmp.18 = 6;
+        %tmp.19 = shl %tmp.17 %tmp.18;
+        %tmp.20 = lgetv %frontGear.2;
+        symbol [ frontGear %tmp.20 243 44 53 ];
+        %tmp.21 = 0x03;
+        %tmp.22 = bitand %tmp.20 %tmp.21;
+        %tmp.23 = 4;
+        %tmp.24 = shl %tmp.22 %tmp.23;
+        %tmp.25 = bitor %tmp.19 %tmp.24;
+        %tmp.26 = lgetv %lights.3;
+        symbol [ lights %tmp.26 243 70 76 ];
+        %tmp.27 = bitor %tmp.25 %tmp.26;
+        ret %tmp.27;
+_workspace_garmin_RideDashboard_source_RideLev_mc_239_45_244_4_stop:
+    }
+    //! Stupeň, na který čekáme, dokud ho kolo nepotvrdí.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 247; @symbol_functiondef = [requestedAssist,247,13,28]; @symbol_return<0> = [Lang,247,34,38]; @symbol_return<1> = [Number,247,39,45]; ]
+    function requestedAssist() as Lang.Number or Null {
+_workspace_garmin_RideDashboard_source_RideLev_mc_247_54_249_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 248 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_248_15_248_48_begin:
+        %tmp.1 = self;
+        symbol [ connected %tmp.2 248 15 24 ];
+        %tmp.2 = getv function %tmp.1 :connected;
+        %tmp.3 = invoke %tmp.1 %tmp.2();
+        bf %tmp.3 @_workspace_garmin_RideDashboard_source_RideLev_mc_248_15_248_48_else_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_248_15_248_48_true:
+        symbol [ mRequestedAssist %tmp.5 248 29 45 ];
+        %tmp.5 = getv ? :mRequestedAssist;
+        push %tmp.5;
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_248_15_248_48_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_248_15_248_48_else_false:
+        %tmp.6 = null;
+        push %tmp.6;
+_workspace_garmin_RideDashboard_source_RideLev_mc_248_15_248_48_end:
+        %tmp.7 = phi [%tmp.3 @_workspace_garmin_RideDashboard_source_RideLev_mc_248_15_248_48_begin] [%tmp.5 @_workspace_garmin_RideDashboard_source_RideLev_mc_248_15_248_48_true] [%tmp.6 @_workspace_garmin_RideDashboard_source_RideLev_mc_248_15_248_48_else_false] [%tmp.7 @_workspace_garmin_RideDashboard_source_RideLev_mc_248_15_248_48_end];
+        ret %tmp.7;
+_workspace_garmin_RideDashboard_source_RideLev_mc_247_54_249_4_stop:
+    }
+    //! Po spárování si ANT+ ID kola uložíme, aby se příště kanál nechytil
+    //! cizího kola, které jede kolem.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 253; @symbol_functiondef = [rememberDeviceNumber,253,13,33]; ]
+    function rememberDeviceNumber() as Void {
+_workspace_garmin_RideDashboard_source_RideLev_mc_253_44_266_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 254 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_254_8_256_8_if_stmt:
+        symbol [ Application %tmp.1 254 14 25 ];
+        %tmp.1 = getm $.Toybox.Application;
+        %tmp.3 = const :Properties;
+        symbol [ Properties %tmp.3 254 31 41 const ];
+        %tmp.4 = canhazplz %tmp.1 %tmp.3;
+        %tmp.5 = not %tmp.4;
+        bf %tmp.5 @_workspace_garmin_RideDashboard_source_RideLev_mc_254_8_256_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_254_8_256_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_254_44_256_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 255 12 ]
+        ret ?;
+_workspace_garmin_RideDashboard_source_RideLev_mc_254_44_256_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_254_8_256_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_254_8_256_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 257 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_253_44_266_4_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_253_44_266_4_stop" ]
+        %found.1 = local;
+        symbol [ found %found.1 257 12 17 ];
+        symbol [ GenericChannel %tmp.7 257 20 34 ];
+        %tmp.7 = getv ? :GenericChannel;
+        symbol [ getDeviceConfig %tmp.8 257 35 50 ];
+        %tmp.8 = getv function %tmp.7 :getDeviceConfig;
+        %tmp.9 = invoke %tmp.7 %tmp.8();
+        symbol [ deviceNumber %tmp.10 257 53 65 ];
+        %tmp.10 = getv %tmp.9 :deviceNumber;
+        lputv %found.1 %tmp.10;
+        symbol [ found %found.1 257 12 17 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 258 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_258_8_260_8_if_stmt:
+_workspace_garmin_RideDashboard_source_RideLev_mc_258_12_258_38_begin:
+        %tmp.11 = lgetv %found.1;
+        symbol [ found %tmp.11 258 12 17 ];
+        %tmp.12 = null;
+        %tmp.13 = eq %tmp.11 %tmp.12;
+        bt %tmp.13 @_workspace_garmin_RideDashboard_source_RideLev_mc_258_8_260_8_if_true;
+_workspace_garmin_RideDashboard_source_RideLev_mc_258_29_258_38_false:
+        %tmp.14 = lgetv %found.1;
+        symbol [ found %tmp.14 258 29 34 ];
+        %tmp.15 = as %tmp.14 { (!Null) };
+        %tmp.16 = 0;
+        %tmp.17 = eq %tmp.15 %tmp.16;
+        push %tmp.17;
+_workspace_garmin_RideDashboard_source_RideLev_mc_258_29_258_38_end:
+        %tmp.18 = phi [%tmp.13 @_workspace_garmin_RideDashboard_source_RideLev_mc_258_12_258_38_begin] [%tmp.17 @_workspace_garmin_RideDashboard_source_RideLev_mc_258_29_258_38_false] [%tmp.18 @_workspace_garmin_RideDashboard_source_RideLev_mc_258_29_258_38_end];
+        bf %tmp.18 @_workspace_garmin_RideDashboard_source_RideLev_mc_258_8_260_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_258_8_260_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_258_41_260_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 259 12 ]
+        ret ?;
+_workspace_garmin_RideDashboard_source_RideLev_mc_258_41_260_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_258_8_260_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_258_8_260_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 261 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_253_44_266_4_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_253_44_266_4_stop" ]
+        %stored.2 = local;
+        symbol [ stored %stored.2 261 12 18 ];
+        symbol [ Application %tmp.19 261 21 32 ];
+        %tmp.19 = getm $.Toybox.Application;
+        symbol [ Properties %tmp.20 261 33 43 ];
+        %tmp.20 = getv %tmp.19 :Properties;
+        symbol [ getValue %tmp.21 261 44 52 ];
+        %tmp.21 = getv function %tmp.20 :getValue;
+        %tmp.22 = "levDeviceNumber";
+        %tmp.23 = invoke %tmp.20 %tmp.21(%tmp.22);
+        lputv %stored.2 %tmp.23;
+        symbol [ stored %stored.2 261 12 18 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 262 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_262_8_264_8_if_stmt:
+_workspace_garmin_RideDashboard_source_RideLev_mc_262_12_262_55_begin:
+        %tmp.24 = lgetv %stored.2;
+        symbol [ stored %tmp.24 262 12 18 ];
+        symbol [ Lang %tmp.25 262 30 34 ];
+        %tmp.25 = getm $.Toybox.Lang;
+        symbol [ Number %tmp.26 262 35 41 ];
+        %tmp.26 = getv %tmp.25 :Number;
+        %tmp.27 = isa %tmp.24 %tmp.26;
+        bf %tmp.27 @_workspace_garmin_RideDashboard_source_RideLev_mc_262_8_264_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_262_45_262_55_true:
+        %tmp.28 = lgetv %stored.2;
+        symbol [ stored %tmp.28 262 45 51 ];
+        %tmp.29 = as %tmp.28 { (Lang.Number) };
+        %tmp.30 = lgetv %found.1;
+        symbol [ found %tmp.30 262 55 60 ];
+        %tmp.31 = eq %tmp.29 %tmp.30;
+        push %tmp.31;
+_workspace_garmin_RideDashboard_source_RideLev_mc_262_45_262_55_end:
+        %tmp.32 = phi [%tmp.27 @_workspace_garmin_RideDashboard_source_RideLev_mc_262_12_262_55_begin] [%tmp.31 @_workspace_garmin_RideDashboard_source_RideLev_mc_262_45_262_55_true] [%tmp.32 @_workspace_garmin_RideDashboard_source_RideLev_mc_262_45_262_55_end];
+        bf %tmp.32 @_workspace_garmin_RideDashboard_source_RideLev_mc_262_8_264_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_262_8_264_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_262_62_264_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 263 12 ]
+        ret ?;
+_workspace_garmin_RideDashboard_source_RideLev_mc_262_62_264_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_262_8_264_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_262_8_264_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 265 8 ]
+        symbol [ Application %tmp.33 265 8 19 ];
+        %tmp.33 = getm $.Toybox.Application;
+        symbol [ Properties %tmp.34 265 20 30 ];
+        %tmp.34 = getv %tmp.33 :Properties;
+        symbol [ setValue %tmp.35 265 31 39 ];
+        %tmp.35 = getv function %tmp.34 :setValue;
+        %tmp.36 = "levDeviceNumber";
+        %tmp.37 = lgetv %found.1;
+        symbol [ found %tmp.37 265 59 64 ];
+        invoke %tmp.34 %tmp.35(%tmp.36, %tmp.37);
+_workspace_garmin_RideDashboard_source_RideLev_mc_253_44_266_4_stop:
+    }
+    //! Rychlost kola sedí na stejném místě ve stránkách 1, 2, 3 i 34.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 269; @symbol_functiondef = [speedFrom,269,13,22]; @symbol_param<0> = [payload,269,23,30]; @symbol_param<0>_type<0> = [Lang,269,34,38]; @symbol_param<0>_type<1> = [Array,269,39,44]; @symbol_param<0>_type<2> = [Lang,269,45,49]; @symbol_param<0>_type<3> = [Number,269,50,56]; @symbol_return<0> = [Lang,269,62,66]; @symbol_return<1> = [Float,269,67,72]; ]
+    function speedFrom(payload as Lang.Array<Lang.Number>) as Lang.Float {
+_workspace_garmin_RideDashboard_source_RideLev_mc_269_73_271_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 270 8 ]
+        %tmp.1 = lgetv %payload;
+        symbol [ payload %tmp.1 270 17 24 ];
+        %tmp.2 = 6;
+        %tmp.3 = agetv %tmp.1 %tmp.2;
+        %tmp.4 = 0xFF;
+        %tmp.5 = bitand %tmp.3 %tmp.4;
+        %tmp.6 = lgetv %payload;
+        symbol [ payload %tmp.6 270 40 47 ];
+        %tmp.7 = 7;
+        %tmp.8 = agetv %tmp.6 %tmp.7;
+        %tmp.9 = 0x0F;
+        %tmp.10 = bitand %tmp.8 %tmp.9;
+        %tmp.11 = 8;
+        %tmp.12 = shl %tmp.10 %tmp.11;
+        %tmp.13 = bitor %tmp.5 %tmp.12;
+        %tmp.14 = 10.0;
+        %tmp.15 = div %tmp.13 %tmp.14;
+        ret %tmp.15;
+_workspace_garmin_RideDashboard_source_RideLev_mc_269_73_271_4_stop:
+    }
+    //! Mluví s námi kolo? Po pár vteřinách ticha už hodnotám nevěříme.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 276; @symbol_functiondef = [connected,276,13,22]; @symbol_return<0> = [Lang,276,28,32]; @symbol_return<1> = [Boolean,276,33,40]; ]
+    function connected() as Lang.Boolean {
+_workspace_garmin_RideDashboard_source_RideLev_mc_276_41_284_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 277 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_276_41_284_4_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_276_41_284_4_stop" ]
+        %last.1 = local;
+        symbol [ last %last.1 277 12 16 ];
+        symbol [ mLastMessage %tmp.2 277 19 31 ];
+        %tmp.2 = getv ? :mLastMessage;
+        lputv %last.1 %tmp.2;
+        symbol [ last %last.1 277 12 16 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 278 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_278_8_280_8_if_stmt:
+        %tmp.3 = lgetv %last.1;
+        symbol [ last %tmp.3 278 12 16 ];
+        %tmp.4 = null;
+        %tmp.5 = eq %tmp.3 %tmp.4;
+        bf %tmp.5 @_workspace_garmin_RideDashboard_source_RideLev_mc_278_8_280_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_278_8_280_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_278_26_280_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 279 12 ]
+        %tmp.6 = false;
+        ret %tmp.6;
+_workspace_garmin_RideDashboard_source_RideLev_mc_278_26_280_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_278_8_280_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_278_8_280_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 281 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_276_41_284_4_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_276_41_284_4_stop" ]
+        %age.2 = local;
+        symbol [ age %age.2 281 12 15 ];
+        symbol [ System %tmp.7 281 18 24 ];
+        %tmp.7 = getm $.Toybox.System;
+        symbol [ getTimer %tmp.8 281 25 33 ];
+        %tmp.8 = getv function %tmp.7 :getTimer;
+        %tmp.9 = invoke %tmp.7 %tmp.8();
+        %tmp.10 = lgetv %last.1;
+        symbol [ last %tmp.10 281 38 42 ];
+        %tmp.11 = sub %tmp.9 %tmp.10;
+        lputv %age.2 %tmp.11;
+        symbol [ age %age.2 281 12 15 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 283 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_283_15_283_32_begin:
+        %tmp.12 = lgetv %age.2;
+        symbol [ age %tmp.12 283 15 18 ];
+        %tmp.13 = 0;
+        %tmp.14 = lt %tmp.12 %tmp.13;
+        %tmp.15 = dup %tmp.14;
+        bt %tmp.15 @_workspace_garmin_RideDashboard_source_RideLev_mc_283_26_283_32_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_283_26_283_32_false:
+        %tmp.16 = lgetv %age.2;
+        symbol [ age %tmp.16 283 26 29 ];
+        symbol [ STALE_MS %tmp.18 283 32 40 ];
+        %tmp.18 = getv ? :STALE_MS;
+        %tmp.19 = lt %tmp.16 %tmp.18;
+        %tmp.20 = or %tmp.14 %tmp.19;
+        push %tmp.20;
+_workspace_garmin_RideDashboard_source_RideLev_mc_283_26_283_32_end:
+        %tmp.21 = phi [%tmp.15 @_workspace_garmin_RideDashboard_source_RideLev_mc_283_15_283_32_begin] [%tmp.20 @_workspace_garmin_RideDashboard_source_RideLev_mc_283_26_283_32_false] [%tmp.21 @_workspace_garmin_RideDashboard_source_RideLev_mc_283_26_283_32_end];
+        ret %tmp.21;
+_workspace_garmin_RideDashboard_source_RideLev_mc_276_41_284_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 286; @symbol_functiondef = [searching,286,13,22]; @symbol_return<0> = [Lang,286,28,32]; @symbol_return<1> = [Boolean,286,33,40]; ]
+    function searching() as Lang.Boolean {
+_workspace_garmin_RideDashboard_source_RideLev_mc_286_41_288_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 287 8 ]
+        symbol [ mSearching %tmp.2 287 15 25 ];
+        %tmp.2 = getv ? :mSearching;
+        ret %tmp.2;
+_workspace_garmin_RideDashboard_source_RideLev_mc_286_41_288_4_stop:
+    }
+    //! Dojezd v kilometrech tak, jak ho spočítalo samo kolo.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 291; @symbol_functiondef = [rangeKm,291,13,20]; @symbol_return<0> = [Lang,291,26,30]; @symbol_return<1> = [Float,291,31,36]; ]
+    function rangeKm() as Lang.Float or Null {
+_workspace_garmin_RideDashboard_source_RideLev_mc_291_45_293_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 292 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_292_15_292_40_begin:
+        %tmp.1 = self;
+        symbol [ connected %tmp.2 292 15 24 ];
+        %tmp.2 = getv function %tmp.1 :connected;
+        %tmp.3 = invoke %tmp.1 %tmp.2();
+        bf %tmp.3 @_workspace_garmin_RideDashboard_source_RideLev_mc_292_15_292_40_else_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_292_15_292_40_true:
+        symbol [ mRangeKm %tmp.5 292 29 37 ];
+        %tmp.5 = getv ? :mRangeKm;
+        push %tmp.5;
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_292_15_292_40_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_292_15_292_40_else_false:
+        %tmp.6 = null;
+        push %tmp.6;
+_workspace_garmin_RideDashboard_source_RideLev_mc_292_15_292_40_end:
+        %tmp.7 = phi [%tmp.3 @_workspace_garmin_RideDashboard_source_RideLev_mc_292_15_292_40_begin] [%tmp.5 @_workspace_garmin_RideDashboard_source_RideLev_mc_292_15_292_40_true] [%tmp.6 @_workspace_garmin_RideDashboard_source_RideLev_mc_292_15_292_40_else_false] [%tmp.7 @_workspace_garmin_RideDashboard_source_RideLev_mc_292_15_292_40_end];
+        ret %tmp.7;
+_workspace_garmin_RideDashboard_source_RideLev_mc_291_45_293_4_stop:
+    }
+    //! Stav baterie v procentech.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 296; @symbol_functiondef = [batteryPercent,296,13,27]; @symbol_return<0> = [Lang,296,33,37]; @symbol_return<1> = [Number,296,38,44]; ]
+    function batteryPercent() as Lang.Number or Null {
+_workspace_garmin_RideDashboard_source_RideLev_mc_296_53_298_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 297 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_297_15_297_36_begin:
+        %tmp.1 = self;
+        symbol [ connected %tmp.2 297 15 24 ];
+        %tmp.2 = getv function %tmp.1 :connected;
+        %tmp.3 = invoke %tmp.1 %tmp.2();
+        bf %tmp.3 @_workspace_garmin_RideDashboard_source_RideLev_mc_297_15_297_36_else_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_297_15_297_36_true:
+        symbol [ mSoc %tmp.5 297 29 33 ];
+        %tmp.5 = getv ? :mSoc;
+        push %tmp.5;
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_297_15_297_36_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_297_15_297_36_else_false:
+        %tmp.6 = null;
+        push %tmp.6;
+_workspace_garmin_RideDashboard_source_RideLev_mc_297_15_297_36_end:
+        %tmp.7 = phi [%tmp.3 @_workspace_garmin_RideDashboard_source_RideLev_mc_297_15_297_36_begin] [%tmp.5 @_workspace_garmin_RideDashboard_source_RideLev_mc_297_15_297_36_true] [%tmp.6 @_workspace_garmin_RideDashboard_source_RideLev_mc_297_15_297_36_else_false] [%tmp.7 @_workspace_garmin_RideDashboard_source_RideLev_mc_297_15_297_36_end];
+        ret %tmp.7;
+_workspace_garmin_RideDashboard_source_RideLev_mc_296_53_298_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 300; @symbol_functiondef = [batteryWarning,300,13,27]; @symbol_return<0> = [Lang,300,33,37]; @symbol_return<1> = [Boolean,300,38,45]; ]
+    function batteryWarning() as Lang.Boolean {
+_workspace_garmin_RideDashboard_source_RideLev_mc_300_46_302_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 301 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_301_15_301_30_begin:
+        %tmp.1 = self;
+        symbol [ connected %tmp.2 301 15 24 ];
+        %tmp.2 = getv function %tmp.1 :connected;
+        %tmp.3 = invoke %tmp.1 %tmp.2();
+        %tmp.4 = dup %tmp.3;
+        bf %tmp.4 @_workspace_garmin_RideDashboard_source_RideLev_mc_301_30_301_30_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_301_30_301_30_true:
+        symbol [ mBatteryWarning %tmp.6 301 30 45 ];
+        %tmp.6 = getv ? :mBatteryWarning;
+        %tmp.7 = and %tmp.3 %tmp.6;
+        push %tmp.7;
+_workspace_garmin_RideDashboard_source_RideLev_mc_301_30_301_30_end:
+        %tmp.8 = phi [%tmp.4 @_workspace_garmin_RideDashboard_source_RideLev_mc_301_15_301_30_begin] [%tmp.7 @_workspace_garmin_RideDashboard_source_RideLev_mc_301_30_301_30_true] [%tmp.8 @_workspace_garmin_RideDashboard_source_RideLev_mc_301_30_301_30_end];
+        ret %tmp.8;
+_workspace_garmin_RideDashboard_source_RideLev_mc_300_46_302_4_stop:
+    }
+    //! Okamžitá spotřeba ve watthodinách na kilometr.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 305; @symbol_functiondef = [consumptionWhPerKm,305,13,31]; @symbol_return<0> = [Lang,305,37,41]; @symbol_return<1> = [Float,305,42,47]; ]
+    function consumptionWhPerKm() as Lang.Float or Null {
+_workspace_garmin_RideDashboard_source_RideLev_mc_305_56_307_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 306 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_306_15_306_44_begin:
+        %tmp.1 = self;
+        symbol [ connected %tmp.2 306 15 24 ];
+        %tmp.2 = getv function %tmp.1 :connected;
+        %tmp.3 = invoke %tmp.1 %tmp.2();
+        bf %tmp.3 @_workspace_garmin_RideDashboard_source_RideLev_mc_306_15_306_44_else_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_306_15_306_44_true:
+        symbol [ mConsumption %tmp.5 306 29 41 ];
+        %tmp.5 = getv ? :mConsumption;
+        push %tmp.5;
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_306_15_306_44_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_306_15_306_44_else_false:
+        %tmp.6 = null;
+        push %tmp.6;
+_workspace_garmin_RideDashboard_source_RideLev_mc_306_15_306_44_end:
+        %tmp.7 = phi [%tmp.3 @_workspace_garmin_RideDashboard_source_RideLev_mc_306_15_306_44_begin] [%tmp.5 @_workspace_garmin_RideDashboard_source_RideLev_mc_306_15_306_44_true] [%tmp.6 @_workspace_garmin_RideDashboard_source_RideLev_mc_306_15_306_44_else_false] [%tmp.7 @_workspace_garmin_RideDashboard_source_RideLev_mc_306_15_306_44_end];
+        ret %tmp.7;
+_workspace_garmin_RideDashboard_source_RideLev_mc_305_56_307_4_stop:
+    }
+    //! Kolik kilometrů kolo ujelo od posledního nabití.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 310; @symbol_functiondef = [distanceOnChargeKm,310,13,31]; @symbol_return<0> = [Lang,310,37,41]; @symbol_return<1> = [Float,310,42,47]; ]
+    function distanceOnChargeKm() as Lang.Float or Null {
+_workspace_garmin_RideDashboard_source_RideLev_mc_310_56_312_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 311 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_311_15_311_49_begin:
+        %tmp.1 = self;
+        symbol [ connected %tmp.2 311 15 24 ];
+        %tmp.2 = getv function %tmp.1 :connected;
+        %tmp.3 = invoke %tmp.1 %tmp.2();
+        bf %tmp.3 @_workspace_garmin_RideDashboard_source_RideLev_mc_311_15_311_49_else_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_311_15_311_49_true:
+        symbol [ mChargeDistanceKm %tmp.5 311 29 46 ];
+        %tmp.5 = getv ? :mChargeDistanceKm;
+        push %tmp.5;
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_311_15_311_49_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_311_15_311_49_else_false:
+        %tmp.6 = null;
+        push %tmp.6;
+_workspace_garmin_RideDashboard_source_RideLev_mc_311_15_311_49_end:
+        %tmp.7 = phi [%tmp.3 @_workspace_garmin_RideDashboard_source_RideLev_mc_311_15_311_49_begin] [%tmp.5 @_workspace_garmin_RideDashboard_source_RideLev_mc_311_15_311_49_true] [%tmp.6 @_workspace_garmin_RideDashboard_source_RideLev_mc_311_15_311_49_else_false] [%tmp.7 @_workspace_garmin_RideDashboard_source_RideLev_mc_311_15_311_49_end];
+        ret %tmp.7;
+_workspace_garmin_RideDashboard_source_RideLev_mc_310_56_312_4_stop:
+    }
+    //! Stupeň asistence 0-7; nula je vypnutá pomoc.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 315; @symbol_functiondef = [assistLevel,315,13,24]; @symbol_return<0> = [Lang,315,30,34]; @symbol_return<1> = [Number,315,35,41]; ]
+    function assistLevel() as Lang.Number or Null {
+_workspace_garmin_RideDashboard_source_RideLev_mc_315_50_317_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 316 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_316_15_316_44_begin:
+        %tmp.1 = self;
+        symbol [ connected %tmp.2 316 15 24 ];
+        %tmp.2 = getv function %tmp.1 :connected;
+        %tmp.3 = invoke %tmp.1 %tmp.2();
+        bf %tmp.3 @_workspace_garmin_RideDashboard_source_RideLev_mc_316_15_316_44_else_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_316_15_316_44_true:
+        symbol [ mAssistLevel %tmp.5 316 29 41 ];
+        %tmp.5 = getv ? :mAssistLevel;
+        push %tmp.5;
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_316_15_316_44_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_316_15_316_44_else_false:
+        %tmp.6 = null;
+        push %tmp.6;
+_workspace_garmin_RideDashboard_source_RideLev_mc_316_15_316_44_end:
+        %tmp.7 = phi [%tmp.3 @_workspace_garmin_RideDashboard_source_RideLev_mc_316_15_316_44_begin] [%tmp.5 @_workspace_garmin_RideDashboard_source_RideLev_mc_316_15_316_44_true] [%tmp.6 @_workspace_garmin_RideDashboard_source_RideLev_mc_316_15_316_44_else_false] [%tmp.7 @_workspace_garmin_RideDashboard_source_RideLev_mc_316_15_316_44_end];
+        ret %tmp.7;
+_workspace_garmin_RideDashboard_source_RideLev_mc_315_50_317_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 319; @symbol_functiondef = [assistPercent,319,13,26]; @symbol_return<0> = [Lang,319,32,36]; @symbol_return<1> = [Number,319,37,43]; ]
+    function assistPercent() as Lang.Number or Null {
+_workspace_garmin_RideDashboard_source_RideLev_mc_319_52_321_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 320 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_320_15_320_46_begin:
+        %tmp.1 = self;
+        symbol [ connected %tmp.2 320 15 24 ];
+        %tmp.2 = getv function %tmp.1 :connected;
+        %tmp.3 = invoke %tmp.1 %tmp.2();
+        bf %tmp.3 @_workspace_garmin_RideDashboard_source_RideLev_mc_320_15_320_46_else_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_320_15_320_46_true:
+        symbol [ mAssistPercent %tmp.5 320 29 43 ];
+        %tmp.5 = getv ? :mAssistPercent;
+        push %tmp.5;
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_320_15_320_46_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_320_15_320_46_else_false:
+        %tmp.6 = null;
+        push %tmp.6;
+_workspace_garmin_RideDashboard_source_RideLev_mc_320_15_320_46_end:
+        %tmp.7 = phi [%tmp.3 @_workspace_garmin_RideDashboard_source_RideLev_mc_320_15_320_46_begin] [%tmp.5 @_workspace_garmin_RideDashboard_source_RideLev_mc_320_15_320_46_true] [%tmp.6 @_workspace_garmin_RideDashboard_source_RideLev_mc_320_15_320_46_else_false] [%tmp.7 @_workspace_garmin_RideDashboard_source_RideLev_mc_320_15_320_46_end];
+        ret %tmp.7;
+_workspace_garmin_RideDashboard_source_RideLev_mc_319_52_321_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 323; @symbol_functiondef = [speedKmh,323,13,21]; @symbol_return<0> = [Lang,323,27,31]; @symbol_return<1> = [Float,323,32,37]; ]
+    function speedKmh() as Lang.Float or Null {
+_workspace_garmin_RideDashboard_source_RideLev_mc_323_46_325_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 324 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_324_15_324_41_begin:
+        %tmp.1 = self;
+        symbol [ connected %tmp.2 324 15 24 ];
+        %tmp.2 = getv function %tmp.1 :connected;
+        %tmp.3 = invoke %tmp.1 %tmp.2();
+        bf %tmp.3 @_workspace_garmin_RideDashboard_source_RideLev_mc_324_15_324_41_else_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_324_15_324_41_true:
+        symbol [ mSpeedKmh %tmp.5 324 29 38 ];
+        %tmp.5 = getv ? :mSpeedKmh;
+        push %tmp.5;
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_324_15_324_41_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_324_15_324_41_else_false:
+        %tmp.6 = null;
+        push %tmp.6;
+_workspace_garmin_RideDashboard_source_RideLev_mc_324_15_324_41_end:
+        %tmp.7 = phi [%tmp.3 @_workspace_garmin_RideDashboard_source_RideLev_mc_324_15_324_41_begin] [%tmp.5 @_workspace_garmin_RideDashboard_source_RideLev_mc_324_15_324_41_true] [%tmp.6 @_workspace_garmin_RideDashboard_source_RideLev_mc_324_15_324_41_else_false] [%tmp.7 @_workspace_garmin_RideDashboard_source_RideLev_mc_324_15_324_41_end];
+        ret %tmp.7;
+_workspace_garmin_RideDashboard_source_RideLev_mc_323_46_325_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 327; @symbol_functiondef = [manufacturer,327,13,25]; @symbol_return<0> = [Lang,327,31,35]; @symbol_return<1> = [Number,327,36,42]; ]
+    function manufacturer() as Lang.Number or Null {
+_workspace_garmin_RideDashboard_source_RideLev_mc_327_51_329_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 328 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_328_15_328_45_begin:
+        %tmp.1 = self;
+        symbol [ connected %tmp.2 328 15 24 ];
+        %tmp.2 = getv function %tmp.1 :connected;
+        %tmp.3 = invoke %tmp.1 %tmp.2();
+        bf %tmp.3 @_workspace_garmin_RideDashboard_source_RideLev_mc_328_15_328_45_else_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_328_15_328_45_true:
+        symbol [ mManufacturer %tmp.5 328 29 42 ];
+        %tmp.5 = getv ? :mManufacturer;
+        push %tmp.5;
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_328_15_328_45_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_328_15_328_45_else_false:
+        %tmp.6 = null;
+        push %tmp.6;
+_workspace_garmin_RideDashboard_source_RideLev_mc_328_15_328_45_end:
+        %tmp.7 = phi [%tmp.3 @_workspace_garmin_RideDashboard_source_RideLev_mc_328_15_328_45_begin] [%tmp.5 @_workspace_garmin_RideDashboard_source_RideLev_mc_328_15_328_45_true] [%tmp.6 @_workspace_garmin_RideDashboard_source_RideLev_mc_328_15_328_45_else_false] [%tmp.7 @_workspace_garmin_RideDashboard_source_RideLev_mc_328_15_328_45_end];
+        ret %tmp.7;
+_workspace_garmin_RideDashboard_source_RideLev_mc_327_51_329_4_stop:
+    }
+    //! Jak se stupeň asistence jmenuje na displeji kola. Profil posílá jen
+    //! číslo 0-7, jména jsou věc výrobce. Když značku neznáme nebo si nejsme
+    //! jistí, který stupeň je který, vrátíme null a nahoře se ukáže číslo -
+    //! vymýšlet si jméno je horší než ho neukázat.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 335; @symbol_functiondef = [assistModeName,335,13,27]; @symbol_return<0> = [Lang,335,33,37]; @symbol_return<1> = [String,335,38,44]; ]
+    function assistModeName() as Lang.String or Null {
+_workspace_garmin_RideDashboard_source_RideLev_mc_335_53_359_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 336 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_335_53_359_4_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_335_53_359_4_stop" ]
+        %level.1 = local;
+        symbol [ level %level.1 336 12 17 ];
+        %tmp.1 = self;
+        symbol [ assistLevel %tmp.2 336 20 31 ];
+        %tmp.2 = getv function %tmp.1 :assistLevel;
+        %tmp.3 = invoke %tmp.1 %tmp.2();
+        lputv %level.1 %tmp.3;
+        symbol [ level %level.1 336 12 17 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 337 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_337_8_339_8_if_stmt:
+        %tmp.4 = lgetv %level.1;
+        symbol [ level %tmp.4 337 12 17 ];
+        %tmp.5 = null;
+        %tmp.6 = eq %tmp.4 %tmp.5;
+        bf %tmp.6 @_workspace_garmin_RideDashboard_source_RideLev_mc_337_8_339_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_337_8_339_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_337_27_339_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 338 12 ]
+        %tmp.7 = null;
+        ret %tmp.7;
+_workspace_garmin_RideDashboard_source_RideLev_mc_337_27_339_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_337_8_339_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_337_8_339_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 340 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_340_8_342_8_if_stmt:
+        %tmp.8 = lgetv %level.1;
+        symbol [ level %tmp.8 340 12 17 ];
+        %tmp.9 = 0;
+        %tmp.10 = eq %tmp.8 %tmp.9;
+        bf %tmp.10 @_workspace_garmin_RideDashboard_source_RideLev_mc_340_8_342_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_340_8_342_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_340_24_342_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 341 12 ]
+        %tmp.11 = "VYPNUTO";
+        ret %tmp.11;
+_workspace_garmin_RideDashboard_source_RideLev_mc_340_24_342_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_340_8_342_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_340_8_342_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 344 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_335_53_359_4_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_335_53_359_4_stop" ]
+        %known.2 = local;
+        symbol [ known %known.2 344 12 17 ];
+        %tmp.12 = self;
+        symbol [ expandedModeNames %tmp.13 344 20 37 ];
+        %tmp.13 = getv function %tmp.12 :expandedModeNames;
+        %tmp.14 = invoke %tmp.12 %tmp.13();
+        lputv %known.2 %tmp.14;
+        symbol [ known %known.2 344 12 17 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 345 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_345_8_347_8_if_stmt:
+        %tmp.15 = lgetv %known.2;
+        symbol [ known %tmp.15 345 12 17 ];
+        %tmp.16 = null;
+        %tmp.17 = ne %tmp.15 %tmp.16;
+        bf %tmp.17 @_workspace_garmin_RideDashboard_source_RideLev_mc_345_8_347_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_345_8_347_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_345_27_347_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 346 12 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_346_19_346_57_begin:
+        %tmp.18 = lgetv %level.1;
+        symbol [ level %tmp.18 346 19 24 ];
+        %tmp.19 = lgetv %known.2;
+        symbol [ known %tmp.19 346 27 32 ];
+        %tmp.20 = as %tmp.19 { (!Null) };
+        symbol [ size %tmp.21 346 33 37 ];
+        %tmp.21 = getv function %tmp.20 :size;
+        %tmp.22 = invoke %tmp.20 %tmp.21();
+        %tmp.23 = lt %tmp.18 %tmp.22;
+        bf %tmp.23 @_workspace_garmin_RideDashboard_source_RideLev_mc_346_19_346_57_else_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_346_19_346_57_true:
+        %tmp.24 = lgetv %known.2;
+        symbol [ known %tmp.24 346 42 47 ];
+        %tmp.25 = as %tmp.24 { (!Null) };
+        %tmp.26 = lgetv %level.1;
+        symbol [ level %tmp.26 346 48 53 ];
+        %tmp.27 = agetv %tmp.25 %tmp.26;
+        push %tmp.27;
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_346_19_346_57_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_346_19_346_57_else_false:
+        %tmp.28 = null;
+        push %tmp.28;
+_workspace_garmin_RideDashboard_source_RideLev_mc_346_19_346_57_end:
+        %tmp.29 = phi [%tmp.23 @_workspace_garmin_RideDashboard_source_RideLev_mc_346_19_346_57_begin] [%tmp.27 @_workspace_garmin_RideDashboard_source_RideLev_mc_346_19_346_57_true] [%tmp.28 @_workspace_garmin_RideDashboard_source_RideLev_mc_346_19_346_57_else_false] [%tmp.29 @_workspace_garmin_RideDashboard_source_RideLev_mc_346_19_346_57_end];
+        ret %tmp.29;
+_workspace_garmin_RideDashboard_source_RideLev_mc_345_27_347_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_345_8_347_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_345_8_347_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 353 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLev_mc_335_53_359_4_start" "_workspace_garmin_RideDashboard_source_RideLev_mc_335_53_359_4_stop" ]
+        %ordered.3 = local;
+        symbol [ ordered %ordered.3 353 12 19 ];
+        %tmp.30 = self;
+        symbol [ orderedModeNames %tmp.31 353 22 38 ];
+        %tmp.31 = getv function %tmp.30 :orderedModeNames;
+        %tmp.32 = invoke %tmp.30 %tmp.31();
+        lputv %ordered.3 %tmp.32;
+        symbol [ ordered %ordered.3 353 12 19 ];
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 354 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_354_8_357_8_if_stmt:
+_workspace_garmin_RideDashboard_source_RideLev_mc_354_12_355_72_begin:
+_workspace_garmin_RideDashboard_source_RideLev_mc_354_12_355_46_begin:
+_workspace_garmin_RideDashboard_source_RideLev_mc_354_12_354_52_begin:
+        %tmp.33 = lgetv %ordered.3;
+        symbol [ ordered %tmp.33 354 12 19 ];
+        %tmp.34 = null;
+        %tmp.35 = eq %tmp.33 %tmp.34;
+        bt %tmp.35 @_workspace_garmin_RideDashboard_source_RideLev_mc_354_8_357_8_if_true;
+_workspace_garmin_RideDashboard_source_RideLev_mc_354_31_354_52_false:
+        symbol [ mTotalAssistModes %tmp.37 354 31 48 ];
+        %tmp.37 = getv ? :mTotalAssistModes;
+        %tmp.38 = null;
+        %tmp.39 = eq %tmp.37 %tmp.38;
+        push %tmp.39;
+_workspace_garmin_RideDashboard_source_RideLev_mc_354_31_354_52_end:
+        %tmp.40 = phi [%tmp.35 @_workspace_garmin_RideDashboard_source_RideLev_mc_354_12_354_52_begin] [%tmp.39 @_workspace_garmin_RideDashboard_source_RideLev_mc_354_31_354_52_false] [%tmp.40 @_workspace_garmin_RideDashboard_source_RideLev_mc_354_31_354_52_end];
+        bt %tmp.40 @_workspace_garmin_RideDashboard_source_RideLev_mc_354_8_357_8_if_true;
+_workspace_garmin_RideDashboard_source_RideLev_mc_355_12_355_46_false:
+        symbol [ mTotalAssistModes %tmp.42 355 12 29 ];
+        %tmp.42 = getv ? :mTotalAssistModes;
+        %tmp.43 = as %tmp.42 { (!Null) };
+        %tmp.44 = lgetv %ordered.3;
+        symbol [ ordered %tmp.44 355 33 40 ];
+        %tmp.45 = as %tmp.44 { (!Null) };
+        symbol [ size %tmp.46 355 41 45 ];
+        %tmp.46 = getv function %tmp.45 :size;
+        %tmp.47 = invoke %tmp.45 %tmp.46();
+        %tmp.48 = ne %tmp.43 %tmp.47;
+        push %tmp.48;
+_workspace_garmin_RideDashboard_source_RideLev_mc_355_12_355_46_end:
+        %tmp.49 = phi [%tmp.40 @_workspace_garmin_RideDashboard_source_RideLev_mc_354_12_355_46_begin] [%tmp.48 @_workspace_garmin_RideDashboard_source_RideLev_mc_355_12_355_46_false] [%tmp.49 @_workspace_garmin_RideDashboard_source_RideLev_mc_355_12_355_46_end];
+        bt %tmp.49 @_workspace_garmin_RideDashboard_source_RideLev_mc_354_8_357_8_if_true;
+_workspace_garmin_RideDashboard_source_RideLev_mc_355_51_355_72_false:
+        %tmp.50 = lgetv %level.1;
+        symbol [ level %tmp.50 355 51 56 ];
+        %tmp.51 = lgetv %ordered.3;
+        symbol [ ordered %tmp.51 355 59 66 ];
+        %tmp.52 = as %tmp.51 { (!Null) };
+        symbol [ size %tmp.53 355 67 71 ];
+        %tmp.53 = getv function %tmp.52 :size;
+        %tmp.54 = invoke %tmp.52 %tmp.53();
+        %tmp.55 = gt %tmp.50 %tmp.54;
+        push %tmp.55;
+_workspace_garmin_RideDashboard_source_RideLev_mc_355_51_355_72_end:
+        %tmp.56 = phi [%tmp.49 @_workspace_garmin_RideDashboard_source_RideLev_mc_354_12_355_72_begin] [%tmp.55 @_workspace_garmin_RideDashboard_source_RideLev_mc_355_51_355_72_false] [%tmp.56 @_workspace_garmin_RideDashboard_source_RideLev_mc_355_51_355_72_end];
+        bf %tmp.56 @_workspace_garmin_RideDashboard_source_RideLev_mc_354_8_357_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_354_8_357_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_355_75_357_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 356 12 ]
+        %tmp.57 = null;
+        ret %tmp.57;
+_workspace_garmin_RideDashboard_source_RideLev_mc_355_75_357_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_354_8_357_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_354_8_357_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 358 8 ]
+        %tmp.58 = lgetv %ordered.3;
+        symbol [ ordered %tmp.58 358 15 22 ];
+        %tmp.59 = lgetv %level.1;
+        symbol [ level %tmp.59 358 23 28 ];
+        %tmp.60 = 1;
+        %tmp.61 = sub %tmp.59 %tmp.60;
+        %tmp.62 = agetv %tmp.58 %tmp.61;
+        ret %tmp.62;
+_workspace_garmin_RideDashboard_source_RideLev_mc_335_53_359_4_stop:
+    }
+    //! Značky, u kterých je ověřené i rozprostření jmen po stupních 0-7.
+    //! Kola s méně režimy stupně zdvojují, proto se jména opakují.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 363; @symbol_functiondef = [expandedModeNames,363,13,30]; @symbol_return<0> = [Lang,363,36,40]; @symbol_return<1> = [Array,363,41,46]; @symbol_return<2> = [Lang,363,47,51]; @symbol_return<3> = [String,363,52,58]; ]
+    function expandedModeNames() as Lang.Array<Lang.String> or Null {
+_workspace_garmin_RideDashboard_source_RideLev_mc_363_68_374_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 364 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_364_8_366_8_if_stmt:
+        symbol [ mManufacturer %tmp.2 364 12 25 ];
+        %tmp.2 = getv ? :mManufacturer;
+        symbol [ MANUFACTURER_GIANT %tmp.4 364 29 47 ];
+        %tmp.4 = getv ? :MANUFACTURER_GIANT;
+        %tmp.5 = eq %tmp.2 %tmp.4;
+        bf %tmp.5 @_workspace_garmin_RideDashboard_source_RideLev_mc_364_8_366_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_364_8_366_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_364_49_366_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 365 12 ]
+        %tmp.6 = newa 8;
+        %tmp.7 = "VYPNUTO";
+        %tmp.8 = dup %tmp.6;
+        %tmp.9 = aputv %tmp.8 0 %tmp.7;
+        %tmp.10 = "ECO";
+        %tmp.11 = dup %tmp.9;
+        %tmp.12 = aputv %tmp.11 1 %tmp.10;
+        %tmp.13 = "BASIC";
+        %tmp.14 = dup %tmp.12;
+        %tmp.15 = aputv %tmp.14 2 %tmp.13;
+        %tmp.16 = "ACTIVE";
+        %tmp.17 = dup %tmp.15;
+        %tmp.18 = aputv %tmp.17 3 %tmp.16;
+        %tmp.19 = "AUTO";
+        %tmp.20 = dup %tmp.18;
+        %tmp.21 = aputv %tmp.20 4 %tmp.19;
+        %tmp.22 = "SPORT";
+        %tmp.23 = dup %tmp.21;
+        %tmp.24 = aputv %tmp.23 5 %tmp.22;
+        %tmp.25 = "POWER";
+        %tmp.26 = dup %tmp.24;
+        %tmp.27 = aputv %tmp.26 6 %tmp.25;
+        %tmp.28 = "POWER";
+        %tmp.29 = dup %tmp.27;
+        %tmp.30 = aputv %tmp.29 7 %tmp.28;
+        ret %tmp.30;
+_workspace_garmin_RideDashboard_source_RideLev_mc_364_49_366_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_364_8_366_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_364_8_366_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 367 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_367_8_369_8_if_stmt:
+_workspace_garmin_RideDashboard_source_RideLev_mc_367_12_367_74_begin:
+        symbol [ mManufacturer %tmp.32 367 12 25 ];
+        %tmp.32 = getv ? :mManufacturer;
+        symbol [ MANUFACTURER_SPECIALIZED %tmp.34 367 29 53 ];
+        %tmp.34 = getv ? :MANUFACTURER_SPECIALIZED;
+        %tmp.35 = eq %tmp.32 %tmp.34;
+        bt %tmp.35 @_workspace_garmin_RideDashboard_source_RideLev_mc_367_8_369_8_if_true;
+_workspace_garmin_RideDashboard_source_RideLev_mc_367_57_367_74_false:
+        symbol [ mManufacturer %tmp.37 367 57 70 ];
+        %tmp.37 = getv ? :mManufacturer;
+        symbol [ MANUFACTURER_MAHLE %tmp.39 367 74 92 ];
+        %tmp.39 = getv ? :MANUFACTURER_MAHLE;
+        %tmp.40 = eq %tmp.37 %tmp.39;
+        push %tmp.40;
+_workspace_garmin_RideDashboard_source_RideLev_mc_367_57_367_74_end:
+        %tmp.41 = phi [%tmp.35 @_workspace_garmin_RideDashboard_source_RideLev_mc_367_12_367_74_begin] [%tmp.40 @_workspace_garmin_RideDashboard_source_RideLev_mc_367_57_367_74_false] [%tmp.41 @_workspace_garmin_RideDashboard_source_RideLev_mc_367_57_367_74_end];
+        bf %tmp.41 @_workspace_garmin_RideDashboard_source_RideLev_mc_367_8_369_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_367_8_369_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_367_94_369_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 368 12 ]
+        %tmp.42 = newa 8;
+        %tmp.43 = "VYPNUTO";
+        %tmp.44 = dup %tmp.42;
+        %tmp.45 = aputv %tmp.44 0 %tmp.43;
+        %tmp.46 = "ECO";
+        %tmp.47 = dup %tmp.45;
+        %tmp.48 = aputv %tmp.47 1 %tmp.46;
+        %tmp.49 = "ECO";
+        %tmp.50 = dup %tmp.48;
+        %tmp.51 = aputv %tmp.50 2 %tmp.49;
+        %tmp.52 = "TRAIL";
+        %tmp.53 = dup %tmp.51;
+        %tmp.54 = aputv %tmp.53 3 %tmp.52;
+        %tmp.55 = "TRAIL";
+        %tmp.56 = dup %tmp.54;
+        %tmp.57 = aputv %tmp.56 4 %tmp.55;
+        %tmp.58 = "TURBO";
+        %tmp.59 = dup %tmp.57;
+        %tmp.60 = aputv %tmp.59 5 %tmp.58;
+        %tmp.61 = "TURBO";
+        %tmp.62 = dup %tmp.60;
+        %tmp.63 = aputv %tmp.62 6 %tmp.61;
+        %tmp.64 = "TURBO";
+        %tmp.65 = dup %tmp.63;
+        %tmp.66 = aputv %tmp.65 7 %tmp.64;
+        ret %tmp.66;
+_workspace_garmin_RideDashboard_source_RideLev_mc_367_94_369_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_367_8_369_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_367_8_369_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 370 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_370_8_372_8_if_stmt:
+        symbol [ mManufacturer %tmp.68 370 12 25 ];
+        %tmp.68 = getv ? :mManufacturer;
+        symbol [ MANUFACTURER_YAMAHA %tmp.70 370 29 48 ];
+        %tmp.70 = getv ? :MANUFACTURER_YAMAHA;
+        %tmp.71 = eq %tmp.68 %tmp.70;
+        bf %tmp.71 @_workspace_garmin_RideDashboard_source_RideLev_mc_370_8_372_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_370_8_372_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_370_50_372_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 371 12 ]
+        %tmp.72 = newa 8;
+        %tmp.73 = "VYPNUTO";
+        %tmp.74 = dup %tmp.72;
+        %tmp.75 = aputv %tmp.74 0 %tmp.73;
+        %tmp.76 = "ECO+";
+        %tmp.77 = dup %tmp.75;
+        %tmp.78 = aputv %tmp.77 1 %tmp.76;
+        %tmp.79 = "ECO";
+        %tmp.80 = dup %tmp.78;
+        %tmp.81 = aputv %tmp.80 2 %tmp.79;
+        %tmp.82 = "STD";
+        %tmp.83 = dup %tmp.81;
+        %tmp.84 = aputv %tmp.83 3 %tmp.82;
+        %tmp.85 = "HIGH";
+        %tmp.86 = dup %tmp.84;
+        %tmp.87 = aputv %tmp.86 4 %tmp.85;
+        %tmp.88 = "HIGH";
+        %tmp.89 = dup %tmp.87;
+        %tmp.90 = aputv %tmp.89 5 %tmp.88;
+        %tmp.91 = "EXPW";
+        %tmp.92 = dup %tmp.90;
+        %tmp.93 = aputv %tmp.92 6 %tmp.91;
+        %tmp.94 = "EXPW";
+        %tmp.95 = dup %tmp.93;
+        %tmp.96 = aputv %tmp.95 7 %tmp.94;
+        ret %tmp.96;
+_workspace_garmin_RideDashboard_source_RideLev_mc_370_50_372_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_370_8_372_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_370_8_372_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 373 8 ]
+        %tmp.97 = null;
+        ret %tmp.97;
+_workspace_garmin_RideDashboard_source_RideLev_mc_363_68_374_4_stop:
+    }
+    //! Značky, kde známe režimy v pořadí od nejslabšího.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 377; @symbol_functiondef = [orderedModeNames,377,13,29]; @symbol_return<0> = [Lang,377,35,39]; @symbol_return<1> = [Array,377,40,45]; @symbol_return<2> = [Lang,377,46,50]; @symbol_return<3> = [String,377,51,57]; ]
+    function orderedModeNames() as Lang.Array<Lang.String> or Null {
+_workspace_garmin_RideDashboard_source_RideLev_mc_377_67_385_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 378 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_378_8_380_8_if_stmt:
+        symbol [ mManufacturer %tmp.2 378 12 25 ];
+        %tmp.2 = getv ? :mManufacturer;
+        symbol [ MANUFACTURER_FAZUA %tmp.4 378 29 47 ];
+        %tmp.4 = getv ? :MANUFACTURER_FAZUA;
+        %tmp.5 = eq %tmp.2 %tmp.4;
+        bf %tmp.5 @_workspace_garmin_RideDashboard_source_RideLev_mc_378_8_380_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_378_8_380_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_378_49_380_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 379 12 ]
+        %tmp.6 = newa 3;
+        %tmp.7 = "BREEZE";
+        %tmp.8 = dup %tmp.6;
+        %tmp.9 = aputv %tmp.8 0 %tmp.7;
+        %tmp.10 = "RIVER";
+        %tmp.11 = dup %tmp.9;
+        %tmp.12 = aputv %tmp.11 1 %tmp.10;
+        %tmp.13 = "ROCKET";
+        %tmp.14 = dup %tmp.12;
+        %tmp.15 = aputv %tmp.14 2 %tmp.13;
+        ret %tmp.15;
+_workspace_garmin_RideDashboard_source_RideLev_mc_378_49_380_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_378_8_380_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_378_8_380_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 381 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_381_8_383_8_if_stmt:
+        symbol [ mManufacturer %tmp.17 381 12 25 ];
+        %tmp.17 = getv ? :mManufacturer;
+        symbol [ MANUFACTURER_TQ %tmp.19 381 29 44 ];
+        %tmp.19 = getv ? :MANUFACTURER_TQ;
+        %tmp.20 = eq %tmp.17 %tmp.19;
+        bf %tmp.20 @_workspace_garmin_RideDashboard_source_RideLev_mc_381_8_383_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_381_8_383_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLev_mc_381_46_383_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 382 12 ]
+        %tmp.21 = newa 3;
+        %tmp.22 = "ECO";
+        %tmp.23 = dup %tmp.21;
+        %tmp.24 = aputv %tmp.23 0 %tmp.22;
+        %tmp.25 = "MID";
+        %tmp.26 = dup %tmp.24;
+        %tmp.27 = aputv %tmp.26 1 %tmp.25;
+        %tmp.28 = "HIGH";
+        %tmp.29 = dup %tmp.27;
+        %tmp.30 = aputv %tmp.29 2 %tmp.28;
+        ret %tmp.30;
+_workspace_garmin_RideDashboard_source_RideLev_mc_381_46_383_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_381_8_383_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_381_8_383_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 384 8 ]
+        %tmp.31 = null;
+        ret %tmp.31;
+_workspace_garmin_RideDashboard_source_RideLev_mc_377_67_385_4_stop:
+    }
+    //! Kolik stupňů asistence kolo hlásí (stránka 5).
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 388; @symbol_functiondef = [totalAssistModes,388,13,29]; @symbol_return<0> = [Lang,388,35,39]; @symbol_return<1> = [Number,388,40,46]; ]
+    function totalAssistModes() as Lang.Number or Null {
+_workspace_garmin_RideDashboard_source_RideLev_mc_388_55_390_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLev.mc" 389 8 ]
+_workspace_garmin_RideDashboard_source_RideLev_mc_389_15_389_49_begin:
+        %tmp.1 = self;
+        symbol [ connected %tmp.2 389 15 24 ];
+        %tmp.2 = getv function %tmp.1 :connected;
+        %tmp.3 = invoke %tmp.1 %tmp.2();
+        bf %tmp.3 @_workspace_garmin_RideDashboard_source_RideLev_mc_389_15_389_49_else_false;
+_workspace_garmin_RideDashboard_source_RideLev_mc_389_15_389_49_true:
+        symbol [ mTotalAssistModes %tmp.5 389 29 46 ];
+        %tmp.5 = getv ? :mTotalAssistModes;
+        push %tmp.5;
+        goto @_workspace_garmin_RideDashboard_source_RideLev_mc_389_15_389_49_end;
+_workspace_garmin_RideDashboard_source_RideLev_mc_389_15_389_49_else_false:
+        %tmp.6 = null;
+        push %tmp.6;
+_workspace_garmin_RideDashboard_source_RideLev_mc_389_15_389_49_end:
+        %tmp.7 = phi [%tmp.3 @_workspace_garmin_RideDashboard_source_RideLev_mc_389_15_389_49_begin] [%tmp.5 @_workspace_garmin_RideDashboard_source_RideLev_mc_389_15_389_49_true] [%tmp.6 @_workspace_garmin_RideDashboard_source_RideLev_mc_389_15_389_49_else_false] [%tmp.7 @_workspace_garmin_RideDashboard_source_RideLev_mc_389_15_389_49_end];
+        ret %tmp.7;
+_workspace_garmin_RideDashboard_source_RideLev_mc_388_55_390_4_stop:
+    }
+}
+[ @file = "/workspace/garmin/RideDashboard/source/RideLev.mc"; @line = 1; ]
+<init> {
+}
