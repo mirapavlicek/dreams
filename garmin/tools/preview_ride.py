@@ -140,6 +140,21 @@ class Painter:
     def polygon(self, points, color) -> None:
         self.draw.polygon([(self.s(px), self.s(py)) for px, py in points], fill=self.color(color))
 
+    def card(self, x, y, width, height, radius, fill="panel") -> None:
+        """Vyplněná karta bez obrysu."""
+        self.draw.rounded_rectangle(
+            (self.s(x), self.s(y), self.s(x + width) - 1, self.s(y + height) - 1),
+            radius=self.s(radius),
+            fill=self.color(fill),
+        )
+
+    def pill(self, x, y, width, height, fill) -> None:
+        self.draw.rounded_rectangle(
+            (self.s(x), self.s(y), self.s(x + width) - 1, self.s(y + height) - 1),
+            radius=self.s(height / 2.0),
+            fill=self.color(fill),
+        )
+
     def rectangle(self, x, y, width, height, color) -> None:
         self.draw.rectangle(
             (self.s(x), self.s(y), self.s(x + width), self.s(y + height)),
@@ -520,16 +535,33 @@ def draw_weather_icon(p: Painter, cx, cy, weather) -> None:
     p.circle(cx + 3, cy + 1, 6, fill="textDim")
 
 
-def draw_band(p: Painter, x, y, width, height, radius) -> None:
-    """Poloprůhledný pruh nad mapou - na přístroji Graphics.createColor()."""
-    spec = p.layout["cockpit"]
-    band = rgb(spec["bandColor"]) + (spec["bandAlpha"],)
+SCRIM_STEPS = 24
+
+
+def draw_scrim(p: Painter, y, height, fade_at_bottom: bool) -> None:
+    """Překryv nad mapou, který se na jedné straně rozplyne - žádná tvrdá hrana.
+
+    Na přístroji je to totéž: plná výplň a pak pár pruhů s klesající alfou
+    přes Graphics.createColor().
+    """
+    spec = p.layout["cockpit"]["scrim"]
+    color = rgb(spec["color"])
+    alpha = spec["alpha"]
+    fade = spec["fade"]
+
     overlay = Image.new("RGBA", p.image.size, (0, 0, 0, 0))
-    ImageDraw.Draw(overlay).rounded_rectangle(
-        (p.s(x), p.s(y), p.s(x + width), p.s(y + height)),
-        radius=p.s(radius),
-        fill=band,
-    )
+    pen = ImageDraw.Draw(overlay)
+
+    solid = (y + fade, height - fade) if not fade_at_bottom else (y, height - fade)
+    pen.rectangle((0, p.s(solid[0]), p.image.size[0], p.s(solid[0] + solid[1])), fill=color + (alpha,))
+
+    step = fade / SCRIM_STEPS
+    for index in range(SCRIM_STEPS):
+        ratio = (index + 1) / SCRIM_STEPS
+        band_alpha = round(alpha * (1.0 - ratio) ** 1.6)
+        top = y + height - fade + index * step if fade_at_bottom else y + fade - (index + 1) * step
+        pen.rectangle((0, p.s(top), p.image.size[0], p.s(top + step) + 1), fill=color + (band_alpha,))
+
     p.image.paste(Image.alpha_composite(p.image.convert("RGBA"), overlay).convert("RGB"), (0, 0))
     p.draw = ImageDraw.Draw(p.image)
 
@@ -555,29 +587,36 @@ def draw_heading_tape(p: Painter, data: dict) -> None:
     p.polygon([(240, y + 11), (235, y + 17), (245, y + 17)], "accent")
 
 
-def draw_cadence_badge(p: Painter, data: dict) -> None:
-    """Kadence jako kruhový budík vlevo - obdoba značky s limitem v autě."""
+def draw_gauge(p: Painter, cx, cy, radius, pen, ratio, color) -> None:
+    """Tříčtvrteční oblouk se zakulacenými konci - moderní budík."""
+    start, span = 135.0, 270.0
+    p.arc(cx, cy, radius, start, start + span, "panelEdge", pen)
+    sweep = span * min(max(ratio, 0.0), 1.0)
+    if sweep < 1.0:
+        return
+    p.arc(cx, cy, radius, start, start + sweep, color, pen)
+    for angle in (start, start + sweep):
+        radians = math.radians(angle)
+        p.circle(cx + radius * math.cos(radians), cy + radius * math.sin(radians), pen / 2.0, fill=color)
+
+
+def draw_cadence_gauge(p: Painter, data: dict) -> None:
+    """Kadence jako budík vlevo - obdoba značky s limitem v autě."""
     spec = p.layout["cockpit"]["cadence"]
-    cx, cy, radius, pen = spec["cx"], spec["cy"], spec["radius"], spec["pen"]
     cadence = int(data["cadence"])
     color = cadence_color(cadence, spec["max"])
-
-    p.circle(cx, cy, radius, outline="panelEdge", width=pen)
-    sweep = 360.0 * min(max(cadence / float(spec["max"]), 0.0), 1.0)
-    if sweep > 1:
-        p.arc(cx, cy, radius, -90, -90 + sweep, color, pen)
-    p.text(cx, cy - 4, str(cadence), 30, "mono", color)
-    p.text(cx, cy + 20, "rpm", 11, "regular", "textDim")
+    draw_gauge(p, spec["cx"], spec["cy"], spec["radius"], spec["pen"],
+               cadence / float(spec["max"]), color)
+    p.text(spec["cx"], spec["cy"] - 6, str(cadence), 28, "mono", color)
+    p.text(spec["cx"], spec["cy"] + 17, "RPM", 10, "regular", "textDim")
 
 
 def draw_cockpit_top(p: Painter, data: dict) -> None:
     spec = p.layout["cockpit"]
-    draw_band(p, -spec["top"]["radius"], -spec["top"]["radius"],
-              480 + 2 * spec["top"]["radius"],
-              spec["top"]["height"] + spec["top"]["radius"], spec["top"]["radius"])
+    draw_scrim(p, 0, spec["top"]["height"], True)
 
     draw_heading_tape(p, data)
-    draw_cadence_badge(p, data)
+    draw_cadence_gauge(p, data)
 
     speed = spec["speed"]
     whole, _, decimal = f"{data['speed']:.1f}".partition(".")
@@ -585,27 +624,28 @@ def draw_cockpit_top(p: Painter, data: dict) -> None:
     decimal_width = p.text_width("." + decimal, speed["decimalSize"], "mono")
     left = speed["cx"] - (whole_width + decimal_width) / 2
     p.text(left, speed["cy"], whole, speed["size"], "mono", "text", anchor="lm")
-    p.text(left + whole_width, speed["cy"] + 18, "." + decimal, speed["decimalSize"], "mono", "text",
+    p.text(left + whole_width, speed["cy"] + 18, "." + decimal, speed["decimalSize"], "mono", "accent",
            anchor="lm")
-    p.text(left + whole_width + decimal_width + 6, speed["cy"] + 22, "km/h", 15, "regular", "textDim",
+    p.text(left + whole_width + decimal_width + 8, speed["cy"] + 22, "km/h", 12, "regular", "textDim",
            anchor="lm")
 
     clock = spec["clock"]
-    p.text(clock["x"], clock["y"], data["clock"], 26, "mono", "text")
-    p.text(clock["x"] - 26, clock["statusY"], "GPS", 11, "bold", "ok", anchor="lm")
-    p.text(clock["x"] + 30, clock["statusY"], f"{int(data['deviceBattery'])}%", 11, "regular", "textDim",
+    p.text(clock["x"], clock["y"], data["clock"], 24, "mono", "text", anchor="rm")
+    p.circle(clock["x"] - 60, clock["statusY"], 3.5, fill="ok")
+    p.text(clock["x"] - 50, clock["statusY"], "GPS", 10, "regular", "textDim", anchor="lm")
+    p.text(clock["x"], clock["statusY"], f"{int(data['deviceBattery'])} %", 10, "regular", "textDim",
            anchor="rm")
 
     chips = spec["chips"]
-    labels = [("PRŮMĚR", f"{data['avgSpeed']:.1f}", "accent"), ("MAX", f"{data['maxSpeed']:.1f}", "warn")]
+    height = chips["height"]
+    cells = [("PRŮMĚR", f"{data['avgSpeed']:.1f}", "accent"), ("MAX", f"{data['maxSpeed']:.1f}", "warn")]
     width = (480 - 2 * chips["margin"] - chips["gap"]) / 2
-    for index, (label, value, color) in enumerate(labels):
+    for index, (label, value, color) in enumerate(cells):
         x = chips["margin"] + index * (width + chips["gap"])
-        p.panel(x, chips["y"], width, chips["height"], radius=chips["radius"])
-        p.text(x + 12, chips["y"] + chips["height"] / 2, label, 11, "regular", "textDim", anchor="lm")
-        p.text(x + width - 38, chips["y"] + chips["height"] / 2, value, 18, "mono", color, anchor="rm")
-        p.text(x + width - 10, chips["y"] + chips["height"] / 2 + 1, "km/h", 10, "regular", "textDim",
-               anchor="rm")
+        p.pill(x, chips["y"], width, height, "panel")
+        p.text(x + 16, chips["y"] + height / 2, label, 10, "regular", "textDim", anchor="lm")
+        p.text(x + width - 42, chips["y"] + height / 2, value, 19, "mono", color, anchor="rm")
+        p.text(x + width - 16, chips["y"] + height / 2 + 1, "km/h", 10, "regular", "textDim", anchor="rm")
 
 
 def draw_arrow(p: Painter, cx, cy, up, color) -> None:
@@ -619,8 +659,7 @@ def draw_arrow(p: Painter, cx, cy, up, color) -> None:
 def draw_cockpit_bottom(p: Painter, data: dict) -> None:
     spec = p.layout["cockpit"]
     bottom = spec["bottom"]
-    draw_band(p, -bottom["radius"], bottom["y"], 480 + 2 * bottom["radius"],
-              bottom["height"] + bottom["radius"], bottom["radius"])
+    draw_scrim(p, bottom["y"], bottom["height"], False)
 
     row_a = spec["rowA"]
     margin = bottom["margin"]
@@ -632,30 +671,39 @@ def draw_cockpit_bottom(p: Painter, data: dict) -> None:
     width = (480 - 2 * margin) / 3
     for index, (label, value, unit, color) in enumerate(columns):
         cx = margin + width * (index + 0.5)
-        p.text(cx, row_a["titleY"], label, 11, "regular", "textDim")
-        value_width = p.text_width(value, 30, "mono")
-        p.text(cx - value_width / 2, row_a["valueY"], value, 30, "mono", color, anchor="lm")
-        p.text(cx + value_width / 2 + 5, row_a["valueY"] + 5, unit, 11, "regular", "textDim", anchor="lm")
+        if index:
+            x = margin + width * index
+            p.line(x, row_a["dividerTop"], x, row_a["dividerTop"] + row_a["dividerHeight"], "panelEdge", 1)
+        p.text(cx, row_a["titleY"], label, 10, "regular", "textDim")
+        value_width = p.text_width(value, 32, "mono")
+        p.text(cx - value_width / 2, row_a["valueY"], value, 32, "mono", color, anchor="lm")
+        p.text(cx + value_width / 2 + 5, row_a["valueY"] + 6, unit, 10, "regular", "textDim", anchor="lm")
 
     row_b = spec["rowB"]
     battery = int(data["assistBattery"])
     battery_color = "ok" if battery > 30 else "danger"
-    p.text(margin, row_b["y"], "E-BIKE", 11, "regular", "textDim", anchor="lm")
-    p.text(margin + 52, row_b["y"], f"{battery}%", 17, "mono", battery_color, anchor="lm")
-    p.bar(margin, row_b["barY"], 100, 5, battery / 100.0, battery_color)
+    cells = [
+        (margin, f"{battery} %", "E-BIKE", battery_color, None),
+        (150, f"{int(data['ascent'])} m", "NASTOUPÁNO", "warn", True),
+        (268, f"{int(data['descent'])} m", "SESTOUPÁNO", "cold", False),
+    ]
+    for x, value, label, color, arrow in cells:
+        offset = 0
+        if arrow is not None:
+            # Šipky se kreslí, ne píšou - Garmin fonty znak ↑ nemají.
+            draw_arrow(p, x + 5, row_b["y"], arrow, color)
+            offset = 15
+        p.text(x + offset, row_b["y"], value, 17, "mono", color, anchor="lm")
+        p.text(x, row_b["labelY"], label, 10, "regular", "textDim", anchor="lm")
 
-    # Šipky se kreslí, ne píšou - Garmin fonty znak ↑ nemají.
-    draw_arrow(p, 196, row_b["y"], True, "warn")
-    p.text(206, row_b["y"], f"{int(data['ascent'])} m", 15, "mono", "warn", anchor="lm")
-    p.text(212, row_b["barY"] + 2, "NASTOUPÁNO", 10, "regular", "textDim", anchor="mm")
-    draw_arrow(p, 302, row_b["y"], False, "cold")
-    p.text(312, row_b["y"], f"{int(data['descent'])} m", 15, "mono", "cold", anchor="lm")
-    p.text(318, row_b["barY"] + 2, "SESTOUPÁNO", 10, "regular", "textDim", anchor="mm")
-
-    draw_weather_icon(p, 400, row_b["y"], data["weather"])
-    p.text(480 - margin, row_b["y"], f"{int(data['temperature'])}°C", 19, "mono", "text", anchor="rm")
-    p.text(480 - margin, row_b["barY"] + 2, WEATHER_LABELS.get(data["weather"], "POČASÍ"), 10,
+    draw_weather_icon(p, 396, row_b["y"] - 2, data["weather"])
+    p.text(480 - margin, row_b["y"], f"{int(data['temperature'])} °C", 19, "mono", "text", anchor="rm")
+    p.text(480 - margin, row_b["labelY"], WEATHER_LABELS.get(data["weather"], "POČASÍ"), 10,
            "regular", "textDim", anchor="rm")
+
+    # Baterie e-biku jako tenký proužek přes celou spodní hranu.
+    battery_spec = spec["battery"]
+    p.bar(0, battery_spec["y"], 480, battery_spec["height"], battery / 100.0, battery_color)
 
 
 def draw_cockpit_inset(p: Painter, data: dict) -> None:
@@ -663,7 +711,7 @@ def draw_cockpit_inset(p: Painter, data: dict) -> None:
     spec = p.layout["cockpit"]
     inset = spec["inset"]
     y = spec["bottom"]["y"] - inset["bottomGap"] - inset["height"]
-    p.panel(inset["x"], y, inset["width"], inset["height"], radius=inset["radius"])
+    p.card(inset["x"], y, inset["width"], inset["height"], inset["radius"])
 
     route = data.get("route") or demo_route()
     travelled = data.get("track") or route[: int(len(route) * 0.62)]
@@ -686,7 +734,31 @@ def draw_cockpit_inset(p: Painter, data: dict) -> None:
     p.polyline([project(point) for point in travelled], "accent", 3)
     here = project(travelled[-1])
     p.circle(here[0], here[1], 4, fill="text")
-    p.text(inset["x"] + inset["width"] - 8, y + 12, "CELÁ TRASA", 10, "regular", "textDim", anchor="rm")
+    p.text(inset["x"] + inset["width"] / 2, y + 13, "CELÁ TRASA", 10, "regular", "textDim")
+
+
+def draw_track_only(p: Painter, data: dict, box) -> None:
+    x, y, width, height = box
+    route = data.get("route") or demo_route()
+    travelled = data.get("track") or route[: int(len(route) * 0.62)]
+    padding = p.layout["map"]["padding"]
+    points = route + travelled
+    min_x = min(px for px, _ in points)
+    max_x = max(px for px, _ in points)
+    min_y = min(py for _, py in points)
+    max_y = max(py for _, py in points)
+    span = max(max_x - min_x, max_y - min_y, 1e-6)
+    factor = min(width - 2 * padding, height - 2 * padding) / span
+    offset_x = x + padding + (width - 2 * padding - (max_x - min_x) * factor) / 2
+    offset_y = y + padding + (height - 2 * padding - (max_y - min_y) * factor) / 2
+
+    def project(point):
+        px, py = point
+        return offset_x + (px - min_x) * factor, offset_y + (max_y - py) * factor
+
+    p.polyline([project(point) for point in travelled], "accent", p.layout["map"]["trackPen"])
+    here = project(travelled[-1])
+    p.circle(here[0], here[1], p.layout["map"]["markerRadius"], fill="text")
 
 
 def render_cockpit(data: dict, layout: dict, device_map: bool = True) -> Image.Image:
@@ -694,15 +766,17 @@ def render_cockpit(data: dict, layout: dict, device_map: bool = True) -> Image.I
     p = Painter(layout)
     canvas = layout["canvas"]
     spec = layout["cockpit"]
-    map_top = spec["top"]["height"]
-    map_bottom = spec["bottom"]["y"]
+    map_top = 0
+    map_bottom = canvas["height"]
 
     if device_map:
         draw_device_map_area(p, data, (0, map_top, canvas["width"], map_bottom - map_top))
         # Přehledová stopa dává smysl jen nad zazoomovanou mapou.
         draw_cockpit_inset(p, data)
     else:
-        draw_map(p, data, (0, map_top, canvas["width"], map_bottom - map_top))
+        # Bez kartografie zaplní místo mezi překryvy jen projetá stopa.
+        focus = spec["focus"]
+        draw_track_only(p, data, (0, focus["top"], canvas["width"], focus["bottom"] - focus["top"]))
 
     draw_cockpit_top(p, data)
     draw_cockpit_bottom(p, data)

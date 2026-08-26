@@ -19,15 +19,18 @@ Dva styly, přepínají se v nastavení aplikace.
 
 ![Palubovka ve stylu přístrojového štítu](docs/preview/ride-cockpit.png)
 
-Mapa vyplňuje celou obrazovku a přes ni jsou dva pruhy jako v přístrojovém štítu
-auta — nahoře kompasová páska, kruhový budík kadence, digitální tachometr,
-hodiny a chipy s průměrnou a maximální rychlostí; dole dojezd e-biku,
-vzdálenost do cíle s odhadem příjezdu, najeté kilometry a řádek se stavem
-baterie, převýšením a počasím. V rohu mapy je náhled celé projeté trasy, aby
-byl vidět tvar jízdy i při zazoomované mapě.
+Mapa vyplňuje celou obrazovku a přes ni jsou dva překryvy jako v přístrojovém
+štítu auta — nahoře kompasová páska, tříčtvrteční budík kadence, digitální
+tachometr s desetinným místem v akcentu, hodiny a pilulky s průměrnou
+a maximální rychlostí; dole dojezd e-biku, vzdálenost do cíle s odhadem
+příjezdu, najeté kilometry a řádek se stavem baterie, převýšením a počasím.
+V rohu mapy je náhled celé projeté trasy, aby byl vidět tvar jízdy i při
+zazoomované mapě, a spodní hranu displeje lemuje tenký proužek baterie.
 
-Pruhy jsou poloprůhledné přes `Graphics.createColor()` (API 4.0 a výš); na
-starších jednotkách vyjdou neprůhledné, jinak se nezmění nic.
+Překryvy nemají tvrdou hranu: směrem k mapě se rozplývají do ztracena. Kreslí
+se jako plná výplň a pár desítek pruhů s klesající alfou přes
+`Graphics.createColor()` (API 4.0 a výš). Na starších jednotkách zůstane
+neprůhledný pruh, jinak se nezmění nic.
 
 ## Styl „panely“
 

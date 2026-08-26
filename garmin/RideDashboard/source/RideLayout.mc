@@ -81,11 +81,12 @@ module RideLayout {
     //! Ve stylu přístrojového štítu je mapa přes celou obrazovku a zaostřuje se
     //! na pruh mezi horním a spodním překryvem.
     function cockpitMapRect() as Lang.Array {
+        var focus = group("cockpit", "focus");
         return [
             0,
-            y(at(group("cockpit", "top"), "height")).toNumber(),
+            y(at(focus, "top")).toNumber(),
             x(number("canvas", "width")).toNumber() - 1,
-            y(at(group("cockpit", "bottom"), "y")).toNumber()
+            y(at(focus, "bottom")).toNumber()
         ];
     }
 
