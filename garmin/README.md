@@ -343,6 +343,26 @@ python3 garmin/tools/crop_screen.py edge830 /tmp/edge830.png docs/device/edge830
 `sim_sweep.sh` projde manifest, každou jednotku spustí a uloží snímek do
 `/tmp/sim-sweep`; `crop_screen.py` z okna simulátoru vyřízne samotný displej.
 
+### Kam simulátor nedohlédne
+
+Dvě věci se v něm ověřit **nedají** a obě si už vybraly svou daň:
+
+- **Mapa je jen naoko.** Simulátor kartografii nevykresluje, prostřední bílá
+  plocha na snímcích není mapa, ale prázdno. Volání `setScreenVisibleArea()`
+  a `setMapMode()` na nepřipojeném view proto projde, kdežto na přístroji
+  shodí aplikaci na „Unexpected Type Error“.
+- **Firmware je pozadu.** Device packy Garmin vydává později než firmware —
+  v době psaní je nejnovější pack pro Edge 1050 na firmware 31.30 (API 6.0.0),
+  zatímco přístroje běží na 32.20. Co se změnilo mezi nimi, se tady neprojeví.
+  Aktuální stav se dá zjistit takhle:
+
+```bash
+python3 -c "import json;c=json.load(open('$HOME/.Garmin/ConnectIQ/Devices/edge1050/compiler.json'));print(c['partNumbers'])"
+```
+
+Pro obojí platí totéž: co se týká mapy a chování na novém firmwaru, rozhoduje
+snímek ze skutečného přístroje, ne ze simulátoru.
+
 ---
 ---
 
