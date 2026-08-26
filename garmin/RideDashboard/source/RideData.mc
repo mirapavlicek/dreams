@@ -35,6 +35,9 @@ module RideData {
     var mUseMap = true;
     var mCockpitStyle = true;
     var mUseLev as Lang.Boolean = true;
+    //: Posílat kolu příkazy, ne jen poslouchat. Ve výchozím stavu vypnuté:
+    //: je to zásah do stroje, který jede, a chování se mezi značkami liší.
+    var mControlLev as Lang.Boolean = false;
     var mLevDeviceNumber as Lang.Number = 0;
     var mLev as RideLev or Null = null;
     var mBleName as Lang.String = "";
@@ -83,6 +86,10 @@ module RideData {
         var useLev = Application.Properties.getValue("useLevSensor");
         if (useLev instanceof Lang.Boolean) {
             mUseLev = useLev;
+        }
+        var control = Application.Properties.getValue("controlLev");
+        if (control instanceof Lang.Boolean) {
+            mControlLev = control;
         }
         var deviceNumber = Application.Properties.getValue("levDeviceNumber");
         if (deviceNumber instanceof Lang.Number && deviceNumber >= 0) {
@@ -394,6 +401,50 @@ module RideData {
         return bike == null ? null : bike.assistLevel();
     }
 
+    // --- ovládání asistence --------------------------------------------------
+
+    //! Smí se kolu posílat? Jen když to uživatel zapnul, kolo mluví a hlásí,
+    //! kolik stupňů má - bez toho není o co opřít horní mez.
+    function canControlAssist() as Lang.Boolean {
+        if (!mControlLev || ebikeNative()) {
+            return false;
+        }
+        var bike = lev();
+        return bike != null && bike.assistLevel() != null && bike.totalAssistModes() != null;
+    }
+
+    //! Posune asistenci o krok nahoru nebo dolů. Strop je počet stupňů, které
+    //! kolo hlásí ve stránce 5; vyšší číslo by profil sice přenesl, ale kolo
+    //! by ho stejně oříznulo.
+    function stepAssist(delta as Lang.Number) as Lang.Boolean {
+        if (!canControlAssist()) {
+            return false;
+        }
+        var bike = lev();
+        var current = bike.requestedAssist();
+        if (current == null) {
+            current = bike.assistLevel();
+        }
+        var maximum = bike.totalAssistModes();
+        var wanted = current + delta;
+        if (wanted < 0) {
+            wanted = 0;
+        }
+        if (wanted > maximum) {
+            wanted = maximum;
+        }
+        if (wanted == current) {
+            return false;
+        }
+        return bike.requestAssist(wanted);
+    }
+
+    //! Stupeň, na který čekáme - kreslení ho ukáže jinak než potvrzený.
+    function pendingAssist() as Lang.Number or Null {
+        var bike = lev();
+        return bike == null ? null : bike.requestedAssist();
+    }
+
     //! Režim asistence tak, jak mu říká výrobce - Giant hlásí ECO, ACTIVE nebo
     //! SPORT, Fazua BREEZE až ROCKET. U neznámé značky zbude číslo stupně,
     //! a když kolo hlásí i počet svých režimů, tak "ASIST 3/5".
@@ -427,13 +478,40 @@ module RideData {
         if (source == ASSIST_FROM_BLE) {
             return "E-BIKE · BLE";
         }
-        var mode = assistModeText();
+        var mode = assistModeLabel();
         return mode == null ? "E-BIKE" : "E-BIKE · " + mode;
+    }
+
+    //! Režim asistence pro popisek. Dokud kolo nepotvrdí náš požadavek, ukáže
+    //! se se šipkou - ať je poznat, že jde o přání, ne o skutečnost.
+    function assistModeLabel() as Lang.String or Null {
+        var pending = pendingAssist();
+        if (pending != null) {
+            return "› " + assistNameFor(pending);
+        }
+        return assistModeText();
+    }
+
+    //! Jméno stupně tak, jak by ho kolo ukázalo, i pro stupeň, který teprve
+    //! chceme nastavit.
+    function assistNameFor(level as Lang.Number) as Lang.String {
+        var bike = lev();
+        if (bike != null) {
+            var names = bike.expandedModeNames();
+            if (names != null && level < names.size()) {
+                return names[level] as Lang.String;
+            }
+        }
+        return "ASIST " + level.toString();
     }
 
     //! Zkrácený popisek pro malé displeje: vedle procent baterie je "E-BIKE"
     //! zřejmé i bez psaní, důležitý je zdroj čísla.
     function assistShortLabel() as Lang.String {
+        var pending = pendingAssist();
+        if (pending != null) {
+            return "› " + assistNameFor(pending);
+        }
         var source = assistSource();
         if (source == ASSIST_ESTIMATED) {
             return "ODHAD";
@@ -460,7 +538,7 @@ module RideData {
         if (source == ASSIST_FROM_BLE) {
             return "baterie přes BLE";
         }
-        var mode = assistModeText();
+        var mode = assistModeLabel();
         if (mode != null) {
             return mode;
         }
@@ -522,7 +600,20 @@ module RideData {
         if (positionInfo == null || positionInfo.position == null) {
             return;
         }
-        var degrees = positionInfo.position.toDegrees() as Lang.Array<Lang.Double>;
+        addPoint(positionInfo.position.toDegrees() as Lang.Array<Lang.Double>);
+    }
+
+    //! Poloha z Activity.Info. Datové pole si vlastní odběr pozic zapnout
+    //! nesmí - Position.enableLocationEvents() pro něj není dostupné - takže
+    //! stopu skládá z toho, co mu přístroj podá při každém výpočtu.
+    function onActivityLocation(location) as Void {
+        if (location == null) {
+            return;
+        }
+        addPoint(location.toDegrees() as Lang.Array<Lang.Double>);
+    }
+
+    function addPoint(degrees as Lang.Array<Lang.Double>) as Void {
         var latitude = degrees[0];
         var longitude = degrees[1];
 

@@ -15,8 +15,8 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 
 PROJECTS=()
 case "${1:-}" in
-    QMailDashboard|RideDashboard) PROJECTS=("$1"); shift ;;
-    *) PROJECTS=(QMailDashboard RideDashboard) ;;
+    QMailDashboard|RideDashboard|RideField) PROJECTS=("$1"); shift ;;
+    *) PROJECTS=(QMailDashboard RideDashboard RideField) ;;
 esac
 
 check_project() {
@@ -26,13 +26,20 @@ check_project() {
     case "$project" in
         QMailDashboard) device="$(python3 "$HERE/tools/stub_device.py" --id qmailstub --shape round --width 454 --height 454)" ;;
         RideDashboard)  device="$(python3 "$HERE/tools/stub_device.py" --id ridestub --shape rectangle --width 480 --height 800)" ;;
+        RideField)      device="$(python3 "$HERE/tools/stub_device.py" --id fieldstub --shape rectangle --width 480 --height 800)" ;;
     esac
 
     # Manifest smí obsahovat jen skutečně stažená zařízení, takže náhradní id
-    # přidáme do dočasné kopie projektu a originál necháme být.
+    # přidáme do dočasné kopie projektu a originál necháme být. Kopíruje se
+    # i sousední RideDashboard, protože datové pole si z něj bere sdílené
+    # zdroje relativní cestou - v holé kopii by je nenašlo.
     local workdir
     workdir="$(mktemp -d)"
-    cp -r "$HERE/$project" "$workdir/project"
+    cp -r "$HERE/$project" "$workdir/$project"
+    if [ "$project" != "RideDashboard" ] && [ -d "$HERE/RideDashboard" ]; then
+        cp -r "$HERE/RideDashboard" "$workdir/RideDashboard"
+    fi
+    ln -s "$workdir/$project" "$workdir/project"
     python3 - "$workdir/project/manifest.xml" "$device" <<'PY'
 import pathlib, sys
 path, device = pathlib.Path(sys.argv[1]), sys.argv[2]

@@ -8,6 +8,9 @@
     <setting propertyKey="@Properties.useLevSensor" title="@Strings.SettingUseLev" prompt="@Strings.SettingUseLevPrompt">
         <settingConfig type="boolean"/>
     </setting>
+    <setting propertyKey="@Properties.controlLev" title="@Strings.SettingControlLev" prompt="@Strings.SettingControlLevPrompt">
+        <settingConfig type="boolean"/>
+    </setting>
     <setting propertyKey="@Properties.levDeviceNumber" title="@Strings.SettingLevDevice" prompt="@Strings.SettingLevDevicePrompt">
         <settingConfig type="numeric" min="0" max="65535"/>
     </setting>

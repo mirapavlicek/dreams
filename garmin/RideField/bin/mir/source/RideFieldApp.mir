@@ -1,0 +1,93 @@
+[ @file = "/workspace/garmin/RideField/source/RideFieldApp.mc"; @line = 1; @symbol_usingdef<0> = [Toybox,1,6,12]; @symbol_usingdef<1> = [Application,1,13,24]; ]
+using Toybox.Application;
+[ @file = "/workspace/garmin/RideField/source/RideFieldApp.mc"; @line = 2; @symbol_usingdef<0> = [Toybox,2,6,12]; @symbol_usingdef<1> = [WatchUi,2,13,20]; ]
+using Toybox.WatchUi;
+//! Táž palubovka jako aplikace v ../RideDashboard, jen jako datové pole.
+//!
+//! Proč obojí: aplikace zabere celou obrazovku a přístroj pod ní schová své
+//! vlastní datové obrazovky. Datové pole naopak v nativní aktivitě bydlí, takže
+//! vedle něj můžou na téže obrazovce svítit údaje, na které Connect IQ nedosáhne
+//! - hlavně e-bike data z Bosch Smart System. Za to platí tím, že nemá žádný
+//! vstup: nejde v něm otevřít menu ani ovládat asistenci.
+[ @file = "/workspace/garmin/RideField/source/RideFieldApp.mc"; @line = 11; @symbol_classdef = [RideFieldApp,11,6,18]; @symbol_extends<0> = [Application,11,27,38]; @symbol_extends<1> = [AppBase,11,39,46]; ]
+class RideFieldApp extends Application.AppBase {
+    [ @file = "/workspace/garmin/RideField/source/RideFieldApp.mc"; @line = 11; ]
+    <init> {
+    }
+    [ @file = "/workspace/garmin/RideField/source/RideFieldApp.mc"; @line = 11; ]
+    static
+    <init> {
+    }
+    [ @file = "/workspace/garmin/RideField/source/RideFieldApp.mc"; @line = 13; @symbol_functiondef = [initialize,13,13,23]; ]
+    function initialize() as Void {
+_workspace_garmin_RideField_source_RideFieldApp_mc_13_26_15_4_start:
+[ "/workspace/garmin/RideField/source/RideFieldApp.mc" 14 8 ]
+        symbol [ AppBase %tmp.2 14 8 15 ];
+        %tmp.2 = getv ? :AppBase;
+        symbol [ initialize %tmp.3 14 16 26 ];
+        %tmp.3 = getv function %tmp.2 :initialize;
+        invoke %tmp.2 %tmp.3();
+_workspace_garmin_RideField_source_RideFieldApp_mc_13_26_15_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideField/source/RideFieldApp.mc"; @line = 17; @symbol_functiondef = [onStart,17,13,20]; @symbol_param<0> = [state,17,21,26]; ]
+    function onStart(state) {
+_workspace_garmin_RideField_source_RideFieldApp_mc_17_28_19_4_start:
+[ "/workspace/garmin/RideField/source/RideFieldApp.mc" 18 8 ]
+        symbol [ RideData %tmp.2 18 8 16 ];
+        %tmp.2 = getv ? :RideData;
+        symbol [ initialize %tmp.3 18 17 27 ];
+        %tmp.3 = getv function %tmp.2 :initialize;
+        invoke %tmp.2 %tmp.3();
+_workspace_garmin_RideField_source_RideFieldApp_mc_17_28_19_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideField/source/RideFieldApp.mc"; @line = 21; @symbol_functiondef = [onStop,21,13,19]; @symbol_param<0> = [state,21,20,25]; ]
+    function onStop(state) {
+_workspace_garmin_RideField_source_RideFieldApp_mc_21_27_23_4_start:
+[ "/workspace/garmin/RideField/source/RideFieldApp.mc" 22 8 ]
+        symbol [ RideData %tmp.2 22 8 16 ];
+        %tmp.2 = getv ? :RideData;
+        symbol [ closeSensors %tmp.3 22 17 29 ];
+        %tmp.3 = getv function %tmp.2 :closeSensors;
+        invoke %tmp.2 %tmp.3();
+_workspace_garmin_RideField_source_RideFieldApp_mc_21_27_23_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideField/source/RideFieldApp.mc"; @line = 25; @symbol_functiondef = [getInitialView,25,13,27]; ]
+    function getInitialView() {
+_workspace_garmin_RideField_source_RideFieldApp_mc_25_30_27_4_start:
+[ "/workspace/garmin/RideField/source/RideFieldApp.mc" 26 8 ]
+        %tmp.1 = newa 1;
+        symbol [ RideField %tmp.5 26 20 29 ];
+        %tmp.5 = getv ? :RideField;
+        %tmp.2 = newc %tmp.5 ();
+        %tmp.6 = dup %tmp.1;
+        %tmp.7 = aputv %tmp.6 0 %tmp.2;
+        ret %tmp.7;
+_workspace_garmin_RideField_source_RideFieldApp_mc_25_30_27_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideField/source/RideFieldApp.mc"; @line = 29; @symbol_functiondef = [onSettingsChanged,29,13,30]; ]
+    function onSettingsChanged() {
+_workspace_garmin_RideField_source_RideFieldApp_mc_29_33_33_4_start:
+[ "/workspace/garmin/RideField/source/RideFieldApp.mc" 30 8 ]
+        symbol [ RideData %tmp.2 30 8 16 ];
+        %tmp.2 = getv ? :RideData;
+        symbol [ reloadSettings %tmp.3 30 17 31 ];
+        %tmp.3 = getv function %tmp.2 :reloadSettings;
+        invoke %tmp.2 %tmp.3();
+[ "/workspace/garmin/RideField/source/RideFieldApp.mc" 31 8 ]
+        symbol [ RideData %tmp.5 31 8 16 ];
+        %tmp.5 = getv ? :RideData;
+        symbol [ openSensors %tmp.6 31 17 28 ];
+        %tmp.6 = getv function %tmp.5 :openSensors;
+        invoke %tmp.5 %tmp.6();
+[ "/workspace/garmin/RideField/source/RideFieldApp.mc" 32 8 ]
+        symbol [ WatchUi %tmp.7 32 8 15 ];
+        %tmp.7 = getm $.Toybox.WatchUi;
+        symbol [ requestUpdate %tmp.8 32 16 29 ];
+        %tmp.8 = getv function %tmp.7 :requestUpdate;
+        invoke %tmp.7 %tmp.8();
+_workspace_garmin_RideField_source_RideFieldApp_mc_29_33_33_4_stop:
+    }
+}
+[ @file = "/workspace/garmin/RideField/source/RideFieldApp.mc"; @line = 1; ]
+<init> {
+}

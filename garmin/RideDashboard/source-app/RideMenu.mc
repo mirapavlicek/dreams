@@ -29,6 +29,9 @@ module RideMenu {
         menu.addItem(new WatchUi.ToggleMenuItem("Elektrokolo ANT+",
             {:enabled => "číst data z kola", :disabled => "jen odhad dojezdu"},
             :lev, RideData.mUseLev, null));
+        menu.addItem(new WatchUi.ToggleMenuItem("Ovládat asistenci",
+            {:enabled => "tlačítky nahoru a dolů", :disabled => "jen číst, nic neposílat"},
+            :control, RideData.mControlLev, null));
         menu.addItem(new WatchUi.MenuItem("Spárovat kolo znovu",
             pairingLabel(), :pair, null));
         menu.addItem(new WatchUi.MenuItem("Kapacita baterie",
@@ -99,6 +102,9 @@ class RideMenuDelegate extends WatchUi.Menu2InputDelegate {
 
         } else if (id == :lev) {
             RideMenu.store("useLevSensor", (item as WatchUi.ToggleMenuItem).isEnabled());
+
+        } else if (id == :control) {
+            RideMenu.store("controlLev", (item as WatchUi.ToggleMenuItem).isEnabled());
 
         } else if (id == :pair) {
             // Nula znamená "vezmi první kolo, které se ozve"; uložené ID se

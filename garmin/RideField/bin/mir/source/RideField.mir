@@ -1,0 +1,100 @@
+[ @file = "/workspace/garmin/RideField/source/RideField.mc"; @line = 1; @symbol_usingdef<0> = [Toybox,1,6,12]; @symbol_usingdef<1> = [Activity,1,13,21]; ]
+using Toybox.Activity;
+[ @file = "/workspace/garmin/RideField/source/RideField.mc"; @line = 2; @symbol_usingdef<0> = [Toybox,2,6,12]; @symbol_usingdef<1> = [WatchUi,2,13,20]; ]
+using Toybox.WatchUi;
+//! Palubovka nakreslená do plochy, kterou poli přidělí datová obrazovka.
+//!
+//! Kreslení je společné s aplikací (RideCockpit / RideChrome), takže se obě
+//! varianty nemůžou rozejít. Dvě věci se ale liší:
+//!
+//! * Poloha chodí z `Activity.Info`, protože datové pole si vlastní odběr
+//!   pozic zapnout nesmí - `Position.enableLocationEvents()` pro něj není
+//!   dostupné a překladač ho rovnou odmítne.
+//! * Mapa z paměti přístroje se nekreslí. Pole nemá vstup, kterým by se dalo
+//!   mezi mapou a palubovkou přepínat, takže uprostřed zůstane drobečková
+//!   stopa - kartografii stejně umí ukázat nativní mapová obrazovka vedle.
+[ @file = "/workspace/garmin/RideField/source/RideField.mc"; @line = 15; @symbol_classdef = [RideField,15,6,15]; @symbol_extends<0> = [WatchUi,15,24,31]; @symbol_extends<1> = [DataField,15,32,41]; ]
+class RideField extends WatchUi.DataField {
+    [ @file = "/workspace/garmin/RideField/source/RideField.mc"; @line = 15; ]
+    <init> {
+    }
+    [ @file = "/workspace/garmin/RideField/source/RideField.mc"; @line = 15; ]
+    static
+    <init> {
+    }
+    [ @file = "/workspace/garmin/RideField/source/RideField.mc"; @line = 17; @symbol_functiondef = [initialize,17,13,23]; ]
+    function initialize() as Void {
+_workspace_garmin_RideField_source_RideField_mc_17_26_19_4_start:
+[ "/workspace/garmin/RideField/source/RideField.mc" 18 8 ]
+        symbol [ DataField %tmp.2 18 8 17 ];
+        %tmp.2 = getv ? :DataField;
+        symbol [ initialize %tmp.3 18 18 28 ];
+        %tmp.3 = getv function %tmp.2 :initialize;
+        invoke %tmp.2 %tmp.3();
+_workspace_garmin_RideField_source_RideField_mc_17_26_19_4_stop:
+    }
+    //! Volá přístroj jednou za vteřinu s aktuálním stavem aktivity.
+    [ @file = "/workspace/garmin/RideField/source/RideField.mc"; @line = 22; @symbol_functiondef = [compute,22,13,20]; @symbol_param<0> = [info,22,21,25]; @symbol_param<0>_type<0> = [Activity,22,29,37]; @symbol_param<0>_type<1> = [Info,22,38,42]; ]
+    function compute(info as Activity.Info) as Void {
+_workspace_garmin_RideField_source_RideField_mc_22_52_25_4_start:
+[ "/workspace/garmin/RideField/source/RideField.mc" 23 8 ]
+        symbol [ RideData %tmp.2 23 8 16 ];
+        %tmp.2 = getv ? :RideData;
+        symbol [ onActivityLocation %tmp.3 23 17 35 ];
+        %tmp.3 = getv function %tmp.2 :onActivityLocation;
+        %tmp.4 = lgetv %info;
+        symbol [ info %tmp.4 23 36 40 ];
+        symbol [ currentLocation %tmp.5 23 41 56 ];
+        %tmp.5 = getv %tmp.4 :currentLocation;
+        invoke %tmp.2 %tmp.3(%tmp.5);
+[ "/workspace/garmin/RideField/source/RideField.mc" 24 8 ]
+        symbol [ RideData %tmp.7 24 8 16 ];
+        %tmp.7 = getv ? :RideData;
+        symbol [ poll %tmp.8 24 17 21 ];
+        %tmp.8 = getv function %tmp.7 :poll;
+        invoke %tmp.7 %tmp.8();
+_workspace_garmin_RideField_source_RideField_mc_22_52_25_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideField/source/RideField.mc"; @line = 27; @symbol_functiondef = [onUpdate,27,13,21]; @symbol_param<0> = [dc,27,22,24]; ]
+    function onUpdate(dc) as Void {
+_workspace_garmin_RideField_source_RideField_mc_27_34_33_4_start:
+[ "/workspace/garmin/RideField/source/RideField.mc" 28 8 ]
+_workspace_garmin_RideField_source_RideField_mc_28_8_32_8_if_stmt:
+        symbol [ RideData %tmp.2 28 12 20 ];
+        %tmp.2 = getv ? :RideData;
+        symbol [ cockpitStyle %tmp.3 28 21 33 ];
+        %tmp.3 = getv function %tmp.2 :cockpitStyle;
+        %tmp.4 = invoke %tmp.2 %tmp.3();
+        bf %tmp.4 @_workspace_garmin_RideField_source_RideField_mc_28_8_32_8_if_else_false;
+_workspace_garmin_RideField_source_RideField_mc_28_8_32_8_if_true:
+_workspace_garmin_RideField_source_RideField_mc_28_37_30_8_start:
+[ "/workspace/garmin/RideField/source/RideField.mc" 29 12 ]
+        symbol [ RideCockpit %tmp.6 29 12 23 ];
+        %tmp.6 = getv ? :RideCockpit;
+        symbol [ draw %tmp.7 29 24 28 ];
+        %tmp.7 = getv function %tmp.6 :draw;
+        %tmp.8 = lgetv %dc;
+        symbol [ dc %tmp.8 29 29 31 ];
+        %tmp.9 = false;
+        invoke %tmp.6 %tmp.7(%tmp.8, %tmp.9);
+_workspace_garmin_RideField_source_RideField_mc_28_37_30_8_stop:
+        goto @_workspace_garmin_RideField_source_RideField_mc_28_8_32_8_if_end;
+_workspace_garmin_RideField_source_RideField_mc_28_8_32_8_if_else_false:
+_workspace_garmin_RideField_source_RideField_mc_30_15_32_8_start:
+[ "/workspace/garmin/RideField/source/RideField.mc" 31 12 ]
+        symbol [ RideChrome %tmp.11 31 12 22 ];
+        %tmp.11 = getv ? :RideChrome;
+        symbol [ draw %tmp.12 31 23 27 ];
+        %tmp.12 = getv function %tmp.11 :draw;
+        %tmp.13 = lgetv %dc;
+        symbol [ dc %tmp.13 31 28 30 ];
+        %tmp.14 = false;
+        invoke %tmp.11 %tmp.12(%tmp.13, %tmp.14);
+_workspace_garmin_RideField_source_RideField_mc_30_15_32_8_stop:
+_workspace_garmin_RideField_source_RideField_mc_28_8_32_8_if_end:
+_workspace_garmin_RideField_source_RideField_mc_27_34_33_4_stop:
+    }
+}
+[ @file = "/workspace/garmin/RideField/source/RideField.mc"; @line = 1; ]
+<init> {
+}

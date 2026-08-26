@@ -2,7 +2,8 @@
 # Přeloží projekt pro jedno zařízení.
 #
 #   ./garmin/build.sh fenix847mm                      # QMailDashboard
-#   ./garmin/build.sh edge1050 RideDashboard
+#   ./garmin/build.sh edge1050 RideDashboard          # aplikace
+#   ./garmin/build.sh edge1050 RideField              # datové pole
 #   ./garmin/build.sh edge1050 RideDashboard --release
 set -euo pipefail
 
@@ -15,7 +16,7 @@ DEVICE="${1:-fenix847mm}"
 shift || true
 
 PROJECT="QMailDashboard"
-if [ "${1:-}" = "QMailDashboard" ] || [ "${1:-}" = "RideDashboard" ]; then
+if [ -n "${1:-}" ] && [ -f "$HERE/${1}/monkey.jungle" ]; then
     PROJECT="$1"
     shift
 fi

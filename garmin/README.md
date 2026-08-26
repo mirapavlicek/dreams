@@ -6,6 +6,8 @@ Dvě aplikace a společné vývojové prostředí:
   cyklopočítače Edge ve stylu přístrojového štítu auta: mapa přístroje pod celou
   obrazovkou, nad ní tachometr, kadence, dojezd e-biku, převýšení a počasí.
   Přeložená pro celou řadu od Edge 830 výš.
+- **[RideField](#ridefield--táž-palubovka-jako-datové-pole)** — táž palubovka
+  jako datové pole, tedy uvnitř nativní aktivity přístroje.
 - **[QMailDashboard](#qmaildashboard--stav-schránky-na-hodinkách)** — stav
   poštovní schránky jako hustota pravděpodobnosti `|ψ|²` podle knihovny `qmail`.
 
@@ -117,6 +119,34 @@ Vymyslet si jméno je horší než ho neukázat.
 Po prvním spárování se ANT+ ID kola uloží do nastavení, aby se kanál příště
 nechytil cizího kola, které jede kolem. Vynulováním pole se aplikace spáruje
 znovu.
+
+### Ovládání asistence z palubovky
+
+Profil LEV není jednosměrný. Kapitola 5.10 popisuje **datovou stránku 16**,
+kterou displej posílá kolu potvrzovanou zprávou, a u níž stojí, že je
+*volitelná pro displej, ale musí ji podporovat každé LEV*. Jde přes ni nastavit
+stupeň asistence i rekuperace, převody, světla a blinkry.
+
+Aplikace toho využívá pro asistenci: **tlačítka nahoru a dolů** ji posunou
+o stupeň, strop je počet režimů, které kolo hlásí ve stránce 5. Dokud kolo
+změnu nepotvrdí ve stránce 1, ukazuje se požadovaný stupeň se šipkou
+(`› SPORT`), aby bylo poznat přání od skutečnosti.
+
+Dvě věci k tomu patří:
+
+- Kanál je proto **obousměrný slave** (`CHANNEL_TYPE_RX_NOT_TX`). Profil to pro
+  displej stejně předepisuje — tabulka 4-1 říká „Bidirectional communication is
+  required“ — takže dřívější čistě poslouchající kanál byl vlastně mimo
+  specifikaci.
+- Stránka 16 nenese jen asistenci. V bajtech 4 a 5 je „desired state“ pro
+  převody, světla, dálková a blinkry, takže **vynulovat je znamená říct kolu
+  „zhasni“**. `RideLev.displayCommand()` je proto skládá ze System State
+  a Gear State, jak je kolo naposledy hlásilo, a mění se opravdu jen stupeň.
+
+Ovládání je ve výchozím stavu **vypnuté** — je to zásah do stroje, který jede,
+a chování se mezi značkami liší. Zapíná se v nastavení nebo v menu přístroje
+volbou *Ovládat asistenci*. Bosch, DJI ani Shimano stránku 16 nepřijmou,
+protože po ANT+ LEV vůbec nemluví.
 
 Dojezd se bere v tomto pořadí:
 
@@ -255,8 +285,9 @@ u šipek převýšení směr stejně říká sama šipka.
 
 ## Nahrání do přístroje
 
-Hotové buildy pro všechny jednotky jsou ve `dist/RideDashboard/` i s přehledem
-v `PREHLED.txt` a kontrolními součty v `SHA256SUMS.txt`. Ke stažení po jednom
+Hotové buildy pro všechny jednotky jsou ve `dist/RideDashboard/` (aplikace)
+a `dist/RideField/` (datové pole), v obou i s přehledem v `PREHLED.txt`
+a kontrolními součty v `SHA256SUMS.txt`. Ke stažení po jednom
 (nebo všechny v jednom zipu) jsou taky ve
 [vydáních](https://github.com/mirapavlicek/dreams/releases). Do přístroje se
 dostanou ručně:
@@ -276,7 +307,8 @@ Přeložit znovu (potřebuje Garmin developer účet kvůli device packům):
 export GARMIN_USERNAME="..."       # účet z developer.garmin.com
 export GARMIN_PASSWORD="..."
 ./garmin/setup_dev_env.sh          # SDK, device packy pro zařízení z manifestu
-./garmin/build_all.sh              # všechny jednotky naráz do garmin/dist
+./garmin/build_all.sh              # aplikace pro všechny jednotky do garmin/dist
+./garmin/build_all.sh RideField    # totéž pro datové pole
 ./garmin/build.sh edge1050 RideDashboard   # nebo jen jednu
 ```
 
@@ -312,6 +344,48 @@ python3 garmin/tools/crop_screen.py edge830 /tmp/edge830.png docs/device/edge830
 `/tmp/sim-sweep`; `crop_screen.py` z okna simulátoru vyřízne samotný displej.
 
 ---
+---
+
+# RideField — táž palubovka jako datové pole
+
+Stejné kreslení, stejná data, jen jinak zabydlené: místo celoobrazovkové
+aplikace je to **datové pole**, které si přidáš na datovou obrazovku aktivity.
+
+Proč obojí. Aplikace zabere celou obrazovku a přístroj pod ní schová své vlastní
+datové obrazovky. Datové pole naopak bydlí uvnitř nativní aktivity, takže vedle
+něj můžou na téže obrazovce svítit údaje, na které Connect IQ nedosáhne —
+hlavně **e-bike data z Bosch Smart System**. Ve dvojici s volbou *Dojezd e-biku
+→ nechat na přístroji* je to jediná cesta, jak mít palubovku a Bosch naráz.
+
+Za to se platí:
+
+| | RideDashboard (aplikace) | RideField (datové pole) |
+|---|---|---|
+| Mapa z paměti přístroje | ano, přes celou obrazovku | ne, jen drobečková stopa |
+| Menu nastavení v přístroji | ano | ne, pole nemá vstup |
+| Ovládání asistence | ano, tlačítky | ne, pole nemá vstup |
+| Nativní data přístroje vedle | ne | ano, na téže obrazovce |
+| Běží uvnitř nativní aktivity | ne | ano |
+| Paměť (Edge 1050) | 50 kB z 1019 | 45 kB ze 124 |
+
+Datové pole nemá vstup, takže se v něm nedá otevřít menu. Nastavení se u něj
+mění z Garmin Connectu — což u ručně nahrané aplikace nejde, takže **sideload
+datového pole jede na výchozích hodnotách**. Pro Bosch to nevadí: výchozí stav
+je přesně ten, který chceš, jen se v manifestu přepne *Dojezd e-biku*.
+
+Poloha se bere z `Activity.Info.currentLocation`; vlastní odběr pozic si datové
+pole zapnout nesmí, `Position.enableLocationEvents()` pro něj není dostupné
+a překladač ho rovnou odmítne.
+
+```bash
+./garmin/build_all.sh RideField            # všechny jednotky do garmin/dist
+./garmin/build.sh edge1050 RideField       # jen jednu
+```
+
+Nahrání je stejné jako u aplikace, jen se pole pak přidá na datovou obrazovku:
+*Activity Profiles → Data Screens → přidat pole → Connect IQ*.
+
+
 
 # QMailDashboard — stav schránky na hodinkách
 
@@ -362,16 +436,23 @@ garmin/
     resources-compact/json/          # totéž na plátně 246x322 pro úzké displeje
     resources-icon{35,36,40,56,68}/  # launcher ikona ve velikostech, co Edge chtějí
     resources/settings/              # elektrokolo, dojezd, počasí, mapa, styl
-    source/RideApp.mc                # vstupní bod + odběr GPS pozic
-    source/RideLayout.mc             # škálování návrhu na displej, výběr fontů
-    source/RideData.mc               # metriky z Activity, Weather a Position
-    source/RideLev.mc                # elektrokolo přes ANT+ profil LEV
-    source/RideBle.mc                # baterie kola přes standardní BLE službu
-    source/RideMenu.mc               # nastavení přímo v přístroji
-    source/RideChrome.mc             # kreslení stylu s panely
-    source/RideCockpit.mc            # kreslení stylu přístrojového štítu
-    source/RideView.mc               # obrazovka s drobečkovou stopou
-    source/RideMapView.mc            # obrazovka s mapou z paměti přístroje
+    source/                          # SDÍLENO s RideField:
+    source/RideLayout.mc             #   škálování návrhu na displej, výběr fontů
+    source/RideData.mc               #   metriky z Activity, Weather a Position
+    source/RideLev.mc                #   elektrokolo přes ANT+ LEV včetně ovládání
+    source/RideBle.mc                #   baterie kola přes standardní BLE službu
+    source/RideChrome.mc             #   kreslení stylu s panely
+    source/RideCockpit.mc            #   kreslení stylu přístrojového štítu
+    source-app/                      # jen aplikace (datové pole nemá vstup):
+    source-app/RideApp.mc            #   vstupní bod + odběr GPS pozic
+    source-app/RideMenu.mc           #   nastavení přímo v přístroji
+    source-app/RideView.mc           #   obrazovka s drobečkovou stopou
+    source-app/RideMapView.mc        #   obrazovka s mapou z paměti přístroje
+  RideField/
+    manifest.xml                     # tytéž jednotky, type="datafield"
+    monkey.jungle                    # sdílené zdroje z ../RideDashboard
+    source/RideFieldApp.mc           # vstupní bod datového pole
+    source/RideField.mc              # compute() z Activity.Info + kreslení
   dist/RideDashboard/                # hotové .prg k nahrání + PREHLED.txt
   docs/device/                       # snímky ze simulátoru 1:1
   tools/preview.py                   # náhled qmail dashboardu do PNG
@@ -433,13 +514,13 @@ python3 garmin/tools/sync_devices.py    # srovná manifest se staženým
 vlastnoručně napsaný `compiler.json` — žádný stažený device pack:
 
 ```bash
-./garmin/check.sh                     # oba projekty
+./garmin/check.sh                     # všechny tři projekty
 ./garmin/check.sh RideDashboard       # jen jeden
 ./garmin/check.sh RideDashboard -l 2  # ukecanější typová analýza
 ```
 
 Skript si vyrobí náhradní zařízení (`qmailstub` 454×454 kulaté, `ridestub`
-480×800 hranaté) a přeloží proti němu dočasnou kopii projektu. Na spuštění
+a `fieldstub` 480×800 hranaté) a přeloží proti němu dočasnou kopii projektu. Na spuštění
 v simulátoru to nestačí — ten navíc potřebuje Garmin fonty — ale odhalí to
 všechno, co odmítne překladač.
 

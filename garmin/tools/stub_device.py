@@ -35,7 +35,12 @@ def compiler_json(device_id: str, shape: str, width: int, height: int) -> dict:
         "imageFormats": ["png"],
         "antiAliasedFontSupport": True,
         "alphaBlendingSupport": "FULL",
-        "appTypes": [{"type": "watchApp", "memoryLimit": 1048576, "prgLimit": 8388608}],
+        "appTypes": [
+            {"type": "watchApp", "memoryLimit": 1048576, "prgLimit": 8388608},
+            # Datové pole má na skutečném Edge osminový limit; kontrola překladu
+            # se o něj neopírá, ale bez uvedeného typu by ho monkeyc odmítl.
+            {"type": "datafield", "memoryLimit": 131072, "prgLimit": 8388608},
+        ],
         "partNumbers": [
             {
                 "number": "006-B9999-00",

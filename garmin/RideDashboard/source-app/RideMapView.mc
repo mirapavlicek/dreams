@@ -140,4 +140,12 @@ class RideMapDelegate extends WatchUi.BehaviorDelegate {
         RideMenu.open();
         return true;
     }
+
+    function onNextPage() {
+        return RideAssist.step(1);
+    }
+
+    function onPreviousPage() {
+        return RideAssist.step(-1);
+    }
 }

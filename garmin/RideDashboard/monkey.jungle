@@ -1,6 +1,9 @@
 project.manifest = manifest.xml
 
-base.sourcePath = source
+# `source` je sdílené s datovým polem v ../RideField, `source-app` je jen pro
+# aplikaci: vstupní bod, obrazovky a menu v přístroji. Datové pole nic z toho
+# použít nemůže, protože nedostává vstup ani nesmí vystrkovat views.
+base.sourcePath = source;source-app
 base.resourcePath = resources
 
 # Každá řada Edge chce launcher ikonu v jiné velikosti (compiler.json ->

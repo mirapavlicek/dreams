@@ -103,4 +103,29 @@ class RideDelegate extends WatchUi.BehaviorDelegate {
         RideMenu.open();
         return true;
     }
+
+    function onNextPage() {
+        return RideAssist.step(1);
+    }
+
+    function onPreviousPage() {
+        return RideAssist.step(-1);
+    }
+}
+
+//! Asistence pod tlačítky nahoru a dolů, na obou obrazovkách stejně.
+//!
+//! Když ovládání není zapnuté nebo kolo nemluví, událost se nezpracuje
+//! (vrátí false) a přístroj si s tlačítkem naloží po svém - to je lepší, než
+//! ho tiše spolknout.
+module RideAssist {
+
+    function step(delta as Lang.Number) as Lang.Boolean {
+        if (!RideData.canControlAssist()) {
+            return false;
+        }
+        RideData.stepAssist(delta);
+        WatchUi.requestUpdate();
+        return true;
+    }
 }

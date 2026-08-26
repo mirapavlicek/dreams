@@ -20,6 +20,17 @@ class RideLev extends Ant.GenericChannel {
     const PERIOD = 8192;
     const FREQUENCY = 57;
 
+    //: Ovládací stránka, kterou displej posílá kolu (profil LEV, kap. 5.10).
+    //: Kolo ji musí umět - podle profilu je povinná pro každé LEV.
+    const PAGE_DISPLAY = 16;
+
+    //: Výrobce displeje. Nejsme registrovaní u ANT+, takže vývojářská 255
+    //: jako ve FIT číselníku.
+    const DISPLAY_MANUFACTURER = 255;
+
+    //: Obvod kola nenastavujeme, profil na to má 0xFFF.
+    const WHEEL_UNSET = 0xFFF;
+
     //: Po takhle dlouhém tichu považujeme hodnoty za neplatné.
     const STALE_MS = 6000;
 
@@ -48,9 +59,22 @@ class RideLev extends Ant.GenericChannel {
     var mManufacturer as Lang.Number or Null = null;
     var mTotalAssistModes as Lang.Number or Null = null;
 
+    //: Stav světel, blinkrů a převodů tak, jak ho kolo hlásí ve stránce 1.
+    //: Do ovládací stránky se musí vrátit beze změny - kdybychom tam poslali
+    //: nuly, řekli bychom kolu zároveň "zhasni a zruš blinkr".
+    var mSystemState as Lang.Number = 0;
+    var mGearState as Lang.Number = 0;
+    var mRegenLevel as Lang.Number = 0;
+
+    //: Poslední odeslaný požadavek, dokud ho kolo nepotvrdí změnou stránky 1.
+    var mRequestedAssist as Lang.Number or Null = null;
+
     //! @param deviceNumber ANT+ ID kola, nula hledá první, které se ozve.
     function initialize(deviceNumber as Lang.Number) {
-        mAssign = new Ant.ChannelAssignment(Ant.CHANNEL_TYPE_RX_ONLY, Ant.NETWORK_PLUS);
+        // Profil pro displej předepisuje obousměrný slave kanál ("Bidirectional
+        // communication is required", tabulka 4-1). Jen poslouchající kanál by
+        // sice na čtení stačil, ale ovládací stránku by nešlo odeslat.
+        mAssign = new Ant.ChannelAssignment(Ant.CHANNEL_TYPE_RX_NOT_TX, Ant.NETWORK_PLUS);
         GenericChannel.initialize(method(:onMessage), mAssign);
         GenericChannel.setDeviceConfig(new Ant.DeviceConfig({
             :deviceNumber => deviceNumber,
@@ -106,7 +130,10 @@ class RideLev extends Ant.GenericChannel {
         var page = payload[0] & 0xFF;
 
         if (page == 1) {
-            mAssistLevel = (payload[2] >> 3) & 0x07;
+            setAssistLevel((payload[2] >> 3) & 0x07);
+            mRegenLevel = payload[2] & 0x07;
+            mSystemState = payload[3] & 0xFF;
+            mGearState = payload[4] & 0xFF;
             mSpeedKmh = speedFrom(payload);
 
         } else if (page == 2) {
@@ -120,7 +147,8 @@ class RideLev extends Ant.GenericChannel {
             var soc = payload[1] & 0x7F;
             mSoc = soc > 100 ? null : soc;
             mBatteryWarning = ((payload[1] >> 7) & 0x01) == 1;
-            mAssistLevel = (payload[2] >> 3) & 0x07;
+            setAssistLevel((payload[2] >> 3) & 0x07);
+            mRegenLevel = payload[2] & 0x07;
             var assist = payload[5] & 0xFF;
             mAssistPercent = assist == 0xFF ? null : assist;
             mSpeedKmh = speedFrom(payload);
@@ -145,6 +173,68 @@ class RideLev extends Ant.GenericChannel {
             // Společná stránka s výrobcem; podle něj pojmenujeme režimy.
             mManufacturer = (payload[4] & 0xFF) | ((payload[5] & 0xFF) << 8);
         }
+    }
+
+    //! Stupeň z kola. Když dorazil ten, o který jsme si řekli, požadavek
+    //! splnil účel a zahodí se; do té doby ukazujeme dál kolem hlášenou
+    //! skutečnost, ne naše přání.
+    function setAssistLevel(level as Lang.Number) as Void {
+        mAssistLevel = level;
+        if (mRequestedAssist != null && mRequestedAssist == level) {
+            mRequestedAssist = null;
+        }
+    }
+
+    // --- ovládání ------------------------------------------------------------
+
+    //! Požádá kolo o jiný stupeň asistence (datová stránka 16 profilu LEV).
+    //!
+    //! Stránka nenese jen asistenci - v bajtech 4 a 5 je "desired state" pro
+    //! převody, světla, dálková a blinkry. Posílají se proto zpátky přesně tak,
+    //! jak je kolo naposledy hlásilo ve stránce 1; jinak by změna stupně
+    //! zároveň zhasla světla. Rekuperace se ze stejného důvodu opisuje.
+    //!
+    //! @return true, když se zprávu podařilo předat rádiu
+    function requestAssist(level as Lang.Number) as Lang.Boolean {
+        if (!connected() || level < 0 || level > 7) {
+            return false;
+        }
+
+        var command = displayCommand();
+        var payload = [
+            PAGE_DISPLAY,
+            WHEEL_UNSET & 0xFF,
+            0xF0 | ((WHEEL_UNSET >> 8) & 0x0F),
+            ((level & 0x07) << 3) | (mRegenLevel & 0x07),
+            command & 0xFF,
+            (command >> 8) & 0xFF,
+            DISPLAY_MANUFACTURER & 0xFF,
+            (DISPLAY_MANUFACTURER >> 8) & 0xFF
+        ];
+
+        var message = new Ant.Message();
+        message.setPayload(payload);
+        // Potvrzovanou zprávou, ať se pozná, že kolo stránku dostalo.
+        var sent = GenericChannel.sendAcknowledge(message);
+        if (sent) {
+            mRequestedAssist = level;
+        }
+        return sent;
+    }
+
+    //! Bity převodů, světel a blinkrů pro ovládací stránku, poskládané ze
+    //! stavu, který kolo hlásí. Rozložení bitů se mezi stránkou 1 a stránkou 16
+    //! liší, proto se převádí a neopisuje.
+    function displayCommand() as Lang.Number {
+        var rearGear = (mGearState >> 2) & 0x0F;
+        var frontGear = mGearState & 0x03;
+        var lights = mSystemState & 0x0F;
+        return ((rearGear & 0x0F) << 6) | ((frontGear & 0x03) << 4) | lights;
+    }
+
+    //! Stupeň, na který čekáme, dokud ho kolo nepotvrdí.
+    function requestedAssist() as Lang.Number or Null {
+        return connected() ? mRequestedAssist : null;
     }
 
     //! Po spárování si ANT+ ID kola uložíme, aby se příště kanál nechytil

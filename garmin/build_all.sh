@@ -3,6 +3,7 @@
 # odkud se dají rovnou nakopírovat do přístroje.
 #
 #   ./garmin/build_all.sh                     # RideDashboard pro celou řadu Edge
+#   ./garmin/build_all.sh RideField           # datové pole pro tutéž řadu
 #   ./garmin/build_all.sh QMailDashboard      # hodinky
 #   ./garmin/build_all.sh RideDashboard -r    # bez ladicích informací (menší .prg)
 #
@@ -17,7 +18,7 @@ CIQ_HOME="${CIQ_HOME:-$HOME/connectiq}"
 HERE="$(cd "$(dirname "$0")" && pwd)"
 
 PROJECT="RideDashboard"
-if [ "${1:-}" = "QMailDashboard" ] || [ "${1:-}" = "RideDashboard" ]; then
+if [ -n "${1:-}" ] && [ -f "$HERE/${1}/monkey.jungle" ]; then
     PROJECT="$1"
     shift
 fi
@@ -56,7 +57,7 @@ done
 # Přehled patří k buildům, ne do hlavy: podle jména souboru není poznat, jestli
 # je edge840 ten s displejem 246x322 nebo ne.
 {
-    echo "RideDashboard - který soubor do kterého přístroje"
+    echo "$PROJECT - který soubor do kterého přístroje"
     echo "vytvořeno: $(date '+%Y-%m-%d %H:%M')"
     echo
     printf '%-34s %-26s %-10s %s\n' "SOUBOR" "PŘÍSTROJ" "DISPLEJ" "ROZVRŽENÍ"
