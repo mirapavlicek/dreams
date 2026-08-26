@@ -1,5 +1,5 @@
 <resources>
     <!-- Přebíjí jméno ze sdílených resources, ať jdou obě pole v nabídce
          od sebe rozeznat. -->
-    <string id="AppName">Ride Dashboard (trasa)</string>
+    <string id="AppName">Palubovka spodní</string>
 </resources>

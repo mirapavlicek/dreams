@@ -1,5 +1,5 @@
 <resources>
     <!-- Přebíjí jméno z ../RideDashboard/resources, ať se v seznamu datových
          polí pozná od aplikace. Zbytek textů se sdílí. -->
-    <string id="AppName">Ride Dashboard (pole)</string>
+    <string id="AppName">Palubovka horní</string>
 </resources>

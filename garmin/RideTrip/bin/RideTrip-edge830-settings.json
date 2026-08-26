@@ -173,7 +173,7 @@
       "SettingAssistRange" : "Dojezd na plnou baterii (km)",
       "SettingBleNamePrompt" : "Prázdné = nehledat. Pro kola bez ANT+ LEV: přečte procenta baterie, pokud kolo nabízí standardní BLE službu",
       "StylePanels" : "Panely (mapa v okně uprostřed)",
-      "AppName" : "Ride Dashboard (trasa)",
+      "AppName" : "Palubovka spodní",
       "SettingLevDevicePrompt" : "0 = spárovat s prvním kolem, které se ozve; po spárování se sem ID uloží",
       "SettingAssistRangePrompt" : "Použije se, dokud kolo vlastní dojezd neposílá",
       "SettingStyle" : "Styl palubovky",

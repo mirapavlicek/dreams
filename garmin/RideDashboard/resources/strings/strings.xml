@@ -1,5 +1,5 @@
 <resources>
-    <string id="AppName">Ride Dashboard</string>
+    <string id="AppName">Elektrokolo</string>
     <string id="SettingEbikeSource">Dojezd elektrokola</string>
     <string id="EbikeSourceOwn">Počítat sama (ANT+ LEV, Bluetooth, odhad)</string>
     <string id="EbikeSourceNative">Nechat na přístroji (Bosch a spol.)</string>

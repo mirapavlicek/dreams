@@ -1,5 +1,5 @@
 RideTrip - který soubor do kterého přístroje
-vytvořeno: 2026-08-26 21:31
+vytvořeno: 2026-08-26 21:41
 
 SOUBOR                             PŘÍSTROJ                 DISPLEJ    ROZVRŽENÍ
 RideTrip-edge1030.prg              Edge® 1030                 282x470    plné

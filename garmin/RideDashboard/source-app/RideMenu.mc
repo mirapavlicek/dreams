@@ -15,16 +15,8 @@ module RideMenu {
     var RANGES as Lang.Array<Lang.Number> = [40, 60, 80, 90, 100, 120, 140, 160];
 
     function open() as Void {
-        var menu = new WatchUi.Menu2({:title => "Palubovka"});
+        var menu = new WatchUi.Menu2({:title => "Elektrokolo"});
 
-        menu.addItem(new WatchUi.ToggleMenuItem("Přístrojový štít",
-            {:enabled => "mapa přes celou obrazovku", :disabled => "panely s oknem mapy"},
-            :style, RideData.cockpitStyle(), null));
-        menu.addItem(new WatchUi.MenuItem("Mapa přes celou obrazovku",
-            "posouvání a zoom jako v nativní mapě", :browse, null));
-        menu.addItem(new WatchUi.ToggleMenuItem("Mapa přístroje",
-            {:enabled => "kartografie", :disabled => "jen stopa z GPS"},
-            :map, RideData.mapEnabled(), null));
         menu.addItem(new WatchUi.ToggleMenuItem("Dojezd e-biku",
             {:enabled => "počítat sama", :disabled => "nechat na přístroji"},
             :ebike, !RideData.ebikeNative(), null));
@@ -90,17 +82,7 @@ class RideMenuDelegate extends WatchUi.Menu2InputDelegate {
     function onSelect(item as WatchUi.MenuItem) as Void {
         var id = item.getId();
 
-        if (id == :style) {
-            RideMenu.store("layoutStyle", (item as WatchUi.ToggleMenuItem).isEnabled() ? 0 : 1);
-
-        } else if (id == :browse) {
-            RideMaps.browse();
-            return;
-
-        } else if (id == :map) {
-            RideMenu.store("useMap", (item as WatchUi.ToggleMenuItem).isEnabled());
-
-        } else if (id == :ebike) {
+        if (id == :ebike) {
             // Zapnuto = palubovka si dojezd počítá sama, vypnuto = přebírá to
             // přístroj (Bosch a spol., na které Connect IQ nedosáhne).
             RideMenu.store("ebikeSource", (item as WatchUi.ToggleMenuItem).isEnabled()

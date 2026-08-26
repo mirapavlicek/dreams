@@ -1,13 +1,17 @@
 using Toybox.Application;
-using Toybox.Position;
 using Toybox.WatchUi;
 
-//! Jízdní dashboard pro Edge: tachometr s půlkruhem kadence, mapa uprostřed
-//! obklopená čtyřmi metrikami a spodní lišta se stavem baterie, převýšením
-//! a počasím.
+//! Konzole elektrokola.
 //!
-//! Mapová obrazovka (RideMapView) se otevírá z RideView - Connect IQ mapové
-//! view z getInitialView() nepřijme.
+//! Palubovku na koukání dělají datová pole (../RideField a ../RideTrip) uvnitř
+//! nativní aktivity, kde teče GPS i data o jízdě a vedle nich může svítit
+//! nativní mapa přístroje. Jako druhá palubovka by tahle aplikace neměla co
+//! nabídnout - samostatná Connect IQ aplikace stojí mimo aktivitu, takže by si
+//! musela nahrávat vlastní jízdu, jen aby vůbec měla čísla.
+//!
+//! Má proto na starost to, co datové pole neumí: **ovládat kolo a ukázat, co
+//! o sobě hlásí.** Pole nedostává vstup, takže z něj stupeň asistence přepnout
+//! nejde.
 class RideApp extends Application.AppBase {
 
     function initialize() {
@@ -20,25 +24,14 @@ class RideApp extends Application.AppBase {
         } catch (exception) {
             RideTrouble.note("start", exception);
         }
-        if (Position has :enableLocationEvents) {
-            Position.enableLocationEvents(Position.LOCATION_CONTINUOUS, method(:onPosition));
-        }
     }
 
     function onStop(state) {
-        if (Position has :enableLocationEvents) {
-            Position.enableLocationEvents(Position.LOCATION_DISABLE, method(:onPosition));
-        }
         RideData.closeSensors();
     }
 
-    function onPosition(info as Position.Info) as Void {
-        RideData.onPosition(info);
-    }
-
     function getInitialView() {
-        var view = new RideView();
-        return [view, new RideDelegate(view)];
+        return [new RideBikeView(), new RideBikeDelegate()];
     }
 
     function onSettingsChanged() {

@@ -2,20 +2,35 @@
 
 Dvě aplikace a společné vývojové prostředí:
 
-- **[RideDashboard](#ridedashboard--palubovka-pro-edge)** — palubovka pro
-  cyklopočítače Edge ve stylu přístrojového štítu auta: mapa přístroje pod celou
-  obrazovkou, nad ní tachometr, kadence, dojezd e-biku, převýšení a počasí.
-  Přeložená pro celou řadu od Edge 830 výš.
-- **[RideField](#ridefield--táž-palubovka-jako-datové-pole)** — táž palubovka
-  jako datové pole, tedy uvnitř nativní aktivity přístroje.
+- **[Palubovka](#palubovka--dvě-datová-pole-kolem-nativní-mapy)** (`RideField`
+  a `RideTrip`) — dvě datová pole ve stylu přístrojového štítu auta: tachometr,
+  kadence, dojezd e-biku, převýšení a počasí. Dávají se nad a pod **nativní
+  mapu** přístroje, takže se palubovka složí kolem opravdové kartografie.
+- **[Elektrokolo](#elektrokolo--konzole-kola)** (`RideDashboard`) — aplikace na
+  to, co datové pole neumí: ovládat asistenci a ukázat, co kolo o sobě hlásí.
+
+Vše přeložené pro celou řadu Edge od 830 výš.
+
+### Proč palubovka není aplikace
+
+Samostatná Connect IQ aplikace stojí na Edge **mimo nativní aktivitu**, takže
+`Activity.getActivityInfo()` vrací prázdno (`dist=null`, `acc=null`), přístroj
+nemá důvod zapínat GPS a `MapTrackView` nemá polohu, na kterou by se
+vycentroval. Jedna příčina, tři příznaky: samé nuly, zhasnutá GPS a černá mapa.
+Aby aplikace vůbec měla čísla, musela by si nahrávat vlastní jízdu — a i pak by
+jen zdvojovala, co přístroj umí líp.
+
+Datové pole naopak bydlí uvnitř nativní aktivity, kde všechno tohle už běží.
+Palubovka proto patří do polí a aplikace k tomu, co pole nedokáže: **pole
+nedostává vstup**, takže z něj stupeň asistence přepnout nejde.
 - **[QMailDashboard](#qmaildashboard--stav-schránky-na-hodinkách)** — stav
   poštovní schránky jako hustota pravděpodobnosti `|ψ|²` podle knihovny `qmail`.
 
 ---
 
-# RideDashboard — palubovka pro Edge
+# Palubovka — dvě datová pole kolem nativní mapy
 
-Dva styly, přepínají se v nastavení aplikace.
+Dva styly kreslení; ve dvojici polí se používá ten první.
 
 ## Styl „přístrojový štít“ (výchozí)
 
@@ -48,34 +63,6 @@ Rozvržení shora dolů:
 | Pod rychlostí | průměrná a maximální rychlost |
 | Prostřední pás | mapa uprostřed, po stranách kompas a dojezd na elektřinu (vlevo), vzdálenost do cíle a najeté kilometry (vpravo) |
 | Spodní lišta | zbývající energie e-biku, nastoupáno, sestoupáno, teplota a počasí |
-
-## Jak se mapa dostane do vlastního rozvržení
-
-V obou stylech je to **opravdová mapa z paměti přístroje**, ne jen nakreslená
-stopa. Trik je v tom, že `setScreenVisibleArea()` mapu neořízne. Mapa se vykreslí pod
-celou obrazovkou a metoda jen říká, na kterou část se má zaostřit a co ještě
-není zakryté rozhraním aplikace — přesně jak to popisuje vlákno
-[MapView](https://forums.garmin.com/developer/connect-iq/f/discussion/7014/mapview)
-na fóru Connect IQ. Okolí mapového okna si tedy aplikace musí přebarvit sama,
-jinak kartografie prosvítá pod ciferníky.
-
-Prakticky to znamená:
-
-- `RideMapView` dědí z `MapTrackView`, takže se mapa sama drží aktuální polohy
-  a kreslí navigační šipku; projetá stopa jde nad ni jako `MapPolyline`.
-- Kreslení nesmí v mapovém režimu zavolat `dc.clear()`, ten by mapu přetřel.
-  `RideChrome` proto vyplní jen čtyři pruhy kolem okna a `RideCockpit` jen dva
-  překryvy nahoře a dole.
-- Mapové view nejde vrátit z `getInitialView()`, dá se jen vystrčit přes
-  `pushView()`. Výchozí obrazovka je proto `RideView` a mapa se otevře hned po
-  startu.
-- **Výběr** přepne mapu přes celou obrazovku (`MAP_MODE_BROWSE`, posouvání
-  a zoom jako v nativní mapě), **zpět** vrátí palubovku a podruhé odejde na
-  variantu s drobečkovou stopou.
-- Bez map v paměti (`WatchUi has :MapTrackView`) nebo po vypnutí volby *Mapa
-  z paměti přístroje* zůstane drobečková stopa z GPS bodů. Pozor při přidávání
-  jednotek bez kartografie do manifestu — třída dědící z `MapTrackView` se pro
-  ně nepřeloží, musela by se vyřadit anotací v `monkey.jungle`.
 
 ## Dojezd elektrokola: měření místo odhadu
 
@@ -120,14 +107,14 @@ Po prvním spárování se ANT+ ID kola uloží do nastavení, aby se kanál př
 nechytil cizího kola, které jede kolem. Vynulováním pole se aplikace spáruje
 znovu.
 
-### Ovládání asistence z palubovky
+### Ovládání asistence z konzole
 
 Profil LEV není jednosměrný. Kapitola 5.10 popisuje **datovou stránku 16**,
 kterou displej posílá kolu potvrzovanou zprávou, a u níž stojí, že je
 *volitelná pro displej, ale musí ji podporovat každé LEV*. Jde přes ni nastavit
 stupeň asistence i rekuperace, převody, světla a blinkry.
 
-Aplikace toho využívá pro asistenci: **tlačítka nahoru a dolů** ji posunou
+Konzole toho využívá pro asistenci: **tlačítka nahoru a dolů** ji posunou
 o stupeň, strop je počet režimů, které kolo hlásí ve stránce 5. Dokud kolo
 změnu nepotvrdí ve stránce 1, ukazuje se požadovaný stupeň se šipkou
 (`› SPORT`), aby bylo poznat přání od skutečnosti.
@@ -224,15 +211,13 @@ od chvíle, kdy je Edge blízko ovladače kola.
 
 ## Nastavení
 
-Všechno jde nastavit dvěma cestami. Z telefonu přes Garmin Connect (styl
-palubovky, mapa, počasí, elektrokolo, kapacita baterie, jméno kola v Bluetooth)
-a **tlačítkem menu přímo v přístroji**, kde je zkrácený výběr: styl, mapa,
-dojezd e-biku, elektrokolo, nové spárování kola, kapacita baterie a dojezd na
-plnou. Obojí píše do stejných properties.
+Menu v konzoli není pro parádu: aplikace nahraná ručně (sideload) se v Garmin
+Connect ani v Garmin Expressu neobjeví, takže je to jediná cesta, jak se
+k nastavení dostat. Je v něm dojezd e-biku, čtení z ANT+, ovládání asistence,
+nové spárování kola, kapacita baterie a dojezd na plnou.
 
-Menu v přístroji tam není pro parádu: aplikace nahraná ručně (sideload) se
-v Garmin Connect ani v Garmin Expressu neobjeví, takže při testování je to
-jediná cesta, jak se k nastavení dostat.
+Datová pole menu mít nemůžou - **pole nedostává vstup** - a properties se mezi
+aplikacemi nesdílí, takže pole jedou na hodnotách zapečených při překladu.
 
 ## Které jednotky palubovka umí
 
@@ -282,32 +267,6 @@ a výšek písma**, ne podle pevných souřadnic. Když se popiska nevejde ani
 nejmenším fontem, sáhne se po kratší variantě (`E-BIKE · ODHAD` → `ODHAD`,
 `NASTOUPÁNO` → `STOUPÁNÍ`, `km · odhad` → `km`) a v krajním případě se vynechá —
 u šipek převýšení směr stejně říká sama šipka.
-
-## Aplikace nahrává jízdu
-
-Bez toho je palubovka na Edge k ničemu, i když se tváří, že běží. Samostatná
-Connect IQ aplikace stojí **mimo nativní aktivitu**, takže `Activity.getActivityInfo()`
-vrací prázdno:
-
-```
-PRED: speed=0.000000 dist=null acc=null
-```
-
-Přístroj pak nemá důvod zapínat GPS a `MapTrackView` nemá polohu, na kterou by
-se vycentroval. Jedna příčina, tři příznaky: samé nuly, zhasnutá GPS a černá
-mapa. Teprve založená a spuštěná relace (`ActivityRecording`, oprávnění `Fit`)
-udělá z aplikace skutečný cyklopočítač.
-
-| Tlačítko | Co dělá |
-|---|---|
-| Start | spustí a zastaví nahrávání |
-| Zpět | z mapy zpět na palubovku, pak dotaz *Uložit jízdu?* |
-| Menu | nastavení, včetně mapy přes celou obrazovku |
-| Nahoru / dolů | stupeň asistence elektrokola (když je ovládání zapnuté) |
-
-Vlevo od hodin svítí stav: `START`, dokud se nezačalo, pak čas jízdy s červenou
-tečkou při nahrávání. Datové pole tohle nemá - běží uvnitř nativní aktivity,
-kde nahrávání řídí přístroj sám.
 
 ## Nahrání do přístroje
 
@@ -392,10 +351,25 @@ snímek ze skutečného přístroje, ne ze simulátoru.
 ---
 ---
 
-# RideField — táž palubovka jako datové pole
+# Elektrokolo — konzole kola
 
-Stejné kreslení, stejná data, jen jinak zabydlené: místo celoobrazovkové
-aplikace je to **datové pole**, které si přidáš na datovou obrazovku aktivity.
+Aplikace `RideDashboard` není druhá palubovka. Má na starost to, co datové pole
+neumí: **ovládat asistenci a ukázat, co kolo o sobě hlásí** — stav baterie,
+dojezd, spotřebu, kilometry od nabití, počet stupňů asistence, výrobce a ANT+ ID.
+
+Tlačítka **nahoru a dolů** mění stupeň asistence (když je ovládání zapnuté),
+**menu** otevře nastavení kola. Obrazovka se počítá z výšky písma, ne z
+`layout.json` — je to prostý seznam a nemá smysl kvůli němu držet druhé
+návrhové plátno.
+
+Aplikace nepotřebuje GPS ani nahrávání, takže nemá oprávnění `Positioning` ani
+`Fit`.
+
+**Nastavení se mezi aplikací a poli nesdílí.** `Application.Properties` jsou
+per-aplikace a Connect IQ mezi nimi žádný most nemá, takže co nastavíš
+v konzoli, platí jen pro ni. Pole jedou na hodnotách zapečených při překladu.
+
+# Datová pole
 
 Proč obojí. Aplikace zabere celou obrazovku a přístroj pod ní schová své vlastní
 datové obrazovky. Datové pole naopak bydlí uvnitř nativní aktivity, takže vedle
