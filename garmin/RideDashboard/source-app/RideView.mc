@@ -78,7 +78,11 @@ class RideView extends WatchUi.View {
     }
 
     function onTick() as Void {
-        RideData.poll();
+        try {
+            RideData.poll();
+        } catch (exception) {
+            RideTrouble.note("čtení senzorů", exception);
+        }
         WatchUi.requestUpdate();
     }
 
@@ -105,10 +109,19 @@ class RideView extends WatchUi.View {
     }
 
     function onUpdate(dc) {
-        if (RideData.cockpitStyle()) {
-            RideCockpit.draw(dc, false);
-        } else {
-            RideChrome.draw(dc, false);
+        if (RideTrouble.caught()) {
+            RideTrouble.draw(dc);
+            return;
+        }
+        try {
+            if (RideData.cockpitStyle()) {
+                RideCockpit.draw(dc, false);
+            } else {
+                RideChrome.draw(dc, false);
+            }
+        } catch (exception) {
+            RideTrouble.note("palubovka", exception);
+            RideTrouble.draw(dc);
         }
     }
 }

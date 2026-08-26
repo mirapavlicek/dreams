@@ -25,10 +25,19 @@ class RideField extends WatchUi.DataField {
     }
 
     function onUpdate(dc) as Void {
-        if (RideData.cockpitStyle()) {
-            RideCockpit.draw(dc, false);
-        } else {
-            RideChrome.draw(dc, false);
+        if (RideTrouble.caught()) {
+            RideTrouble.draw(dc);
+            return;
+        }
+        try {
+            if (RideData.cockpitStyle()) {
+                RideCockpit.draw(dc, false);
+            } else {
+                RideChrome.draw(dc, false);
+            }
+        } catch (exception) {
+            RideTrouble.note("palubovka", exception);
+            RideTrouble.draw(dc);
         }
     }
 }

@@ -100,6 +100,17 @@ class RideLev extends Ant.GenericChannel {
     // --- příjem --------------------------------------------------------------
 
     function onMessage(message as Ant.Message) as Void {
+        try {
+            handle(message);
+        } catch (exception) {
+            // Zprávy z kola jsou jediné, co v simulátoru nikdy neproteče.
+            // Když se v nich něco nečekaného objeví, ať to shodí čtení dat,
+            // ne celou palubovku.
+            RideTrouble.note("data z kola (ANT+)", exception);
+        }
+    }
+
+    function handle(message as Ant.Message) as Void {
         var payload = message.getPayload();
 
         if (Ant.MSG_ID_BROADCAST_DATA == message.messageId) {

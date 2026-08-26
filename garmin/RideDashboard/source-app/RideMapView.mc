@@ -41,10 +41,16 @@ class RideMapView extends WatchUi.MapTrackView {
     }
 
     function onLayout(dc) {
-        RideLayout.prepare(dc);
-        mReady = true;
-        applyWindow();
-        setMapMode(WatchUi.MAP_MODE_PREVIEW);
+        // onLayout volá systém až po pushView, takže sem try/catch kolem
+        // otevírání mapy nedosáhne - vlastní ho tedy potřebuje.
+        try {
+            RideLayout.prepare(dc);
+            mReady = true;
+            applyWindow();
+            setMapMode(WatchUi.MAP_MODE_PREVIEW);
+        } catch (exception) {
+            RideTrouble.note("nastavení mapy", exception);
+        }
     }
 
     function onShow() {
@@ -62,8 +68,12 @@ class RideMapView extends WatchUi.MapTrackView {
     }
 
     function onTick() as Void {
-        RideData.poll();
-        updateTrack();
+        try {
+            RideData.poll();
+            updateTrack();
+        } catch (exception) {
+            RideTrouble.note("stopa nad mapou", exception);
+        }
         WatchUi.requestUpdate();
     }
 
@@ -112,15 +122,24 @@ class RideMapView extends WatchUi.MapTrackView {
     }
 
     function onUpdate(dc) {
-        // Nejdřív mapa, pak naše rozhraní přes ni.
-        MapView.onUpdate(dc);
-        if (isBrowsing()) {
+        if (RideTrouble.caught()) {
+            RideTrouble.draw(dc);
             return;
         }
-        if (RideData.cockpitStyle()) {
-            RideCockpit.draw(dc, true);
-        } else {
-            RideChrome.draw(dc, true);
+        try {
+            // Nejdřív mapa, pak naše rozhraní přes ni.
+            MapView.onUpdate(dc);
+            if (isBrowsing()) {
+                return;
+            }
+            if (RideData.cockpitStyle()) {
+                RideCockpit.draw(dc, true);
+            } else {
+                RideChrome.draw(dc, true);
+            }
+        } catch (exception) {
+            RideTrouble.note("palubovka nad mapou", exception);
+            RideTrouble.draw(dc);
         }
     }
 }

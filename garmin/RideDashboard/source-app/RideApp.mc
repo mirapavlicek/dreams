@@ -15,7 +15,11 @@ class RideApp extends Application.AppBase {
     }
 
     function onStart(state) {
-        RideData.initialize();
+        try {
+            RideData.initialize();
+        } catch (exception) {
+            RideTrouble.note("start", exception);
+        }
         if (Position has :enableLocationEvents) {
             Position.enableLocationEvents(Position.LOCATION_CONTINUOUS, method(:onPosition));
         }
