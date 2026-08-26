@@ -13,10 +13,20 @@ module RideData {
     //: Kolik bodů stopy si držíme pro minimapu.
     const TRACK_CAPACITY = 150;
 
+    //: Odkud je dojezd elektrokola: přímo z kola, dopočítaný ze stavu jeho
+    //: baterie, nebo jen odhad z ujetých kilometrů.
+    const ASSIST_FROM_BIKE = 0;
+    const ASSIST_FROM_BATTERY = 1;
+    const ASSIST_ESTIMATED = 2;
+
     var mFullRangeKm = 90.0;
+    var mBatteryWh = 0.0;
     var mShowWeather = true;
     var mUseMap = true;
     var mCockpitStyle = true;
+    var mUseLev = true;
+    var mLevDeviceNumber = 0;
+    var mLev = null;
     var mTrack = null;
     var mLatitudeScale = 1.0;
 
@@ -25,6 +35,7 @@ module RideData {
             mTrack = [];
         }
         reloadSettings();
+        openSensors();
     }
 
     function reloadSettings() as Void {
@@ -34,6 +45,10 @@ module RideData {
         var range = Application.Properties.getValue("assistFullRangeKm");
         if (range instanceof Lang.Number && range > 0) {
             mFullRangeKm = range.toFloat();
+        }
+        var capacity = Application.Properties.getValue("assistBatteryWh");
+        if (capacity instanceof Lang.Number && capacity >= 0) {
+            mBatteryWh = capacity.toFloat();
         }
         var weather = Application.Properties.getValue("showWeather");
         if (weather instanceof Lang.Boolean) {
@@ -47,6 +62,59 @@ module RideData {
         if (style instanceof Lang.Number) {
             mCockpitStyle = style == 0;
         }
+
+        var useLev = Application.Properties.getValue("useLevSensor");
+        if (useLev instanceof Lang.Boolean) {
+            mUseLev = useLev;
+        }
+        var deviceNumber = Application.Properties.getValue("levDeviceNumber");
+        if (deviceNumber instanceof Lang.Number && deviceNumber >= 0) {
+            if (deviceNumber != mLevDeviceNumber) {
+                mLevDeviceNumber = deviceNumber;
+                closeSensors();
+            }
+        }
+        if (!mUseLev) {
+            closeSensors();
+        }
+    }
+
+    // --- ANT+ kanál elektrokola ---------------------------------------------
+
+    //! Kanál otevíráme jen když ho uživatel chce a přístroj ANT umí. Když ho
+    //! zabral někdo jiný (na jednom kanálu může viset jen jedna aplikace),
+    //! zůstane null a dojezd se odhaduje.
+    function openSensors() as Void {
+        if (!mUseLev || mLev != null || !(Toybox has :Ant)) {
+            return;
+        }
+        try {
+            var sensor = new RideLev(mLevDeviceNumber);
+            sensor.open();
+            mLev = sensor;
+        } catch (exception) {
+            mLev = null;
+        }
+    }
+
+    function closeSensors() as Void {
+        if (mLev == null) {
+            return;
+        }
+        try {
+            mLev.shutdown();
+        } catch (exception) {
+            // Kanál už mohl spadnout sám, na tom nesejde.
+        }
+        mLev = null;
+    }
+
+    //! Kolo, které zrovna mluví. Jinak null a všechno se odhaduje.
+    function lev() {
+        if (mLev == null || !mLev.connected()) {
+            return null;
+        }
+        return mLev;
     }
 
     //! Chce uživatel mapu z paměti přístroje, nebo mu stačí drobečková stopa?
@@ -161,21 +229,111 @@ module RideData {
 
     // --- elektrokolo --------------------------------------------------------
     //
-    // Connect IQ nedává přístup k baterii elektrokola (ANT+ profil LEV není
-    // v API), takže dojezd odhadujeme z ujeté vzdálenosti a dojezdu na plnou
-    // baterii, který si uživatel nastaví. Je to odhad, ne měření.
+    // Dojezd bereme v tomhle pořadí:
+    //   1. přímo z kola - stránka 2 profilu LEV, kolo počítá s vlastní
+    //      spotřebou a profilem trasy, stejné číslo ukazuje i Edge sám,
+    //   2. ze stavu baterie kola - když kolo dojezd neposílá, spočítáme ho
+    //      z procent a spotřeby ve Wh/km (nebo z nastaveného dojezdu na plnou),
+    //   3. odhad z ujetých kilometrů - když se s kolem nemluví vůbec.
+    //
+    // Který zdroj se povedl, hlásí assistSource(); kreslení pak k odhadu
+    // připisuje poznámku, aby se nezaměnil s měřením.
+
+    function assistSource() as Lang.Number {
+        var bike = lev();
+        if (bike == null) {
+            return ASSIST_ESTIMATED;
+        }
+        if (bike.rangeKm() != null) {
+            return ASSIST_FROM_BIKE;
+        }
+        return bike.batteryPercent() == null ? ASSIST_ESTIMATED : ASSIST_FROM_BATTERY;
+    }
+
+    //! Je dojezd měřený kolem, nebo jen náš odhad?
+    function assistMeasured() as Lang.Boolean {
+        return assistSource() != ASSIST_ESTIMATED;
+    }
 
     function assistRangeKm() {
+        var bike = lev();
+        if (bike != null) {
+            var reported = bike.rangeKm();
+            if (reported != null) {
+                return reported;
+            }
+            var soc = bike.batteryPercent();
+            if (soc != null) {
+                return rangeFromBattery(soc, bike.consumptionWhPerKm());
+            }
+        }
         var remaining = mFullRangeKm - distanceKm();
         return remaining > 0.0 ? remaining : 0.0;
     }
 
+    //! Kolik ještě ujedeme na zbývající procenta. Se známou kapacitou baterie
+    //! a spotřebou to je fyzika, jinak jen poměrná část dojezdu na plnou.
+    function rangeFromBattery(percent, consumption) {
+        if (mBatteryWh > 0.0 && consumption != null && consumption > 0.0) {
+            return (mBatteryWh * percent / 100.0) / consumption;
+        }
+        return mFullRangeKm * percent / 100.0;
+    }
+
     function assistBatteryPercent() {
+        var bike = lev();
+        if (bike != null) {
+            var soc = bike.batteryPercent();
+            if (soc != null) {
+                return soc;
+            }
+        }
         if (mFullRangeKm <= 0.0) {
             return 0;
         }
-        var ratio = assistRangeKm() / mFullRangeKm;
-        return (ratio * 100.0).toNumber();
+        var remaining = mFullRangeKm - distanceKm();
+        if (remaining < 0.0) {
+            remaining = 0.0;
+        }
+        return (remaining / mFullRangeKm * 100.0).toNumber();
+    }
+
+    //! Stupeň asistence z kola, nebo null když ho neposílá.
+    function assistLevel() {
+        var bike = lev();
+        return bike == null ? null : bike.assistLevel();
+    }
+
+    //! Popisek k baterii kola: měřená hodnota se doplní stupněm asistence,
+    //! odhad se přizná.
+    function assistBatteryLabel() as Lang.String {
+        if (!assistMeasured()) {
+            return "E-BIKE · ODHAD";
+        }
+        var level = assistLevel();
+        if (level == null || level == 0) {
+            return "E-BIKE";
+        }
+        return "E-BIKE · ASIST " + level.toString();
+    }
+
+    //! Jednotka pod dojezdem - u odhadu je poctivé to napsat.
+    function assistRangeUnit() as Lang.String {
+        return assistMeasured() ? "km" : "km · odhad";
+    }
+
+    //! Poznámka pod dojezd tam, kde je na ni místo: odkud číslo je a jakou
+    //! asistenci kolo zrovna drží.
+    function assistNote() as Lang.String {
+        var source = assistSource();
+        if (source == ASSIST_ESTIMATED) {
+            return "odhad";
+        }
+        var level = assistLevel();
+        if (level != null && level > 0) {
+            return "asistence " + level.toString();
+        }
+        return source == ASSIST_FROM_BIKE ? "přímo z kola" : "ze stavu baterie";
     }
 
     function deviceBatteryPercent() {

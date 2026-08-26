@@ -255,7 +255,7 @@ module RideChrome {
 
         drawMetric(dc, margin, top + cellHeight + gap, side, cellHeight,
             "DOJEZD E-BIKE", RideData.assistRangeKm().format("%.0f"), "km", "ok",
-            null, RideData.assistBatteryPercent() / 100.0);
+            RideData.assistNote(), RideData.assistBatteryPercent() / 100.0);
 
         var remaining = RideData.distanceToDestinationKm();
         drawMetric(dc, rightX, top, side, cellHeight,

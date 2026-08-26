@@ -1,5 +1,8 @@
 <properties>
+    <property id="useLevSensor" type="boolean">true</property>
+    <property id="levDeviceNumber" type="number">0</property>
     <property id="assistFullRangeKm" type="number">90</property>
+    <property id="assistBatteryWh" type="number">0</property>
     <property id="showWeather" type="boolean">true</property>
     <property id="useMap" type="boolean">true</property>
     <property id="layoutStyle" type="number">0</property>

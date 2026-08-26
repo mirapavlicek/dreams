@@ -43,6 +43,10 @@ DEMO = {
     "heading": 142,
     "assistRange": 48.2,
     "assistBattery": 63,
+    # Odkud je dojezd: "bike" = stránka 2 profilu ANT+ LEV, "battery" =
+    # dopočet ze stavu baterie kola, "estimate" = jen odhad z ujetých km.
+    "assistSource": "bike",
+    "assistLevel": 2,
     "distanceToDestination": 12.4,
     "eta": "15:04",
     "distance": 37.8,
@@ -55,6 +59,33 @@ DEMO = {
 
 WEATHER_LABELS = {"clear": "JASNO", "cloudy": "OBLAČNO", "rain": "DÉŠŤ"}
 CARDINALS = ["S", "SV", "V", "JV", "J", "JZ", "Z", "SZ"]
+
+
+# Popisky kolem dojezdu elektrokola - stejná pravidla jako v RideData.mc.
+
+
+def assist_measured(data: dict) -> bool:
+    return data.get("assistSource", "estimate") != "estimate"
+
+
+def assist_range_unit(data: dict) -> str:
+    return "km" if assist_measured(data) else "km · odhad"
+
+
+def assist_battery_label(data: dict) -> str:
+    if not assist_measured(data):
+        return "E-BIKE · ODHAD"
+    level = data.get("assistLevel")
+    return f"E-BIKE · ASIST {level}" if level else "E-BIKE"
+
+
+def assist_note(data: dict) -> str:
+    if not assist_measured(data):
+        return "odhad"
+    level = data.get("assistLevel")
+    if level:
+        return f"asistence {level}"
+    return "přímo z kola" if data["assistSource"] == "bike" else "ze stavu baterie"
 
 
 def load_layout() -> dict:
@@ -664,7 +695,7 @@ def draw_cockpit_bottom(p: Painter, data: dict) -> None:
     row_a = spec["rowA"]
     margin = bottom["margin"]
     columns = [
-        ("DOJEZD E-BIKE", f"{data['assistRange']:.0f}", "km", "ok"),
+        ("DOJEZD E-BIKE", f"{data['assistRange']:.0f}", assist_range_unit(data), "ok"),
         ("DO CÍLE", f"{data['distanceToDestination']:.1f}", f"km · {data['eta']}", "accent"),
         ("NAJETO", f"{data['distance']:.1f}", "km", "text"),
     ]
@@ -683,7 +714,7 @@ def draw_cockpit_bottom(p: Painter, data: dict) -> None:
     battery = int(data["assistBattery"])
     battery_color = "ok" if battery > 30 else "danger"
     cells = [
-        (margin, f"{battery} %", "E-BIKE", battery_color, None),
+        (margin, f"{battery} %", assist_battery_label(data), battery_color, None),
         (150, f"{int(data['ascent'])} m", "NASTOUPÁNO", "warn", True),
         (268, f"{int(data['descent'])} m", "SESTOUPÁNO", "cold", False),
     ]
@@ -806,6 +837,7 @@ def render(data: dict, layout: dict, device_map: bool = False) -> Image.Image:
     draw_metric(
         p, (margin, top + cell_height + gap, side, cell_height),
         "DOJEZD E-BIKE", f"{data['assistRange']:.0f}", "km", "ok",
+        note=assist_note(data),
         ratio=data["assistBattery"] / 100.0,
     )
     draw_metric(
@@ -840,9 +872,16 @@ def main() -> int:
         action="store_true",
         help="styl přístrojového štítu auta: mapa přes celou obrazovku, pruhy nad ní",
     )
+    parser.add_argument(
+        "--estimate",
+        action="store_true",
+        help="kolo neposílá ANT+ LEV, dojezd je jen odhad z ujetých kilometrů",
+    )
     args = parser.parse_args()
 
     data = dict(DEMO)
+    if args.estimate:
+        data.update({"assistSource": "estimate", "assistLevel": None})
     if args.json:
         data.update(json.loads(pathlib.Path(args.json).read_text(encoding="utf-8")))
 

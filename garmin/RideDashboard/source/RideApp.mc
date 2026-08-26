@@ -25,6 +25,7 @@ class RideApp extends Application.AppBase {
         if (Position has :enableLocationEvents) {
             Position.enableLocationEvents(Position.LOCATION_DISABLE, method(:onPosition));
         }
+        RideData.closeSensors();
     }
 
     function onPosition(info as Position.Info) as Void {
@@ -38,6 +39,7 @@ class RideApp extends Application.AppBase {
 
     function onSettingsChanged() {
         RideData.reloadSettings();
+        RideData.openSensors();
         WatchUi.requestUpdate();
     }
 }

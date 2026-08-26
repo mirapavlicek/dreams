@@ -1,6 +1,15 @@
 <settings>
-    <setting propertyKey="@Properties.assistFullRangeKm" title="@Strings.SettingAssistRange">
+    <setting propertyKey="@Properties.useLevSensor" title="@Strings.SettingUseLev" prompt="@Strings.SettingUseLevPrompt">
+        <settingConfig type="boolean"/>
+    </setting>
+    <setting propertyKey="@Properties.levDeviceNumber" title="@Strings.SettingLevDevice" prompt="@Strings.SettingLevDevicePrompt">
+        <settingConfig type="numeric" min="0" max="65535"/>
+    </setting>
+    <setting propertyKey="@Properties.assistFullRangeKm" title="@Strings.SettingAssistRange" prompt="@Strings.SettingAssistRangePrompt">
         <settingConfig type="numeric" min="10" max="400"/>
+    </setting>
+    <setting propertyKey="@Properties.assistBatteryWh" title="@Strings.SettingBatteryWh" prompt="@Strings.SettingBatteryWhPrompt">
+        <settingConfig type="numeric" min="0" max="2000"/>
     </setting>
     <setting propertyKey="@Properties.showWeather" title="@Strings.SettingUseWeather">
         <settingConfig type="boolean"/>

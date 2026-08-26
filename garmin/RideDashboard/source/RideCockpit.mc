@@ -312,7 +312,7 @@ module RideCockpit {
             remaining == null ? "--" : remaining.format("%.1f"),
             RideData.distanceKm().format("%.1f")
         ];
-        var units = ["km", "km · " + RideData.etaString(), "km"];
+        var units = [RideData.assistRangeUnit(), "km · " + RideData.etaString(), "km"];
         var colors = ["ok", "accent", "text"];
 
         for (var i = 0; i < titles.size(); i += 1) {
@@ -351,7 +351,7 @@ module RideCockpit {
         var batteryColor = battery > 30 ? "ok" : "danger";
         var temperature = RideData.temperature();
 
-        value(dc, margin, y, labelY, battery.toString() + " %", "E-BIKE", batteryColor);
+        value(dc, margin, y, labelY, battery.toString() + " %", RideData.assistBatteryLabel(), batteryColor);
         climb(dc, 150, y, labelY, true, RideData.ascent(), "NASTOUPÁNO", "warn");
         climb(dc, 268, y, labelY, false, RideData.descent(), "SESTOUPÁNO", "cold");
 

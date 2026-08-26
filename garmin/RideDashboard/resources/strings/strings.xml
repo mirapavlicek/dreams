@@ -1,6 +1,13 @@
 <resources>
     <string id="AppName">Ride Dashboard</string>
+    <string id="SettingUseLev">Číst data z elektrokola (ANT+ LEV)</string>
+    <string id="SettingUseLevPrompt">Dojezd a baterii bere přímo z kola, když profil LEV podporuje</string>
+    <string id="SettingLevDevice">ANT+ ID elektrokola</string>
+    <string id="SettingLevDevicePrompt">0 = spárovat s prvním kolem, které se ozve</string>
     <string id="SettingAssistRange">Dojezd na plnou baterii (km)</string>
+    <string id="SettingAssistRangePrompt">Použije se, dokud kolo vlastní dojezd neposílá</string>
+    <string id="SettingBatteryWh">Kapacita baterie (Wh)</string>
+    <string id="SettingBatteryWhPrompt">0 = neznámá; se známou kapacitou počítáme dojezd ze spotřeby kola</string>
     <string id="SettingUseWeather">Zobrazovat počasí</string>
     <string id="SettingUseMap">Mapa z paměti přístroje</string>
     <string id="SettingUseMapPrompt">Vypnuto: uprostřed se kreslí jen drobečková stopa z GPS</string>

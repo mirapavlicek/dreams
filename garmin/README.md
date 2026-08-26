@@ -75,9 +75,42 @@ Prakticky to znamená:
   jednotek bez kartografie do manifestu — třída dědící z `MapTrackView` se pro
   ně nepřeloží, musela by se vyřadit anotací v `monkey.jungle`.
 
-Co Connect IQ neumožňuje: **baterii e-biku**. ANT+ profil elektrokol (LEV)
-v API není, takže dojezd je **odhad** — uživatel v nastavení zadá dojezd na
-plnou baterii a aplikace ho úměrně krátí podle ujeté vzdálenosti.
+## Dojezd elektrokola: měření místo odhadu
+
+Edge dojezd e-biku ukazuje sám, ale Connect IQ na něj hotovou třídu nemá —
+`Toybox.AntPlus` zná pulsy, výkon i řazení, profil elektrokol (LEV) v něm
+chybí. Dá se ale obejít: `RideLev` si otevře **generický ANT kanál** na device
+type 20 (frekvence 57, perioda 8192 = 4 Hz) a datové stránky si rozebere sám.
+
+| Stránka | Co z ní bereme |
+|---|---|
+| 1 | stupeň asistence, rychlost kola |
+| 2 | **dojezd v km** (12 bitů, nula = kolo neví), odometr |
+| 3 | stav baterie v procentech, varování o vybití, % asistence |
+| 4 | spotřeba ve Wh/km, kilometry od posledního nabití |
+| 34 | náhrada stránky 2 — místo dojezdu posílá spotřebu |
+
+Kanál je jen poslouchající (`CHANNEL_TYPE_RX_ONLY`), takže kolu nic neposílá
+a nemluví do toho, co si s ním řeší přístroj. Na jednom kole ale může viset jen
+jedna aplikace — když je kanál zabraný, `RideData` zůstane u odhadu.
+
+Dojezd se bere v tomto pořadí:
+
+1. **přímo z kola** (stránka 2) — totéž číslo, co ukazuje Edge, kolo v něm má
+   vlastní spotřebu i nastavenou asistenci,
+2. **ze stavu baterie** — když kolo dojezd neposílá, spočítá se z procent
+   a spotřeby ve Wh/km podle kapacity vyplněné v nastavení; bez kapacity
+   z poměrné části dojezdu na plnou,
+3. **odhad z ujetých kilometrů** — když se s kolem nemluví vůbec.
+
+Odhad se v palubovce přizná: v přístrojovém štítu jednotkou `km · odhad`
+a popiskem `E-BIKE · ODHAD`, v panelech poznámkou pod hodnotou. Měřený dojezd
+naopak ukazuje i stupeň asistence (`E-BIKE · ASIST 2`).
+
+![Dojezd jako odhad, když kolo LEV neumí](docs/preview/ride-cockpit-estimate.png)
+
+LEV umí Specialized, Fazua, Giant nebo Mahle. Bosch a Shimano posílají data
+po svém, tam zůstane odhad.
 
 Rozvržení je popsané v `RideDashboard/resources/json/layout.json` v pixelech
 návrhového plátna 480×800; při kreslení se přepočítá na skutečný displej, takže
@@ -87,6 +120,7 @@ stejná čísla platí i pro menší jednotky Edge.
 python3 garmin/tools/preview_ride.py --cockpit --map    # přístrojový štít
 python3 garmin/tools/preview_ride.py --map              # panely s mapou
 python3 garmin/tools/preview_ride.py                    # panely bez mapy
+python3 garmin/tools/preview_ride.py --cockpit --map --estimate  # kolo bez LEV
 ./garmin/check.sh RideDashboard                         # překlad bez Garmin účtu
 ./garmin/run_simulator.sh edge1050 RideDashboard
 ```
@@ -140,10 +174,11 @@ garmin/
     source/GlanceView.mc             # kompaktní řádek
   RideDashboard/
     resources/json/layout.json       # rozvržení palubovky v pixelech 480x800
-    resources/settings/              # dojezd na plnou baterii, počasí, mapa
+    resources/settings/              # elektrokolo, dojezd, počasí, mapa, styl
     source/RideApp.mc                # vstupní bod + odběr GPS pozic
     source/RideLayout.mc             # škálování návrhu na displej, výběr fontů
     source/RideData.mc               # metriky z Activity, Weather a Position
+    source/RideLev.mc                # elektrokolo přes ANT+ profil LEV
     source/RideChrome.mc             # kreslení stylu s panely
     source/RideCockpit.mc            # kreslení stylu přístrojového štítu
     source/RideView.mc               # obrazovka s drobečkovou stopou
