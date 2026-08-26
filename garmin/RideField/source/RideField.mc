@@ -30,7 +30,12 @@ class RideField extends WatchUi.DataField {
             return;
         }
         try {
-            if (RideData.cockpitStyle()) {
+            // Pole nemusí dostat celou obrazovku. Na podílu datové obrazovky
+            // by se návrh počítaný na celý displej jen svisle zmáčkl, takže se
+            // místo něj kreslí mřížka metrik.
+            if (RideCompact.needed(dc)) {
+                RideCompact.draw(dc);
+            } else if (RideData.cockpitStyle()) {
                 RideCockpit.draw(dc, false);
             } else {
                 RideChrome.draw(dc, false);

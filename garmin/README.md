@@ -283,6 +283,32 @@ nejmenším fontem, sáhne se po kratší variantě (`E-BIKE · ODHAD` → `ODHA
 `NASTOUPÁNO` → `STOUPÁNÍ`, `km · odhad` → `km`) a v krajním případě se vynechá —
 u šipek převýšení směr stejně říká sama šipka.
 
+## Aplikace nahrává jízdu
+
+Bez toho je palubovka na Edge k ničemu, i když se tváří, že běží. Samostatná
+Connect IQ aplikace stojí **mimo nativní aktivitu**, takže `Activity.getActivityInfo()`
+vrací prázdno:
+
+```
+PRED: speed=0.000000 dist=null acc=null
+```
+
+Přístroj pak nemá důvod zapínat GPS a `MapTrackView` nemá polohu, na kterou by
+se vycentroval. Jedna příčina, tři příznaky: samé nuly, zhasnutá GPS a černá
+mapa. Teprve založená a spuštěná relace (`ActivityRecording`, oprávnění `Fit`)
+udělá z aplikace skutečný cyklopočítač.
+
+| Tlačítko | Co dělá |
+|---|---|
+| Start | spustí a zastaví nahrávání |
+| Zpět | z mapy zpět na palubovku, pak dotaz *Uložit jízdu?* |
+| Menu | nastavení, včetně mapy přes celou obrazovku |
+| Nahoru / dolů | stupeň asistence elektrokola (když je ovládání zapnuté) |
+
+Vlevo od hodin svítí stav: `START`, dokud se nezačalo, pak čas jízdy s červenou
+tečkou při nahrávání. Datové pole tohle nemá - běží uvnitř nativní aktivity,
+kde nahrávání řídí přístroj sám.
+
 ## Nahrání do přístroje
 
 Hotové buildy pro všechny jednotky jsou ve `dist/RideDashboard/` (aplikace)
@@ -396,6 +422,23 @@ je přesně ten, který chceš, jen se v manifestu přepne *Dojezd e-biku*.
 Poloha se bere z `Activity.Info.currentLocation`; vlastní odběr pozic si datové
 pole zapnout nesmí, `Position.enableLocationEvents()` pro něj není dostupné
 a překladač ho rovnou odmítne.
+
+**Mapa v datovém poli nejde a nepůjde.** Není to volba návrhu, ale pravidlo
+platformy - pokus o vystrčení mapové obrazovky skončí takhle:
+
+```
+Exception: Page control not allowed in current app type (or mode) - Data Field
+```
+
+Mapu vedle palubovky dá nativní mapové datové pole přístroje, a je lepší než
+cokoli, co jde z Connect IQ postavit.
+
+### Když pole nedostane celou obrazovku
+
+Na podílu datové obrazovky (vedle nativní mapy nebo Bosch polí) by se návrh
+počítaný na celý displej jen svisle zmáčkl. Když je rámeček výrazně plošší než
+návrhové plátno, kreslí se místo něj **mřížka metrik** ve dvou sloupcích -
+tolik údajů, kolik se vejde čitelně, od rychlosti a kadence po převýšení.
 
 ```bash
 ./garmin/build_all.sh RideField            # všechny jednotky do garmin/dist

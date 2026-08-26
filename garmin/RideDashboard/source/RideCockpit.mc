@@ -259,6 +259,10 @@ module RideCockpit {
             RideLayout.numberFont(dc, 24), RideData.clockString(),
             Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
 
+        var clockFont = RideLayout.numberFont(dc, 24);
+        var clockWidth = dc.getTextWidthInPixels(RideData.clockString(), clockFont);
+        drawRideState(dc, right - clockWidth - gap, RideLayout.y(RideLayout.at(spec, "y")));
+
         var battery = RideData.deviceBatteryPercent().toString() + " %";
         dc.setColor(RideLayout.color("textDim"), Graphics.COLOR_TRANSPARENT);
         dc.drawText(right, statusY, font, battery,
@@ -267,6 +271,7 @@ module RideCockpit {
         var gpsRight = right - dc.getTextWidthInPixels(battery, font) - gap;
         dc.drawText(gpsRight, statusY, font, "GPS",
             Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
+
 
         var dot = RideLayout.s(3.5);
         dc.setColor(RideData.hasFix() ? RideLayout.color("ok") : RideLayout.color("textDim"),
@@ -277,6 +282,29 @@ module RideCockpit {
     //! Pilulky s průměrnou a maximální rychlostí. Obsah se skládá zprava:
     //! nejdřív jednotka, před ni hodnota a popiska dostane, co zbude - když
     //! nezbude nic (malý displej), vynechá se.
+    //! Nahrává se? Bez toho by jezdec nevěděl, jestli se jízda ukládá.
+    //! Vlevo od hodin, ať to jde vidět koutkem oka. Kolečko se kreslí, ne píše -
+    //! Garmin fonty na takové znaky spolehnout nejde.
+    //! @param right pravý okraj v pixelech displeje, tedy hned vlevo od hodin
+    function drawRideState(dc, right, y) as Void {
+        var state = RideData.rideState();
+        if (state == null) {
+            return;
+        }
+        var dot = RideLayout.s(3.5);
+        var room = right - RideLayout.x(240) - dot * 3;
+        var fitted = RideChrome.fitText(dc, [state, "REC"], room, 12);
+        if (fitted[1].length() == 0) {
+            return;
+        }
+
+        dc.setColor(RideLayout.color(RideData.rideRecording() ? "danger" : "textDim"),
+            Graphics.COLOR_TRANSPARENT);
+        dc.drawText(right, y, fitted[0], fitted[1],
+            Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.fillCircle(right - dc.getTextWidthInPixels(fitted[1], fitted[0]) - dot * 2, y, dot);
+    }
+
     function drawChips(dc) as Void {
         var spec = RideLayout.group("cockpit", "chips");
         var y = RideLayout.at(spec, "y");

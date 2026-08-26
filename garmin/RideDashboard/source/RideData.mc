@@ -582,6 +582,24 @@ module RideData {
         return conditions == null ? null : conditions.condition;
     }
 
+    //: Stav nahrávání a čas jízdy. Plní to aplikace; datové pole běží uvnitř
+    //: nativní aktivity, kde nahrávání řídí přístroj sám, a nechává tu null.
+    var mRideState as Lang.String or Null = null;
+    var mRideRecording as Lang.Boolean = false;
+
+    function setRideState(state as Lang.String or Null, recording as Lang.Boolean) as Void {
+        mRideState = state;
+        mRideRecording = recording;
+    }
+
+    function rideState() as Lang.String or Null {
+        return mRideState;
+    }
+
+    function rideRecording() as Lang.Boolean {
+        return mRideRecording;
+    }
+
     function clockString() {
         var now = System.getClockTime();
         var hour = now.hour;

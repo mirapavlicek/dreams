@@ -54,6 +54,7 @@ class RideMapView extends WatchUi.MapTrackView {
     }
 
     function onShow() {
+        RideMaps.attach(self);
         // Styl se mohl mezitím změnit v nastavení, tak okno přepočítáme.
         applyWindow();
         mTimer = new Timer.Timer();
@@ -61,6 +62,7 @@ class RideMapView extends WatchUi.MapTrackView {
     }
 
     function onHide() {
+        RideMaps.attach(null);
         if (mTimer != null) {
             mTimer.stop();
             mTimer = null;
@@ -69,6 +71,7 @@ class RideMapView extends WatchUi.MapTrackView {
 
     function onTick() as Void {
         try {
+            RideRecord.publish();
             RideData.poll();
             updateTrack();
         } catch (exception) {
@@ -156,7 +159,8 @@ class RideMapDelegate extends WatchUi.BehaviorDelegate {
     }
 
     function onSelect() {
-        mView.setBrowsing(!mView.isBrowsing());
+        RideRecord.toggle();
+        WatchUi.requestUpdate();
         return true;
     }
 

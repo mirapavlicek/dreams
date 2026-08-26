@@ -20,6 +20,8 @@ module RideMenu {
         menu.addItem(new WatchUi.ToggleMenuItem("Přístrojový štít",
             {:enabled => "mapa přes celou obrazovku", :disabled => "panely s oknem mapy"},
             :style, RideData.cockpitStyle(), null));
+        menu.addItem(new WatchUi.MenuItem("Mapa přes celou obrazovku",
+            "posouvání a zoom jako v nativní mapě", :browse, null));
         menu.addItem(new WatchUi.ToggleMenuItem("Mapa přístroje",
             {:enabled => "kartografie", :disabled => "jen stopa z GPS"},
             :map, RideData.mapEnabled(), null));
@@ -90,6 +92,10 @@ class RideMenuDelegate extends WatchUi.Menu2InputDelegate {
 
         if (id == :style) {
             RideMenu.store("layoutStyle", (item as WatchUi.ToggleMenuItem).isEnabled() ? 0 : 1);
+
+        } else if (id == :browse) {
+            RideMaps.browse();
+            return;
 
         } else if (id == :map) {
             RideMenu.store("useMap", (item as WatchUi.ToggleMenuItem).isEnabled());

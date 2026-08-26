@@ -19,6 +19,21 @@ module RideMaps {
         mBroken = true;
     }
 
+    //: Mapová obrazovka, když zrovna běží - kvůli přepnutí do procházení
+    //: z menu, kam se to přesunulo poté, co Start převzalo nahrávání.
+    var mView = null;
+
+    function attach(view) as Void {
+        mView = view;
+    }
+
+    function browse() as Void {
+        var view = mView;
+        if (view != null) {
+            view.setBrowsing(true);
+        }
+    }
+
     //! Proč se místo mapy kreslí drobečková stopa. Na přístroji je to jediné
     //! vodítko - ručně nahraná aplikace nemá kam vypsat log.
     function reason() as Lang.String or Null {
@@ -79,6 +94,7 @@ class RideView extends WatchUi.View {
 
     function onTick() as Void {
         try {
+            RideRecord.publish();
             RideData.poll();
         } catch (exception) {
             RideTrouble.note("čtení senzorů", exception);
@@ -136,14 +152,16 @@ class RideDelegate extends WatchUi.BehaviorDelegate {
         mView = view;
     }
 
+    //! Start/stop jízdy, jak je na cyklopočítači zvykem. Mapa se přepíná
+    //! z menu - tlačítko Start patří nahrávání, ne přepínání obrazovek.
     function onSelect() {
-        if (RideMaps.available()) {
-            RideMaps.setWanted(true);
-            mView.onOpenMap();
-        } else {
-            WatchUi.requestUpdate();
-        }
+        RideRecord.toggle();
+        WatchUi.requestUpdate();
         return true;
+    }
+
+    function onBack() {
+        return RideExit.confirm();
     }
 
     function onMenu() {
