@@ -20,6 +20,15 @@ module RideData {
     const ASSIST_FROM_BLE = 2;
     const ASSIST_ESTIMATED = 3;
 
+    //: Kdo počítá dojezd elektrokola. Bosch, DJI ani Shimano po ANT+ LEV
+    //: nemluví a Connect IQ se k jejich datům nedostane; novější Edge je ale
+    //: umí nativně. V tom případě nemá smysl vedle skutečných čísel přístroje
+    //: ukazovat vlastní odhad - palubovka místo toho e-bike vynechá a ani
+    //: neotevírá kanály, které by stejně nic nepřinesly.
+    const EBIKE_OWN = 0;
+    const EBIKE_NATIVE = 1;
+
+    var mEbikeSource as Lang.Number = EBIKE_OWN;
     var mFullRangeKm as Lang.Float = 90.0;
     var mBatteryWh as Lang.Float = 0.0;
     var mShowWeather = true;
@@ -44,6 +53,11 @@ module RideData {
     function reloadSettings() as Void {
         if (!(Application has :Properties)) {
             return;
+        }
+        var source = Application.Properties.getValue("ebikeSource");
+        if (source instanceof Lang.Number && source != mEbikeSource) {
+            mEbikeSource = source;
+            closeSensors();
         }
         var range = Application.Properties.getValue("assistFullRangeKm");
         if (range instanceof Lang.Number && range > 0) {
@@ -103,8 +117,13 @@ module RideData {
         closeBle();
     }
 
+    //! Řeší si dojezd elektrokola přístroj sám? Pak do toho palubovka nemluví.
+    function ebikeNative() as Lang.Boolean {
+        return mEbikeSource == EBIKE_NATIVE;
+    }
+
     function openLev() as Void {
-        if (!mUseLev || mLev != null || !(Toybox has :Ant)) {
+        if (ebikeNative() || !mUseLev || mLev != null || !(Toybox has :Ant)) {
             return;
         }
         try {
@@ -131,7 +150,8 @@ module RideData {
     //! Bluetooth se zapíná jen vyplněným jménem kola - skenování stojí baterii
     //! a kolům s ANT+ profilem LEV není k ničemu.
     function openBle() as Void {
-        if (mBleName.length() == 0 || mBle != null || !(Toybox has :BluetoothLowEnergy)) {
+        if (ebikeNative() || mBleName.length() == 0 || mBle != null ||
+            !(Toybox has :BluetoothLowEnergy)) {
             return;
         }
         try {

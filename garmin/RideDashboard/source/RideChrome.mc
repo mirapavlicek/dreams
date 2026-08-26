@@ -258,8 +258,15 @@ module RideChrome {
         dc.drawText(left + wholeWidth, centerY + drop, smallFont, decimalText,
             Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
 
-        label(dc, RideLayout.centerX(), RideLayout.number("speed", "unitY"), "km/h",
-            RideLayout.number("speed", "unitSize"), "textDim");
+        // Jednotka je pod tachometrem, takže musí uhnout pod spodní hranu jeho
+        // písma. Návrhová souřadnice s tím počítá jen pro Edge 1050; jinde
+        // vyjde jiný font a "km/h" by skončilo přes desetinné místo.
+        var unitFont = RideLayout.textFont(dc, RideLayout.number("speed", "unitSize"));
+        var unitY = centerY + (dc.getFontHeight(bigFont) + dc.getFontHeight(unitFont)) / 2;
+        var designUnitY = RideLayout.y(RideLayout.number("speed", "unitY"));
+        dc.setColor(RideLayout.color("textDim"), Graphics.COLOR_TRANSPARENT);
+        dc.drawText(RideLayout.x(RideLayout.centerX()), unitY > designUnitY ? unitY : designUnitY,
+            unitFont, "km/h", Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
     }
 
     function drawSpeedStats(dc) as Void {
@@ -324,12 +331,17 @@ module RideChrome {
         var mapWidth = canvasWidth - 2 * (margin + side + gap);
         var rightX = canvasWidth - margin - side;
 
-        drawCompass(dc, margin, top, side, cellHeight);
-
-        drawMetric(dc, margin, top + cellHeight + gap, side, cellHeight,
-            [["DOJEZD E-BIKE", "DOJEZD", "E-BIKE"], RideData.assistRangeKm().format("%.0f"), "km",
-                RideData.assistNote()],
-            "ok", RideData.assistBatteryPercent() / 100.0);
+        // Bez vlastního dojezdu e-biku zbude vlevo místo, tak se kompas roztáhne
+        // přes obě buňky - prázdný panel by vypadal jako chybějící údaj.
+        if (RideData.ebikeNative()) {
+            drawCompass(dc, margin, top, side, bottom - top);
+        } else {
+            drawCompass(dc, margin, top, side, cellHeight);
+            drawMetric(dc, margin, top + cellHeight + gap, side, cellHeight,
+                [["DOJEZD E-BIKE", "DOJEZD", "E-BIKE"], RideData.assistRangeKm().format("%.0f"),
+                    "km", RideData.assistNote()],
+                "ok", RideData.assistBatteryPercent() / 100.0);
+        }
 
         var remaining = RideData.distanceToDestinationKm();
         drawMetric(dc, rightX, top, side, cellHeight,
@@ -589,27 +601,27 @@ module RideChrome {
         var margin = RideLayout.number("bottom", "margin");
         var gap = RideLayout.number("bottom", "gap");
         var canvasWidth = RideLayout.number("canvas", "width");
-        var width = (canvasWidth - 2 * margin - 3 * gap) / 4.0;
-
         var battery = RideData.assistBatteryPercent();
-        var batteryColor = battery > 30 ? "ok" : "danger";
         var temperature = RideData.temperature();
+        var ebike = !RideData.ebikeNative();
+        var cells = ebike ? 4 : 3;
+        var width = (canvasWidth - 2 * margin - (cells - 1) * gap) / cells;
 
         var climbLabels = fitPair(dc, [["NASTOUPÁNO", "SESTOUPÁNO"], ["STOUPÁNÍ", "KLESÁNÍ"]],
             RideLayout.x(width - 8), 11);
-        var titles = [
-            ["E-BIKE"],
-            [climbLabels[0]],
-            [climbLabels[1]],
-            [weatherLabel()]
-        ];
+        var titles = [[climbLabels[0]], [climbLabels[1]], [weatherLabel()]];
         var values = [
-            battery.toString() + "%",
             RideData.ascent().toString() + " m",
             RideData.descent().toString() + " m",
             temperature == null ? "--" : temperature.toString() + "°C"
         ];
-        var colors = [batteryColor, "warn", "cold", "text"];
+        var colors = ["warn", "cold", "text"];
+
+        if (ebike) {
+            titles = [["E-BIKE"], titles[0], titles[1], titles[2]];
+            values = [battery.toString() + "%", values[0], values[1], values[2]];
+            colors = [battery > 30 ? "ok" : "danger", colors[0], colors[1], colors[2]];
+        }
 
         // Titulek a hodnota se staví od středu buňky podle změřených výšek;
         // u baterie se pod ně vejde ještě proužek. Pevné odsazení od horní
@@ -627,7 +639,7 @@ module RideChrome {
             var valueFont = RideLayout.fitFont(dc, values[i], room, 21);
             var titleHeight = dc.getFontHeight(title[0]);
             var valueHeight = dc.getFontHeight(valueFont);
-            var withBar = i == 0;
+            var withBar = ebike && i == 0;
             var total = titleHeight + rowGap + valueHeight + (withBar ? rowGap + barHeight : 0);
             var cursor = RideLayout.y(y + height / 2.0) - total / 2;
 
@@ -644,13 +656,13 @@ module RideChrome {
             if (withBar) {
                 dc.setColor(RideLayout.color("panelEdge"), Graphics.COLOR_TRANSPARENT);
                 dc.fillRectangle(RideLayout.x(x + 12), cursor, RideLayout.x(width - 24), barHeight);
-                dc.setColor(RideLayout.color(batteryColor), Graphics.COLOR_TRANSPARENT);
+                dc.setColor(RideLayout.color(colors[i]), Graphics.COLOR_TRANSPARENT);
                 dc.fillRectangle(RideLayout.x(x + 12), cursor,
                     RideLayout.x((width - 24) * clamp(battery / 100.0)), barHeight);
             }
         }
 
-        drawWeatherIcon(dc, margin + 3 * (width + gap) + 14, y + height / 2.0 + 2);
+        drawWeatherIcon(dc, margin + (cells - 1) * (width + gap) + 14, y + height / 2.0 + 2);
     }
 
     function weatherLabel() {

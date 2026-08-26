@@ -1,4 +1,10 @@
 <settings>
+    <setting propertyKey="@Properties.ebikeSource" title="@Strings.SettingEbikeSource">
+        <settingConfig type="list">
+            <listEntry value="0">@Strings.EbikeSourceOwn</listEntry>
+            <listEntry value="1">@Strings.EbikeSourceNative</listEntry>
+        </settingConfig>
+    </setting>
     <setting propertyKey="@Properties.useLevSensor" title="@Strings.SettingUseLev" prompt="@Strings.SettingUseLevPrompt">
         <settingConfig type="boolean"/>
     </setting>

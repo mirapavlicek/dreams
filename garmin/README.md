@@ -165,6 +165,27 @@ Co přes Bluetooth **nejde**:
 - **Shimano STEPS** vozí data ve vlastních službách (`…5348494D414E4F…`, tedy
   „SHIMANO“ v ASCII), které specifikované nejsou.
 
+### Když si dojezd řeší přístroj sám (Bosch)
+
+Novější firmware Edge umí Bosch Smart System nativně — jenže přes **Bosch Live
+Data Interface**, ne přes ANT+ LEV, a Connect IQ se k těm datům nedostane.
+V `Activity.Info` není o elektrokole jediné pole a `Toybox.AntPlus` profil LEV
+nemá, takže aplikace ani datové pole nemají odkud číst.
+
+Ukazovat vedle skutečných čísel přístroje vlastní odhad by jen mátlo, proto je
+v nastavení a v menu přístroje přepínač **Dojezd e-biku**:
+
+| Volba | Co dělá |
+|---|---|
+| *Počítat sama* (výchozí) | dojezd z ANT+ LEV, Bluetooth nebo odhadu, jak je popsáno výše |
+| *Nechat na přístroji* | palubovka e-bike vynechá a ani neotevře ANT+ kanál ani BLE skenování |
+
+Druhá volba není jen kosmetika. Kanály, které pro Bosch stejně nic nepřinesou,
+se vůbec neotevřou (skenování BLE stojí baterii) a v palubovce se uvolní místo:
+ve stylu přístrojového štítu zbydou dva široké sloupce místo tří a ve stylu
+s panely se kompas roztáhne přes obě levé buňky. Vlastní Bosch data pak čti na
+nativní datové obrazovce přístroje.
+
 **Pozor na nativní spárování:** na jednom kole může viset jen jeden posluchač.
 Když je e-bike připojený přes systémové menu *Senzory* nebo ho drží jiná
 Connect IQ aplikace, náš kanál data nedostane a dojezd spadne na odhad — kolo
@@ -176,8 +197,8 @@ od chvíle, kdy je Edge blízko ovladače kola.
 Všechno jde nastavit dvěma cestami. Z telefonu přes Garmin Connect (styl
 palubovky, mapa, počasí, elektrokolo, kapacita baterie, jméno kola v Bluetooth)
 a **tlačítkem menu přímo v přístroji**, kde je zkrácený výběr: styl, mapa,
-elektrokolo, nové spárování kola, kapacita baterie a dojezd na plnou. Obojí
-píše do stejných properties.
+dojezd e-biku, elektrokolo, nové spárování kola, kapacita baterie a dojezd na
+plnou. Obojí píše do stejných properties.
 
 Menu v přístroji tam není pro parádu: aplikace nahraná ručně (sideload) se
 v Garmin Connect ani v Garmin Expressu neobjeví, takže při testování je to

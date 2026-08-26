@@ -23,6 +23,9 @@ module RideMenu {
         menu.addItem(new WatchUi.ToggleMenuItem("Mapa přístroje",
             {:enabled => "kartografie", :disabled => "jen stopa z GPS"},
             :map, RideData.mapEnabled(), null));
+        menu.addItem(new WatchUi.ToggleMenuItem("Dojezd e-biku",
+            {:enabled => "počítat sama", :disabled => "nechat na přístroji"},
+            :ebike, !RideData.ebikeNative(), null));
         menu.addItem(new WatchUi.ToggleMenuItem("Elektrokolo ANT+",
             {:enabled => "číst data z kola", :disabled => "jen odhad dojezdu"},
             :lev, RideData.mUseLev, null));
@@ -87,6 +90,12 @@ class RideMenuDelegate extends WatchUi.Menu2InputDelegate {
 
         } else if (id == :map) {
             RideMenu.store("useMap", (item as WatchUi.ToggleMenuItem).isEnabled());
+
+        } else if (id == :ebike) {
+            // Zapnuto = palubovka si dojezd počítá sama, vypnuto = přebírá to
+            // přístroj (Bosch a spol., na které Connect IQ nedosáhne).
+            RideMenu.store("ebikeSource", (item as WatchUi.ToggleMenuItem).isEnabled()
+                ? RideData.EBIKE_OWN : RideData.EBIKE_NATIVE);
 
         } else if (id == :lev) {
             RideMenu.store("useLevSensor", (item as WatchUi.ToggleMenuItem).isEnabled());

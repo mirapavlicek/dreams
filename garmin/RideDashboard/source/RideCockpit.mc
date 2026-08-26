@@ -332,7 +332,9 @@ module RideCockpit {
 
         drawSummary(dc, margin, canvasWidth, rows);
         drawStatus(dc, margin, canvasWidth, rows);
-        drawBatteryStrip(dc, canvasWidth);
+        if (!RideData.ebikeNative()) {
+            drawBatteryStrip(dc, canvasWidth);
+        }
     }
 
     //! Svislé rozvržení spodního překryvu jako [titulek, hodnota, stav, popiska].
@@ -364,24 +366,32 @@ module RideCockpit {
         return designed < limit ? designed : limit;
     }
 
-    //! Tři velké údaje oddělené vlásovými linkami.
+    //! Velké údaje oddělené vlásovými linkami. Když si dojezd elektrokola řeší
+    //! přístroj sám, sloupec s ním se vynechá a zbylé se o místo podělí -
+    //! ukazovat vlastní odhad vedle skutečného čísla přístroje by jen mátlo.
     function drawSummary(dc, margin, canvasWidth, rows as Lang.Array) as Void {
         var spec = RideLayout.group("cockpit", "rowA");
         var titleY = rows[0];
         var valueY = rows[1];
         var dividerTop = RideLayout.at(spec, "dividerTop");
         var dividerHeight = RideLayout.at(spec, "dividerHeight");
-        var width = (canvasWidth - 2 * margin) / 3.0;
 
         var remaining = RideData.distanceToDestinationKm();
-        var titles = ["DOJEZD E-BIKE", "DO CÍLE", "NAJETO"];
+        var titles = ["DO CÍLE", "NAJETO"];
         var values = [
-            RideData.assistRangeKm().format("%.0f"),
             remaining == null ? "--" : remaining.format("%.1f"),
             RideData.distanceKm().format("%.1f")
         ];
-        var units = [RideData.assistRangeUnit(), "km · " + RideData.etaString(), "km"];
-        var colors = ["ok", "accent", "text"];
+        var units = ["km · " + RideData.etaString(), "km"];
+        var colors = ["accent", "text"];
+
+        if (!RideData.ebikeNative()) {
+            titles = ["DOJEZD E-BIKE", titles[0], titles[1]];
+            values = [RideData.assistRangeKm().format("%.0f"), values[0], values[1]];
+            units = [RideData.assistRangeUnit(), units[0], units[1]];
+            colors = ["ok", colors[0], colors[1]];
+        }
+        var width = (canvasWidth - 2 * margin) / titles.size();
 
         for (var i = 0; i < titles.size(); i += 1) {
             var cx = margin + width * (i + 0.5);
@@ -433,25 +443,31 @@ module RideCockpit {
     function drawStatus(dc, margin, canvasWidth, rows as Lang.Array) as Void {
         var y = rows[2];
         var labelY = rows[3];
-        var battery = RideData.assistBatteryPercent();
         var temperature = RideData.temperature();
-        var width = (canvasWidth - 2 * margin) / 4.0;
+        var ebike = !RideData.ebikeNative();
+        var width = (canvasWidth - 2 * margin) / (ebike ? 4.0 : 3.0);
+        var slot = margin;
 
         // Popisky dostanou dvě varianty: na čtvrtinu úzkého displeje se
         // "SESTOUPÁNO" nevejde ani nejmenším fontem, ale šipka nahoru a dolů
         // to řekne taky - proto je druhá varianta prázdná.
-        value(dc, [margin, y, labelY, width], battery.toString() + " %",
-            [RideData.assistBatteryLabel(), RideData.assistShortLabel()],
-            battery > 30 ? "ok" : "danger");
+        if (ebike) {
+            var battery = RideData.assistBatteryPercent();
+            value(dc, [slot, y, labelY, width], battery.toString() + " %",
+                [RideData.assistBatteryLabel(), RideData.assistShortLabel()],
+                battery > 30 ? "ok" : "danger");
+            slot += width;
+        }
+
         var climbLabels = RideChrome.fitPair(dc,
             [["NASTOUPÁNO", "SESTOUPÁNO"], ["STOUPÁNÍ", "KLESÁNÍ"]],
             RideLayout.x(width - 8), 10);
-        climb(dc, [margin + width, y, labelY, width], true, RideData.ascent(),
+        climb(dc, [slot, y, labelY, width], true, RideData.ascent(),
             [climbLabels[0]], "warn");
-        climb(dc, [margin + 2 * width, y, labelY, width], false, RideData.descent(),
+        climb(dc, [slot + width, y, labelY, width], false, RideData.descent(),
             [climbLabels[1]], "cold");
 
-        var weatherX = margin + 3 * width;
+        var weatherX = slot + 2 * width;
         RideChrome.drawWeatherIcon(dc, weatherX + 8, y - 2);
         value(dc, [weatherX + 20, y, labelY, width - 20],
             temperature == null ? "--" : temperature.toString() + " °C",
