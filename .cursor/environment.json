@@ -1,0 +1,17 @@
+{
+  "name": "qmail + Garmin dashboards",
+  "install": "bash .cursor/install.sh",
+  "terminals": [
+    {
+      "name": "qmail endpoint",
+      "command": "python3 garmin/tools/qmail_server.py --mail-dir examples --port 8720",
+      "description": "Serves the mailbox |psi|^2 state as JSON at http://localhost:8720/qmail.json (real qmail output over examples/), the endpoint the Garmin QMailDashboard and the preview renderer read from."
+    }
+  ],
+  "ports": [
+    {
+      "name": "qmail endpoint",
+      "port": 8720
+    }
+  ]
+}
