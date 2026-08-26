@@ -1,0 +1,39 @@
+{
+    "note": "Jediný zdroj pravdy pro vzhled dashboardu. Čte ho jak hodinková aplikace (Rez.JsonData.Theme), tak náhledový renderer garmin/tools/preview.py. Barvy jsou dekadicky, protože Monkey C pracuje s Graphics barvami jako s čísly.",
+    "colors": {
+        "background": 0,
+        "track": 2894894,
+        "text": 16777215,
+        "textDim": 9342611,
+        "ham": 51283,
+        "spam": 16757504,
+        "phishing": 16726832,
+        "accent": 689407
+    },
+    "colorsHex": {
+        "background": "#000000",
+        "track": "#2C2C2E",
+        "text": "#FFFFFF",
+        "textDim": "#8E8E93",
+        "ham": "#00C853",
+        "spam": "#FFB300",
+        "phishing": "#FF3B30",
+        "accent": "#0A84FF"
+    },
+    "ring": {
+        "radiusPct": 0.425,
+        "widthPct": 0.05,
+        "gapDeg": 5.0,
+        "startDeg": 90.0
+    },
+    "layout": {
+        "titlePct": 0.215,
+        "verdictPct": 0.395,
+        "confidencePct": 0.53,
+        "uncertaintyLabelPct": 0.655,
+        "uncertaintyBarPct": 0.705,
+        "uncertaintyBarWidthPct": 0.38,
+        "uncertaintyBarHeightPct": 0.016,
+        "footerPct": 0.775
+    }
+}

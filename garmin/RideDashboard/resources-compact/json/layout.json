@@ -1,0 +1,66 @@
+{
+    "note": "Kompaktní rozvržení pro malé, skoro čtvercové displeje - Edge 830/530/840/540 (246x322) a Edge MTB (240x320). Návrhové plátno je rovnou 246x322, takže se na těchhle jednotkách nic nepřepočítává. Proti návrhu z Edge 1050 jsou vynechané prvky, které se sem nevejdou čitelně: kompasová páska, pilulky s průměrem a maximem, přehledová stopa v rohu mapy. Čte to aplikace (Rez.JsonData.Layout) i náhled: garmin/tools/preview_ride.py --compact.",
+    "canvas": { "width": 246, "height": 322 },
+    "features": { "tape": false, "chips": false, "inset": false },
+    "colors": {
+        "background": 329482,
+        "panel": 988187,
+        "panelEdge": 1975856,
+        "text": 15922680,
+        "textDim": 9082019,
+        "accent": 2282478,
+        "ok": 4054167,
+        "warn": 16756768,
+        "danger": 16734815,
+        "cold": 6993919
+    },
+    "colorsHex": {
+        "background": "#05070A",
+        "panel": "#0F141B",
+        "panelEdge": "#1E2630",
+        "text": "#F2F5F8",
+        "textDim": "#8A94A3",
+        "accent": "#22D3EE",
+        "ok": "#3DDC97",
+        "warn": "#FFB020",
+        "danger": "#FF5A5F",
+        "cold": "#6AB7FF"
+    },
+    "clock": { "y": 1, "height": 22, "size": 18 },
+    "cadence": {
+        "cx": 123, "cy": 108, "radius": 76, "pen": 8,
+        "max": 200, "ticks": [0, 50, 100, 150, 200],
+        "labelY": 50, "unitY": 70, "labelSize": 18, "unitSize": 10
+    },
+    "speed": { "cy": 100, "unitY": 130, "size": 42, "decimalSize": 18, "unitSize": 11 },
+    "speedStats": { "y": 138, "height": 24, "gap": 5, "margin": 5 },
+    "divider": { "y": 166, "margin": 5 },
+    "middle": {
+        "top": 170, "bottom": 264,
+        "sideWidth": 64, "margin": 4, "gap": 4
+    },
+    "bottom": { "y": 268, "height": 50, "margin": 4, "gap": 4 },
+    "map": {
+        "trackPen": 3,
+        "routePen": 2,
+        "markerRadius": 5,
+        "padding": 8,
+        "focusInset": 2
+    },
+    "cockpit": {
+        "note": "Dva překryvy nad mapou. Horní drží jen kadenci, rychlost a hodiny; spodní tři hodnoty a stavový řádek. Na mapu tak zbude přes 40 % výšky displeje.",
+        "scrim": { "color": 329482, "alpha": 238, "fade": 20 },
+        "tape": { "y": 4, "height": 14, "spacing": 1.4 },
+        "top": { "height": 96 },
+        "speed": { "cx": 140, "cy": 46, "size": 54, "decimalSize": 22 },
+        "cadence": { "cx": 36, "cy": 48, "radius": 26, "pen": 5, "max": 200 },
+        "clock": { "x": 240, "y": 16, "statusY": 40 },
+        "chips": { "y": 74, "height": 20, "gap": 6, "margin": 30 },
+        "focus": { "top": 88, "bottom": 218 },
+        "inset": { "x": 8, "width": 80, "height": 62, "bottomGap": 8, "radius": 10 },
+        "bottom": { "y": 210, "height": 112, "margin": 8 },
+        "rowA": { "titleY": 234, "valueY": 262, "dividerTop": 226, "dividerHeight": 44 },
+        "rowB": { "y": 292, "labelY": 310 },
+        "battery": { "y": 318, "height": 3 }
+    }
+}

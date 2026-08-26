@@ -1,0 +1,290 @@
+using Toybox.Ant;
+using Toybox.Application;
+using Toybox.Lang;
+using Toybox.System;
+
+//! Elektrokolo přes ANT+ profil LEV (Light Electric Vehicle, device type 20).
+//!
+//! Edge sám dojezd i stav baterie kola zobrazuje, jenže Connect IQ na to nemá
+//! hotovou třídu jako na pulsy nebo výkon - v Toybox.AntPlus profil LEV chybí.
+//! Otevřeme si tedy vlastní generický kanál a bajty datových stránek
+//! dekódujeme ručně podle profilu. Kanál je jen poslouchající (RX_ONLY), takže
+//! kolu nic neposíláme a nemluvíme mu do toho, co si s ním řeší přístroj.
+//!
+//! Kolo musí LEV umět - Specialized, Fazua, Giant nebo Mahle ano, Bosch a
+//! Shimano po svém, tam zůstane odhad v RideData.
+class RideLev extends Ant.GenericChannel {
+
+    //: Device type 20 (0x14) na frekvenci 57 a periodě 8192 = 4 Hz.
+    const DEVICE_TYPE = 20;
+    const PERIOD = 8192;
+    const FREQUENCY = 57;
+
+    //: Po takhle dlouhém tichu považujeme hodnoty za neplatné.
+    const STALE_MS = 6000;
+
+    //: Výrobci ze společné stránky 80 (číselník je stejný jako v FIT). Stupně
+    //: asistence 0-7 mají u každého jiná jména a na displeji kola svítí ta,
+    //: ne čísla.
+    const MANUFACTURER_SPECIALIZED = 63;
+    const MANUFACTURER_GIANT = 108;
+    const MANUFACTURER_TQ = 141;
+    const MANUFACTURER_MAHLE = 299;
+    const MANUFACTURER_YAMAHA = 304;
+    const MANUFACTURER_FAZUA = 318;
+
+    var mAssign as Ant.ChannelAssignment or Null = null;
+    var mSearching as Lang.Boolean = true;
+    var mLastMessage as Lang.Number or Null = null;
+
+    var mSoc as Lang.Number or Null = null;
+    var mBatteryWarning as Lang.Boolean = false;
+    var mRangeKm as Lang.Float or Null = null;
+    var mConsumption as Lang.Float or Null = null;
+    var mChargeDistanceKm as Lang.Float or Null = null;
+    var mAssistLevel as Lang.Number or Null = null;
+    var mAssistPercent as Lang.Number or Null = null;
+    var mSpeedKmh as Lang.Float or Null = null;
+    var mManufacturer as Lang.Number or Null = null;
+    var mTotalAssistModes as Lang.Number or Null = null;
+
+    //! @param deviceNumber ANT+ ID kola, nula hledá první, které se ozve.
+    function initialize(deviceNumber as Lang.Number) {
+        mAssign = new Ant.ChannelAssignment(Ant.CHANNEL_TYPE_RX_ONLY, Ant.NETWORK_PLUS);
+        GenericChannel.initialize(method(:onMessage), mAssign);
+        GenericChannel.setDeviceConfig(new Ant.DeviceConfig({
+            :deviceNumber => deviceNumber,
+            :deviceType => DEVICE_TYPE,
+            :transmissionType => 0,
+            :messagePeriod => PERIOD,
+            :radioFrequency => FREQUENCY,
+            :searchTimeoutLowPriority => 12,
+            :searchThreshold => 0
+        }));
+    }
+
+    function open() as Lang.Boolean {
+        mSearching = true;
+        return GenericChannel.open();
+    }
+
+    function shutdown() as Void {
+        GenericChannel.close();
+        GenericChannel.release();
+    }
+
+    // --- příjem --------------------------------------------------------------
+
+    function onMessage(message as Ant.Message) as Void {
+        var payload = message.getPayload();
+
+        if (Ant.MSG_ID_BROADCAST_DATA == message.messageId) {
+            if (mSearching) {
+                mSearching = false;
+                rememberDeviceNumber();
+            }
+            mLastMessage = System.getTimer();
+            parse(payload);
+            return;
+        }
+
+        if (Ant.MSG_ID_CHANNEL_RESPONSE_EVENT == message.messageId &&
+            Ant.MSG_ID_RF_EVENT == (payload[0] & 0xFF)) {
+            var code = payload[1] & 0xFF;
+            if (Ant.MSG_CODE_EVENT_CHANNEL_CLOSED == code) {
+                // Vypršelo hledání nebo kolo usnulo; zkusíme to znovu.
+                open();
+            } else if (Ant.MSG_CODE_EVENT_RX_FAIL_GO_TO_SEARCH == code) {
+                mSearching = true;
+            }
+        }
+    }
+
+    //! Rozdělení bajtů podle profilu LEV. Stránky 1-3 chodí každou vteřinu,
+    //! stránka 4 a 5 jen občas nebo na vyžádání.
+    function parse(payload as Lang.Array<Lang.Number>) as Void {
+        var page = payload[0] & 0xFF;
+
+        if (page == 1) {
+            mAssistLevel = (payload[2] >> 3) & 0x07;
+            mSpeedKmh = speedFrom(payload);
+
+        } else if (page == 2) {
+            // Dojezd: 12 bitů po kilometru, nula znamená "kolo neví".
+            var range = (payload[4] & 0xFF) | ((payload[5] & 0x0F) << 8);
+            mRangeKm = range == 0 ? null : range.toFloat();
+            mSpeedKmh = speedFrom(payload);
+
+        } else if (page == 3) {
+            // Nejvyšší bit je varování o prázdné baterii, zbytek procenta.
+            var soc = payload[1] & 0x7F;
+            mSoc = soc > 100 ? null : soc;
+            mBatteryWarning = ((payload[1] >> 7) & 0x01) == 1;
+            mAssistLevel = (payload[2] >> 3) & 0x07;
+            var assist = payload[5] & 0xFF;
+            mAssistPercent = assist == 0xFF ? null : assist;
+            mSpeedKmh = speedFrom(payload);
+
+        } else if (page == 4) {
+            // Spotřeba má nižší bajt na čtyřce a horní půlbajt na trojce.
+            var consumption = (payload[4] & 0xFF) | (((payload[3] >> 4) & 0x0F) << 8);
+            mConsumption = consumption == 0 ? null : consumption / 10.0;
+            var charged = (payload[6] & 0xFF) | ((payload[7] & 0xFF) << 8);
+            mChargeDistanceKm = charged == 0 ? null : charged / 10.0;
+
+        } else if (page == 34) {
+            // Náhrada za stránku 2: místo dojezdu posílá spotřebu ve Wh/km.
+            var alternate = (payload[4] & 0xFF) | ((payload[5] & 0x0F) << 8);
+            mConsumption = alternate == 0 ? null : alternate / 10.0;
+            mSpeedKmh = speedFrom(payload);
+
+        } else if (page == 5) {
+            mTotalAssistModes = (payload[2] >> 3) & 0x07;
+
+        } else if (page == 80) {
+            // Společná stránka s výrobcem; podle něj pojmenujeme režimy.
+            mManufacturer = (payload[4] & 0xFF) | ((payload[5] & 0xFF) << 8);
+        }
+    }
+
+    //! Po spárování si ANT+ ID kola uložíme, aby se příště kanál nechytil
+    //! cizího kola, které jede kolem.
+    function rememberDeviceNumber() as Void {
+        if (!(Application has :Properties)) {
+            return;
+        }
+        var found = GenericChannel.getDeviceConfig().deviceNumber;
+        if (found == null || found == 0) {
+            return;
+        }
+        var stored = Application.Properties.getValue("levDeviceNumber");
+        if (stored instanceof Lang.Number && stored == found) {
+            return;
+        }
+        Application.Properties.setValue("levDeviceNumber", found);
+    }
+
+    //! Rychlost kola sedí na stejném místě ve stránkách 1, 2, 3 i 34.
+    function speedFrom(payload as Lang.Array<Lang.Number>) as Lang.Float {
+        return ((payload[6] & 0xFF) | ((payload[7] & 0x0F) << 8)) / 10.0;
+    }
+
+    // --- hodnoty pro dashboard ----------------------------------------------
+
+    //! Mluví s námi kolo? Po pár vteřinách ticha už hodnotám nevěříme.
+    function connected() as Lang.Boolean {
+        var last = mLastMessage;
+        if (last == null) {
+            return false;
+        }
+        var age = System.getTimer() - last;
+        // Čítač přeteče zhruba po 24 dnech; záporný rozdíl bereme jako čerstvý.
+        return age < 0 || age < STALE_MS;
+    }
+
+    function searching() as Lang.Boolean {
+        return mSearching;
+    }
+
+    //! Dojezd v kilometrech tak, jak ho spočítalo samo kolo.
+    function rangeKm() as Lang.Float or Null {
+        return connected() ? mRangeKm : null;
+    }
+
+    //! Stav baterie v procentech.
+    function batteryPercent() as Lang.Number or Null {
+        return connected() ? mSoc : null;
+    }
+
+    function batteryWarning() as Lang.Boolean {
+        return connected() && mBatteryWarning;
+    }
+
+    //! Okamžitá spotřeba ve watthodinách na kilometr.
+    function consumptionWhPerKm() as Lang.Float or Null {
+        return connected() ? mConsumption : null;
+    }
+
+    //! Kolik kilometrů kolo ujelo od posledního nabití.
+    function distanceOnChargeKm() as Lang.Float or Null {
+        return connected() ? mChargeDistanceKm : null;
+    }
+
+    //! Stupeň asistence 0-7; nula je vypnutá pomoc.
+    function assistLevel() as Lang.Number or Null {
+        return connected() ? mAssistLevel : null;
+    }
+
+    function assistPercent() as Lang.Number or Null {
+        return connected() ? mAssistPercent : null;
+    }
+
+    function speedKmh() as Lang.Float or Null {
+        return connected() ? mSpeedKmh : null;
+    }
+
+    function manufacturer() as Lang.Number or Null {
+        return connected() ? mManufacturer : null;
+    }
+
+    //! Jak se stupeň asistence jmenuje na displeji kola. Profil posílá jen
+    //! číslo 0-7, jména jsou věc výrobce. Když značku neznáme nebo si nejsme
+    //! jistí, který stupeň je který, vrátíme null a nahoře se ukáže číslo -
+    //! vymýšlet si jméno je horší než ho neukázat.
+    function assistModeName() as Lang.String or Null {
+        var level = assistLevel();
+        if (level == null) {
+            return null;
+        }
+        if (level == 0) {
+            return "VYPNUTO";
+        }
+
+        var known = expandedModeNames();
+        if (known != null) {
+            return level < known.size() ? known[level] : null;
+        }
+
+        // U ostatních značek známe jen pořadí režimů, ne jejich rozprostření
+        // po sedmi stupních profilu. Pojmenujeme je proto jen tehdy, když kolo
+        // hlásí přesně tolik stupňů, kolik jich značka má - pak je to jedna
+        // ku jedné a není co odhadovat.
+        var ordered = orderedModeNames();
+        if (ordered == null || mTotalAssistModes == null ||
+            mTotalAssistModes != ordered.size() || level > ordered.size()) {
+            return null;
+        }
+        return ordered[level - 1];
+    }
+
+    //! Značky, u kterých je ověřené i rozprostření jmen po stupních 0-7.
+    //! Kola s méně režimy stupně zdvojují, proto se jména opakují.
+    function expandedModeNames() as Lang.Array<Lang.String> or Null {
+        if (mManufacturer == MANUFACTURER_GIANT) {
+            return ["VYPNUTO", "ECO", "BASIC", "ACTIVE", "AUTO", "SPORT", "POWER", "POWER"];
+        }
+        if (mManufacturer == MANUFACTURER_SPECIALIZED || mManufacturer == MANUFACTURER_MAHLE) {
+            return ["VYPNUTO", "ECO", "ECO", "TRAIL", "TRAIL", "TURBO", "TURBO", "TURBO"];
+        }
+        if (mManufacturer == MANUFACTURER_YAMAHA) {
+            return ["VYPNUTO", "ECO+", "ECO", "STD", "HIGH", "HIGH", "EXPW", "EXPW"];
+        }
+        return null;
+    }
+
+    //! Značky, kde známe režimy v pořadí od nejslabšího.
+    function orderedModeNames() as Lang.Array<Lang.String> or Null {
+        if (mManufacturer == MANUFACTURER_FAZUA) {
+            return ["BREEZE", "RIVER", "ROCKET"];
+        }
+        if (mManufacturer == MANUFACTURER_TQ) {
+            return ["ECO", "MID", "HIGH"];
+        }
+        return null;
+    }
+
+    //! Kolik stupňů asistence kolo hlásí (stránka 5).
+    function totalAssistModes() as Lang.Number or Null {
+        return connected() ? mTotalAssistModes : null;
+    }
+}

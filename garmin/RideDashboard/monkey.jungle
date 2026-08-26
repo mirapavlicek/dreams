@@ -1,0 +1,33 @@
+project.manifest = manifest.xml
+
+base.sourcePath = source
+base.resourcePath = resources
+
+# Každá řada Edge chce launcher ikonu v jiné velikosti (compiler.json ->
+# launcherIcon). Přeškálovat jednu jde taky, ale výsledek je rozmazaný a
+# překladač na to při každém buildu upozorňuje.
+edge1050.resourcePath = $(edge1050.resourcePath);resources-icon68
+edge850.resourcePath = $(edge850.resourcePath);resources-icon56
+edge550.resourcePath = $(edge550.resourcePath);resources-icon56
+edge1040.resourcePath = $(edge1040.resourcePath);resources-icon40
+edge1030.resourcePath = $(edge1030.resourcePath);resources-icon36
+edge1030plus.resourcePath = $(edge1030plus.resourcePath);resources-icon36
+edge1030bontrager.resourcePath = $(edge1030bontrager.resourcePath);resources-icon36
+edgeexplore2.resourcePath = $(edgeexplore2.resourcePath);resources-icon36
+edgemtb.resourcePath = $(edgemtb.resourcePath);resources-icon36
+edge830.resourcePath = $(edge830.resourcePath);resources-icon35
+edge530.resourcePath = $(edge530.resourcePath);resources-icon35
+edge840.resourcePath = $(edge840.resourcePath);resources-icon35
+edge540.resourcePath = $(edge540.resourcePath);resources-icon35
+
+# Úzké displeje dostanou vlastní layout.json. Rozhoduje šířka, ne úhlopříčka:
+# nejmenší Garmin font je daný a pod něj se zmenšit nedá, takže na 240 pixelech
+# se prostě nevejde tolik textu jako na 480. U Edge 830/530/840/540 a MTB k tomu
+# přistupuje ještě skoro čtvercový poměr stran, který návrh z Edge 1050 svisle
+# mačká.
+edge830.resourcePath = $(edge830.resourcePath);resources-compact
+edge530.resourcePath = $(edge530.resourcePath);resources-compact
+edge840.resourcePath = $(edge840.resourcePath);resources-compact
+edge540.resourcePath = $(edge540.resourcePath);resources-compact
+edgemtb.resourcePath = $(edgemtb.resourcePath);resources-compact
+edgeexplore2.resourcePath = $(edgeexplore2.resourcePath);resources-compact
