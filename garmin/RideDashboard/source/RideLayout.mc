@@ -117,6 +117,12 @@ module RideLayout {
         return designY * mScaleY;
     }
 
+    //! Zpátky z pixelů displeje do návrhových - pro dopočty, které vycházejí
+    //! z výšky písma, ale musí skončit v souřadnicích rozvržení.
+    function fromY(pixels) {
+        return pixels / mScaleY;
+    }
+
     //! Pro poloměry a tloušťky, kde by nerovnoměrné měřítko rozbilo tvar.
     function s(designSize) {
         return designSize * mScale;

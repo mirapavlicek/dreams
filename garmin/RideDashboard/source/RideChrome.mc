@@ -106,6 +106,25 @@ module RideChrome {
         return [RideLayout.textFont(dc, size), ""];
     }
 
+    //! Dvojice popisek stejné délky pro sousední sloupce.
+    //!
+    //! Kdyby se vybíraly zvlášť, na určité šířce by u jedné šipky slovo zbylo
+    //! a u druhé ne - jedno je o písmeno kratší a zrovna se ještě vejde.
+    //! @param variants dvojice od nejdelší, třeba [["NASTOUPÁNO", "SESTOUPÁNO"],
+    //!        ["STOUPÁNÍ", "KLESÁNÍ"]]
+    function fitPair(dc, variants as Lang.Array, room, size) as Lang.Array {
+        for (var i = 0; i < variants.size(); i += 1) {
+            var pair = variants[i] as Lang.Array;
+            var first = RideLayout.fitFont(dc, pair[0], room, size);
+            var second = RideLayout.fitFont(dc, pair[1], room, size);
+            if (dc.getTextWidthInPixels(pair[0], first) <= room &&
+                dc.getTextWidthInPixels(pair[1], second) <= room) {
+                return pair;
+            }
+        }
+        return ["", ""];
+    }
+
     function number(dc, x, y, text, size, colorName) as Void {
         dc.setColor(RideLayout.color(colorName), Graphics.COLOR_TRANSPARENT);
         dc.drawText(RideLayout.x(x), RideLayout.y(y), RideLayout.numberFont(dc, size), text,
@@ -576,10 +595,12 @@ module RideChrome {
         var batteryColor = battery > 30 ? "ok" : "danger";
         var temperature = RideData.temperature();
 
+        var climbLabels = fitPair(dc, [["NASTOUPÁNO", "SESTOUPÁNO"], ["STOUPÁNÍ", "KLESÁNÍ"]],
+            RideLayout.x(width - 8), 11);
         var titles = [
             ["E-BIKE"],
-            ["NASTOUPÁNO", "STOUPÁNÍ"],
-            ["SESTOUPÁNO", "KLESÁNÍ"],
+            [climbLabels[0]],
+            [climbLabels[1]],
             [weatherLabel()]
         ];
         var values = [

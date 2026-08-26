@@ -20,11 +20,14 @@ edge530.resourcePath = $(edge530.resourcePath);resources-icon35
 edge840.resourcePath = $(edge840.resourcePath);resources-icon35
 edge540.resourcePath = $(edge540.resourcePath);resources-icon35
 
-# Malé a skoro čtvercové displeje (Edge 830/530/840/540 a MTB) mají na návrh
-# z Edge 1050 příliš jiný poměr stran - kompasová páska ani pilulky se na ně
-# nevejdou. Dostanou proto vlastní layout.json.
+# Úzké displeje dostanou vlastní layout.json. Rozhoduje šířka, ne úhlopříčka:
+# nejmenší Garmin font je daný a pod něj se zmenšit nedá, takže na 240 pixelech
+# se prostě nevejde tolik textu jako na 480. U Edge 830/530/840/540 a MTB k tomu
+# přistupuje ještě skoro čtvercový poměr stran, který návrh z Edge 1050 svisle
+# mačká.
 edge830.resourcePath = $(edge830.resourcePath);resources-compact
 edge530.resourcePath = $(edge530.resourcePath);resources-compact
 edge840.resourcePath = $(edge840.resourcePath);resources-compact
 edge540.resourcePath = $(edge540.resourcePath);resources-compact
 edgemtb.resourcePath = $(edgemtb.resourcePath);resources-compact
+edgeexplore2.resourcePath = $(edgeexplore2.resourcePath);resources-compact

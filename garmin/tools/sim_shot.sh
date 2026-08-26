@@ -18,6 +18,10 @@ export DISPLAY="${DISPLAY:-:1}"
 
 "$HERE/build.sh" "$DEVICE" "$PROJECT" >/dev/null
 
+# Simulátor si nastavení aplikace pamatuje mezi spuštěními, takže by snímek
+# ukazoval styl vybraný při minulém pokusu, ne výchozí z properties.xml.
+rm -rf /tmp/com.garmin.connectiq/GARMIN/APPS/SETTINGS
+
 # Simulátor drží jedno zařízení - po přepnutí je potřeba ho restartovat,
 # jinak by monkeydo nahrál build do cizího přístroje.
 pkill -f "$CIQ_SDK/bin/simulator" >/dev/null 2>&1 || true

@@ -328,17 +328,47 @@ module RideCockpit {
 
         var margin = RideLayout.at(spec, "margin");
         var canvasWidth = RideLayout.number("canvas", "width");
+        var rows = bottomRows(dc);
 
-        drawSummary(dc, margin, canvasWidth);
-        drawStatus(dc, margin, canvasWidth);
+        drawSummary(dc, margin, canvasWidth, rows);
+        drawStatus(dc, margin, canvasWidth, rows);
         drawBatteryStrip(dc, canvasWidth);
     }
 
+    //! Svislé rozvržení spodního překryvu jako [titulek, hodnota, stav, popiska].
+    //!
+    //! Počítá se odspodu od proužku baterie podle změřených výšek písma.
+    //! Návrhová čísla platí pro Edge 1050; na menším displeji je nejmenší font
+    //! poměrově o dost větší, takže by popisky ležely pod proužkem a řádky
+    //! přes sebe. Bere se proto vždy to vyšší z obojího.
+    function bottomRows(dc) as Lang.Array {
+        var rowA = RideLayout.group("cockpit", "rowA");
+        var rowB = RideLayout.group("cockpit", "rowB");
+        var strip = RideLayout.at(RideLayout.group("cockpit", "battery"), "y");
+        var gap = 3.0;
+
+        var labelHeight = RideLayout.fromY(dc.getFontHeight(RideLayout.textFont(dc, 10)));
+        var valueHeight = RideLayout.fromY(dc.getFontHeight(RideLayout.numberFont(dc, 17)));
+        var bigHeight = RideLayout.fromY(dc.getFontHeight(RideLayout.numberFont(dc, 32)));
+
+        var labelY = higher(RideLayout.at(rowB, "labelY"), strip - gap - labelHeight / 2);
+        var statusY = higher(RideLayout.at(rowB, "y"), labelY - (labelHeight + valueHeight) / 2);
+        var valueY = higher(RideLayout.at(rowA, "valueY"),
+            statusY - (valueHeight + bigHeight) / 2 - gap);
+        var titleY = higher(RideLayout.at(rowA, "titleY"), valueY - (bigHeight + labelHeight) / 2);
+
+        return [titleY, valueY, statusY, labelY];
+    }
+
+    function higher(designed, limit) {
+        return designed < limit ? designed : limit;
+    }
+
     //! Tři velké údaje oddělené vlásovými linkami.
-    function drawSummary(dc, margin, canvasWidth) as Void {
+    function drawSummary(dc, margin, canvasWidth, rows as Lang.Array) as Void {
         var spec = RideLayout.group("cockpit", "rowA");
-        var titleY = RideLayout.at(spec, "titleY");
-        var valueY = RideLayout.at(spec, "valueY");
+        var titleY = rows[0];
+        var valueY = rows[1];
         var dividerTop = RideLayout.at(spec, "dividerTop");
         var dividerHeight = RideLayout.at(spec, "dividerHeight");
         var width = (canvasWidth - 2 * margin) / 3.0;
@@ -400,10 +430,9 @@ module RideCockpit {
     //! Řádek se stavem: baterie e-biku, převýšení a počasí. Sloupce se dělí
     //! rovným dílem přes celou šířku, popisky se do svého dílu vejdou zmenšením
     //! fontu - dřív měly pevné souřadnice a "SESTOUPÁNO" leželo přes počasí.
-    function drawStatus(dc, margin, canvasWidth) as Void {
-        var spec = RideLayout.group("cockpit", "rowB");
-        var y = RideLayout.at(spec, "y");
-        var labelY = RideLayout.at(spec, "labelY");
+    function drawStatus(dc, margin, canvasWidth, rows as Lang.Array) as Void {
+        var y = rows[2];
+        var labelY = rows[3];
         var battery = RideData.assistBatteryPercent();
         var temperature = RideData.temperature();
         var width = (canvasWidth - 2 * margin) / 4.0;
@@ -414,10 +443,13 @@ module RideCockpit {
         value(dc, [margin, y, labelY, width], battery.toString() + " %",
             [RideData.assistBatteryLabel(), RideData.assistShortLabel()],
             battery > 30 ? "ok" : "danger");
+        var climbLabels = RideChrome.fitPair(dc,
+            [["NASTOUPÁNO", "SESTOUPÁNO"], ["STOUPÁNÍ", "KLESÁNÍ"]],
+            RideLayout.x(width - 8), 10);
         climb(dc, [margin + width, y, labelY, width], true, RideData.ascent(),
-            ["NASTOUPÁNO", "STOUPÁNÍ"], "warn");
+            [climbLabels[0]], "warn");
         climb(dc, [margin + 2 * width, y, labelY, width], false, RideData.descent(),
-            ["SESTOUPÁNO", "KLESÁNÍ"], "cold");
+            [climbLabels[1]], "cold");
 
         var weatherX = margin + 3 * width;
         RideChrome.drawWeatherIcon(dc, weatherX + 8, y - 2);
