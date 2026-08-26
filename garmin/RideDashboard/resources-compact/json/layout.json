@@ -26,20 +26,20 @@
         "danger": "#FF5A5F",
         "cold": "#6AB7FF"
     },
-    "clock": { "y": 2, "height": 26 },
+    "clock": { "y": 1, "height": 22, "size": 18 },
     "cadence": {
-        "cx": 123, "cy": 132, "radius": 96, "pen": 10,
+        "cx": 123, "cy": 108, "radius": 76, "pen": 8,
         "max": 200, "ticks": [0, 50, 100, 150, 200],
-        "labelY": 60, "unitY": 80
+        "labelY": 50, "unitY": 70, "labelSize": 18, "unitSize": 10
     },
-    "speed": { "cy": 112, "unitY": 146 },
-    "speedStats": { "y": 160, "height": 30, "gap": 6, "margin": 6 },
-    "divider": { "y": 196 },
+    "speed": { "cy": 100, "unitY": 130, "size": 42, "decimalSize": 18, "unitSize": 11 },
+    "speedStats": { "y": 138, "height": 24, "gap": 5, "margin": 5 },
+    "divider": { "y": 166, "margin": 5 },
     "middle": {
-        "top": 200, "bottom": 274,
-        "sideWidth": 62, "margin": 4, "gap": 4
+        "top": 170, "bottom": 264,
+        "sideWidth": 64, "margin": 4, "gap": 4
     },
-    "bottom": { "y": 278, "height": 40, "margin": 4, "gap": 4 },
+    "bottom": { "y": 268, "height": 50, "margin": 4, "gap": 4 },
     "map": {
         "trackPen": 3,
         "routePen": 2,

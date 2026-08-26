@@ -25,7 +25,9 @@ module RideChrome {
         var dividerY = RideLayout.y(RideLayout.number("divider", "y"));
         dc.setColor(RideLayout.color("panelEdge"), Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(1);
-        dc.drawLine(RideLayout.x(8), dividerY, RideLayout.x(472), dividerY);
+        var margin = RideLayout.number("divider", "margin");
+        dc.drawLine(RideLayout.x(margin), dividerY,
+            RideLayout.x(RideLayout.number("canvas", "width") - margin), dividerY);
 
         drawMiddle(dc, mapBehind);
         drawBottom(dc);
@@ -131,7 +133,8 @@ module RideChrome {
     function drawClock(dc) as Void {
         var centerY = RideLayout.number("clock", "y") + RideLayout.number("clock", "height") / 2.0;
 
-        number(dc, 240, centerY, RideData.clockString(), 30, "text");
+        number(dc, RideLayout.centerX(), centerY, RideData.clockString(),
+            RideLayout.number("clock", "size"), "text");
 
         dc.setColor(RideData.hasFix() ? RideLayout.color("ok") : RideLayout.color("textDim"),
             Graphics.COLOR_TRANSPARENT);
@@ -200,8 +203,10 @@ module RideChrome {
         label(dc, RideLayout.number("cadence", "cx") - edge, edgeY, "0", 13, "textDim");
         label(dc, RideLayout.number("cadence", "cx") + edge, edgeY, maximum.format("%d"), 13, "textDim");
 
-        number(dc, 240, RideLayout.number("cadence", "labelY"), cadence.toString(), 32, cadenceColor(cadence));
-        label(dc, 240, RideLayout.number("cadence", "unitY"), "KADENCE rpm", 13, "textDim");
+        number(dc, RideLayout.centerX(), RideLayout.number("cadence", "labelY"), cadence.toString(),
+            RideLayout.number("cadence", "labelSize"), cadenceColor(cadence));
+        label(dc, RideLayout.centerX(), RideLayout.number("cadence", "unitY"), "KADENCE rpm",
+            RideLayout.number("cadence", "unitSize"), "textDim");
     }
 
     // --- tachometr ----------------------------------------------------------
@@ -215,22 +220,27 @@ module RideChrome {
         }
 
         var centerY = RideLayout.y(RideLayout.number("speed", "cy"));
-        var bigFont = RideLayout.numberFont(dc, 106);
-        var smallFont = RideLayout.numberFont(dc, 46);
+        var bigFont = RideLayout.numberFont(dc, RideLayout.number("speed", "size"));
+        var smallFont = RideLayout.numberFont(dc, RideLayout.number("speed", "decimalSize"));
         var wholeText = whole.toString();
         var decimalText = "." + decimal.toString();
 
         var wholeWidth = dc.getTextWidthInPixels(wholeText, bigFont);
         var decimalWidth = dc.getTextWidthInPixels(decimalText, smallFont);
-        var left = RideLayout.x(240) - (wholeWidth + decimalWidth) / 2;
+        var left = RideLayout.x(RideLayout.centerX()) - (wholeWidth + decimalWidth) / 2;
+
+        // Desetinné místo sedí na stejné lince jako celá čísla - o kolik níž,
+        // to plyne z rozdílu výšek písma, ne z pevného odsazení.
+        var drop = (dc.getFontHeight(bigFont) - dc.getFontHeight(smallFont)) / 2;
 
         dc.setColor(RideLayout.color("text"), Graphics.COLOR_TRANSPARENT);
         dc.drawText(left, centerY, bigFont, wholeText,
             Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
-        dc.drawText(left + wholeWidth, centerY + RideLayout.y(22), smallFont, decimalText,
+        dc.drawText(left + wholeWidth, centerY + drop, smallFont, decimalText,
             Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
 
-        label(dc, 240, RideLayout.number("speed", "unitY"), "km/h", 20, "textDim");
+        label(dc, RideLayout.centerX(), RideLayout.number("speed", "unitY"), "km/h",
+            RideLayout.number("speed", "unitSize"), "textDim");
     }
 
     function drawSpeedStats(dc) as Void {
@@ -241,26 +251,42 @@ module RideChrome {
         var canvasWidth = RideLayout.number("canvas", "width");
         var width = (canvasWidth - 2 * margin - gap) / 2.0;
 
-        var labels = ["PRŮMĚR", "MAXIMUM"];
+        var labels = [["PRŮMĚR", "PRŮM"], ["MAXIMUM", "MAX"]];
         var values = [RideData.averageSpeed(), RideData.maxSpeed()];
         var colors = ["accent", "warn"];
 
+        var unitFont = RideLayout.textFont(dc, 11);
+        var unitWidth = dc.getTextWidthInPixels("km/h", unitFont);
+        var padding = RideLayout.x(12);
+
+        // Obsah panelu se skládá zprava - jednotka, před ni hodnota a popiska
+        // dostane, co zbude. Pevné odsazení jednotku i hodnotu překrývalo.
         for (var i = 0; i < labels.size(); i += 1) {
             var x = margin + i * (width + gap);
-            var centerY = y + height / 2.0;
+            var centerY = RideLayout.y(y + height / 2.0);
+            var right = RideLayout.x(x + width) - padding;
             panel(dc, x, y, width, height, 10);
 
             dc.setColor(RideLayout.color("textDim"), Graphics.COLOR_TRANSPARENT);
-            dc.drawText(RideLayout.x(x + 12), RideLayout.y(centerY), RideLayout.textFont(dc, 13), labels[i],
-                Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
+            dc.drawText(right, centerY + RideLayout.y(2), unitFont, "km/h",
+                Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
 
+            var value = values[i].format("%.1f");
+            var valueFont = RideLayout.numberFont(dc, 28);
+            var valueRight = right - unitWidth - RideLayout.x(4);
             dc.setColor(RideLayout.color(colors[i]), Graphics.COLOR_TRANSPARENT);
-            dc.drawText(RideLayout.x(x + width - 42), RideLayout.y(centerY), RideLayout.numberFont(dc, 28),
-                values[i].format("%.1f"), Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
+            dc.drawText(valueRight, centerY, valueFont, value,
+                Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
 
+            var left = RideLayout.x(x) + padding;
+            var room = valueRight - dc.getTextWidthInPixels(value, valueFont) - left - RideLayout.x(6);
+            if (room <= 0) {
+                continue;
+            }
+            var label = fitText(dc, labels[i] as Lang.Array, room, 13);
             dc.setColor(RideLayout.color("textDim"), Graphics.COLOR_TRANSPARENT);
-            dc.drawText(RideLayout.x(x + width - 12), RideLayout.y(centerY + 2), RideLayout.textFont(dc, 11),
-                "km/h", Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
+            dc.drawText(left, centerY, label[0], label[1],
+                Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
         }
     }
 
@@ -282,17 +308,18 @@ module RideChrome {
         drawCompass(dc, margin, top, side, cellHeight);
 
         drawMetric(dc, margin, top + cellHeight + gap, side, cellHeight,
-            ["DOJEZD E-BIKE", RideData.assistRangeKm().format("%.0f"), "km", RideData.assistNote()],
+            [["DOJEZD E-BIKE", "DOJEZD", "E-BIKE"], RideData.assistRangeKm().format("%.0f"), "km",
+                RideData.assistNote()],
             "ok", RideData.assistBatteryPercent() / 100.0);
 
         var remaining = RideData.distanceToDestinationKm();
         drawMetric(dc, rightX, top, side, cellHeight,
-            ["DO CÍLE", remaining == null ? "--" : remaining.format("%.1f"), "km",
+            [["DO CÍLE"], remaining == null ? "--" : remaining.format("%.1f"), "km",
                 "příjezd " + RideData.etaString()],
             "accent", null);
 
         drawMetric(dc, rightX, top + cellHeight + gap, side, cellHeight,
-            ["NAJETO", RideData.distanceKm().format("%.1f"), "km", null], "text", null);
+            [["NAJETO"], RideData.distanceKm().format("%.1f"), "km", null], "text", null);
 
         if (mapBehind) {
             drawMapFrame(dc, mapX, top, mapWidth, bottom - top);
@@ -301,42 +328,118 @@ module RideChrome {
         }
     }
 
-    //! @param texts [titulek, hodnota, jednotka, poznámka]; poznámka smí být null.
-    //!        Sbalené do pole schválně: starší jednotky (Edge 830 a spol.) víc
-    //!        než devět argumentů metodě nepředají.
+    //! @param texts [varianty titulku, hodnota, jednotka, poznámka]; poznámka
+    //!        smí být null. Sbalené do pole schválně: starší jednotky (Edge 830
+    //!        a spol.) víc než devět argumentů metodě nepředají.
+    //! Buňka s jednou metrikou: titulek, hodnota, jednotka, proužek a poznámka.
+    //!
+    //! Řádky se skládají pod sebe podle změřených výšek písma a celý sloupeček
+    //! se vystředí v buňce; co se nevejde, se odspodu vynechá. Pevné odsazení
+    //! od okraje fungovalo jen pro vysoké buňky z Edge 1050 - na kompaktním
+    //! rozvržení, kde je buňka třetinová, by řádky ležely přes sebe.
     function drawMetric(dc, x, y, width, height, texts as Lang.Array, colorName, ratio) as Void {
-        var note = texts[3];
-
         panel(dc, x, y, width, height, 10);
-        label(dc, x + width / 2.0, y + 16, texts[0], 12, "textDim");
-        number(dc, x + width / 2.0, y + height / 2.0 - 4, texts[1], 34, colorName);
-        label(dc, x + width / 2.0, y + height / 2.0 + 26, texts[2], 13, "textDim");
+
+        var cx = RideLayout.x(x + width / 2.0);
+        var room = RideLayout.x(width - 8);
+        var gap = RideLayout.y(4);
+
+        var title = fitText(dc, texts[0] as Lang.Array, room, 12);
+        var valueFont = RideLayout.fitNumberFont(dc, texts[1], room, 34);
+        var unitFont = RideLayout.fitFont(dc, texts[2], room, 13);
+        var rows = [
+            [title[0], title[1], "textDim"],
+            [valueFont, texts[1], colorName],
+            [unitFont, texts[2], "textDim"]
+        ];
         if (ratio != null) {
-            bar(dc, x + 16, y + height - 30, width - 32, 6, ratio, colorName);
+            rows.add([null, null, colorName]);
         }
-        if (note != null) {
-            label(dc, x + width / 2.0, y + height - 14, note, 12, "textDim");
+        if (texts[3] != null) {
+            rows.add([RideLayout.fitFont(dc, texts[3], room, 12), texts[3], "textDim"]);
         }
+
+        var barHeight = RideLayout.y(6);
+        var total = 0.0;
+        var heights = [];
+        for (var i = 0; i < rows.size(); i += 1) {
+            var row = rows[i] as Lang.Array;
+            var rowHeight = row[0] == null ? barHeight : dc.getFontHeight(row[0]);
+            heights.add(rowHeight);
+            total += rowHeight + (i > 0 ? gap : 0);
+        }
+
+        // Odspodu ubíráme, dokud se sloupeček do buňky nevejde - poznámka je
+        // postradatelnější než hodnota.
+        var boxHeight = RideLayout.y(height) - RideLayout.y(8);
+        while (rows.size() > 2 && total > boxHeight) {
+            total -= (heights[heights.size() - 1] as Lang.Float) + gap;
+            rows = rows.slice(0, rows.size() - 1);
+            heights = heights.slice(0, heights.size() - 1);
+        }
+
+        var cursor = RideLayout.y(y + height / 2.0) - total / 2;
+        for (var i = 0; i < rows.size(); i += 1) {
+            var row = rows[i] as Lang.Array;
+            var rowHeight = heights[i] as Lang.Float;
+            if (row[0] == null) {
+                dc.setColor(RideLayout.color("panelEdge"), Graphics.COLOR_TRANSPARENT);
+                dc.fillRectangle(RideLayout.x(x + 16), cursor, RideLayout.x(width - 32), rowHeight);
+                dc.setColor(RideLayout.color(row[2]), Graphics.COLOR_TRANSPARENT);
+                dc.fillRectangle(RideLayout.x(x + 16), cursor,
+                    RideLayout.x((width - 32) * clamp(ratio)), rowHeight);
+            } else {
+                dc.setColor(RideLayout.color(row[2]), Graphics.COLOR_TRANSPARENT);
+                dc.drawText(cx, cursor + rowHeight / 2, row[0], row[1],
+                    Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+            }
+            cursor += rowHeight + gap;
+        }
+    }
+
+    function clamp(ratio) {
+        if (ratio < 0.0) {
+            return 0.0;
+        }
+        return ratio > 1.0 ? 1.0 : ratio;
     }
 
     function drawCompass(dc, x, y, width, height) as Void {
         panel(dc, x, y, width, height, 10);
-        label(dc, x + width / 2.0, y + 16, "KOMPAS", 12, "textDim");
+
+        // Na nízké buňce (kompaktní rozvržení) by titulek ležel přes růžici.
+        // Slovo KOMPAS je postradatelné - směr říká šipka i údaj pod ní.
+        var labelHeight = dc.getFontHeight(RideLayout.textFont(dc, 12));
+        var top = RideLayout.y(y);
+        var titled = RideLayout.y(height) > labelHeight * 5;
+        if (titled) {
+            labelIn(dc, x + width / 2.0, y + 16, width - 8, "KOMPAS", 12, "textDim");
+            top += RideLayout.y(26);
+        } else {
+            top += labelHeight / 3;
+        }
 
         var heading = RideData.heading();
         var cx = RideLayout.x(x + width / 2.0);
-        var cy = RideLayout.y(y + height / 2.0 + 4);
+        var bottom = RideLayout.y(y + height) - labelHeight * 1.4;
+        var cy = (top + bottom) / 2;
+        var span = (bottom - top) / 2;
         var radius = RideLayout.s(width / 2.0 - 14);
+        if (radius > span) {
+            radius = span;
+        }
 
         dc.setPenWidth(2);
         dc.setColor(RideLayout.color("panelEdge"), Graphics.COLOR_TRANSPARENT);
         dc.drawCircle(cx, cy, radius);
 
-        // Nahoře je vždy směr jízdy, růžice se otáčí pod ním.
+        // Nahoře je vždy směr jízdy, růžice se otáčí pod ním. Vnitřní poloměry
+        // jsou podílem toho vnějšího - odečítat pevný počet pixelů šlo jen
+        // u velké růžice, na malé buňce by vyšly záporné.
         var names = ["S", "V", "J", "Z"];
         for (var i = 0; i < names.size(); i += 1) {
             var bearing = (i * 90 - heading) * Math.PI / 180.0;
-            var ringRadius = radius - RideLayout.s(13);
+            var ringRadius = radius * 0.78;
             dc.setColor(i == 0 ? RideLayout.color("text") : RideLayout.color("textDim"),
                 Graphics.COLOR_TRANSPARENT);
             dc.drawText(cx + ringRadius * Math.sin(bearing), cy - ringRadius * Math.cos(bearing),
@@ -344,7 +447,7 @@ module RideChrome {
                 Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
         }
 
-        var needle = radius - RideLayout.s(28);
+        var needle = radius * 0.55;
         dc.setColor(RideLayout.color("accent"), Graphics.COLOR_TRANSPARENT);
         dc.fillPolygon([
             [cx, cy - needle],
@@ -355,7 +458,7 @@ module RideChrome {
 
         var cardinals = ["S", "SV", "V", "JV", "J", "JZ", "Z", "SZ"];
         var index = (((heading + 22.5).toNumber() % 360) / 45).toNumber();
-        label(dc, x + width / 2.0, y + height - 16,
+        labelIn(dc, x + width / 2.0, y + height - 16, width - 8,
             heading.format("%d") + "° " + cardinals[index], 15, "text");
     }
 
@@ -365,12 +468,16 @@ module RideChrome {
     //! proužek s nápovědou, protože kolem okna už místo není.
     function drawMapFrame(dc, x, y, width, height) as Void {
         var strip = 18;
+        var hint = fitText(dc, ["MAPA · výběr = přes celou obrazovku", "MAPA · výběr", "MAPA"],
+            RideLayout.x(width - 6), 11);
 
         dc.setColor(RideLayout.color("panel"), Graphics.COLOR_TRANSPARENT);
         dc.fillRectangle(RideLayout.x(x + 1), RideLayout.y(y + height - strip),
             RideLayout.x(width - 2), RideLayout.y(strip - 1));
-        label(dc, x + width / 2.0, y + height - strip / 2.0, "MAPA · výběr = přes celou obrazovku",
-            11, "textDim");
+
+        dc.setColor(RideLayout.color("textDim"), Graphics.COLOR_TRANSPARENT);
+        dc.drawText(RideLayout.x(x + width / 2.0), RideLayout.y(y + height - strip / 2.0),
+            hint[0], hint[1], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
 
         dc.setColor(RideLayout.color("panelEdge"), Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(2);
@@ -469,7 +576,12 @@ module RideChrome {
         var batteryColor = battery > 30 ? "ok" : "danger";
         var temperature = RideData.temperature();
 
-        var titles = ["E-BIKE", "NASTOUPÁNO", "SESTOUPÁNO", weatherLabel()];
+        var titles = [
+            ["E-BIKE"],
+            ["NASTOUPÁNO", "STOUPÁNÍ"],
+            ["SESTOUPÁNO", "KLESÁNÍ"],
+            [weatherLabel()]
+        ];
         var values = [
             battery.toString() + "%",
             RideData.ascent().toString() + " m",
@@ -478,14 +590,45 @@ module RideChrome {
         ];
         var colors = [batteryColor, "warn", "cold", "text"];
 
+        // Titulek a hodnota se staví od středu buňky podle změřených výšek;
+        // u baterie se pod ně vejde ještě proužek. Pevné odsazení od horní
+        // hrany fungovalo jen pro vysokou buňku z Edge 1050.
+        var barHeight = RideLayout.y(4);
+        var rowGap = RideLayout.y(3);
+
         for (var i = 0; i < titles.size(); i += 1) {
             var x = margin + i * (width + gap);
+            var cx = RideLayout.x(x + width / 2.0);
+            var room = RideLayout.x(width - 8);
             panel(dc, x, y, width, height, 10);
-            label(dc, x + width / 2.0, y + 15, titles[i], 11, "textDim");
-            label(dc, x + width / 2.0, y + 34, values[i], 21, colors[i]);
+
+            var title = fitText(dc, titles[i] as Lang.Array, room, 11);
+            var valueFont = RideLayout.fitFont(dc, values[i], room, 21);
+            var titleHeight = dc.getFontHeight(title[0]);
+            var valueHeight = dc.getFontHeight(valueFont);
+            var withBar = i == 0;
+            var total = titleHeight + rowGap + valueHeight + (withBar ? rowGap + barHeight : 0);
+            var cursor = RideLayout.y(y + height / 2.0) - total / 2;
+
+            dc.setColor(RideLayout.color("textDim"), Graphics.COLOR_TRANSPARENT);
+            dc.drawText(cx, cursor + titleHeight / 2, title[0], title[1],
+                Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+            cursor += titleHeight + rowGap;
+
+            dc.setColor(RideLayout.color(colors[i]), Graphics.COLOR_TRANSPARENT);
+            dc.drawText(cx, cursor + valueHeight / 2, valueFont, values[i],
+                Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+            cursor += valueHeight + rowGap;
+
+            if (withBar) {
+                dc.setColor(RideLayout.color("panelEdge"), Graphics.COLOR_TRANSPARENT);
+                dc.fillRectangle(RideLayout.x(x + 12), cursor, RideLayout.x(width - 24), barHeight);
+                dc.setColor(RideLayout.color(batteryColor), Graphics.COLOR_TRANSPARENT);
+                dc.fillRectangle(RideLayout.x(x + 12), cursor,
+                    RideLayout.x((width - 24) * clamp(battery / 100.0)), barHeight);
+            }
         }
 
-        bar(dc, margin + 12, y + height - 9, width - 24, 4, battery / 100.0, batteryColor);
         drawWeatherIcon(dc, margin + 3 * (width + gap) + 14, y + height / 2.0 + 2);
     }
 

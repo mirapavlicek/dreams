@@ -157,6 +157,7 @@ module RideCockpit {
         var centerY = RideLayout.at(tape, "y") + RideLayout.at(tape, "height") / 2.0;
         var spacing = RideLayout.at(tape, "spacing");
         var heading = RideData.heading();
+        var center = RideLayout.centerX();
         var first = ((heading - 70) / 10).toNumber() * 10;
 
         for (var step = first; step <= heading + 70; step += 10) {
@@ -164,7 +165,7 @@ module RideCockpit {
             if (bearing < 0) {
                 bearing += 360;
             }
-            var x = 240 + (step - heading) * spacing;
+            var x = center + (step - heading) * spacing;
 
             if (bearing % 45 == 0) {
                 RideChrome.label(dc, x, centerY, CARDINALS[bearing / 45], 13, "text");
@@ -180,9 +181,9 @@ module RideCockpit {
 
         dc.setColor(RideLayout.color("accent"), Graphics.COLOR_TRANSPARENT);
         dc.fillPolygon([
-            [RideLayout.x(240), RideLayout.y(centerY + 11)],
-            [RideLayout.x(235), RideLayout.y(centerY + 17)],
-            [RideLayout.x(245), RideLayout.y(centerY + 17)]
+            [RideLayout.x(center), RideLayout.y(centerY + 11)],
+            [RideLayout.x(center - 5), RideLayout.y(centerY + 17)],
+            [RideLayout.x(center + 5), RideLayout.y(centerY + 17)]
         ]);
     }
 
@@ -222,17 +223,23 @@ module RideCockpit {
         var decimalWidth = dc.getTextWidthInPixels(decimalText, smallFont);
         var left = RideLayout.x(RideLayout.at(spec, "cx")) - (wholeWidth + decimalWidth) / 2;
 
+        // Desetinné místo i jednotka sedí na stejné lince jako celá čísla -
+        // o kolik níž, to plyne z rozdílu výšek písma, ne z pevného odsazení.
+        var unitFont = RideLayout.textFont(dc, 12);
+        var bigHeight = dc.getFontHeight(bigFont);
+        var drop = (bigHeight - dc.getFontHeight(smallFont)) / 2;
+
         dc.setColor(RideLayout.color("text"), Graphics.COLOR_TRANSPARENT);
         dc.drawText(left, centerY, bigFont, wholeText,
             Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
 
         dc.setColor(RideLayout.color("accent"), Graphics.COLOR_TRANSPARENT);
-        dc.drawText(left + wholeWidth, centerY + RideLayout.y(18), smallFont, decimalText,
+        dc.drawText(left + wholeWidth, centerY + drop, smallFont, decimalText,
             Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
 
         dc.setColor(RideLayout.color("textDim"), Graphics.COLOR_TRANSPARENT);
-        dc.drawText(left + wholeWidth + decimalWidth + RideLayout.x(8), centerY + RideLayout.y(22),
-            RideLayout.textFont(dc, 12), "km/h",
+        dc.drawText(left + wholeWidth + decimalWidth + RideLayout.x(8),
+            centerY + (bigHeight - dc.getFontHeight(unitFont)) / 2, unitFont, "km/h",
             Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
     }
 
@@ -281,7 +288,7 @@ module RideCockpit {
         var valueFont = RideLayout.numberFont(dc, 19);
         var unitWidth = dc.getTextWidthInPixels("km/h", unitFont);
 
-        var titles = ["PRŮMĚR", "MAX"];
+        var titles = [["PRŮMĚR", "PRŮM"], ["MAX"]];
         var values = [RideData.averageSpeed(), RideData.maxSpeed()];
         var colors = ["accent", "warn"];
 
@@ -306,8 +313,9 @@ module RideCockpit {
             if (room <= 0) {
                 continue;
             }
+            var title = RideChrome.fitText(dc, titles[i] as Lang.Array, room, 10);
             dc.setColor(RideLayout.color("textDim"), Graphics.COLOR_TRANSPARENT);
-            dc.drawText(left, centerY, RideLayout.fitFont(dc, titles[i], room, 10), titles[i],
+            dc.drawText(left, centerY, title[0], title[1],
                 Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
         }
     }

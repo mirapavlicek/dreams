@@ -545,268 +545,286 @@ _workspace_garmin_RideDashboard_source_RideLayout_mc_95_44_103_4_start:
         ret %tmp.47;
 _workspace_garmin_RideDashboard_source_RideLayout_mc_95_44_103_4_stop:
     }
-    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 105; @symbol_functiondef = [x,105,13,14]; @symbol_param<0> = [designX,105,15,22]; ]
+    //! Vodorovný střed návrhového plátna. Kreslení ho potřebuje pořád a pevná
+    //! 240 platila jen pro plátno z Edge 1050 - na kompaktním rozvržení
+    //! (246x322) by všechno na střed odsunula k pravému okraji.
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 108; @symbol_functiondef = [centerX,108,13,20]; ]
+    function centerX() {
+_workspace_garmin_RideDashboard_source_RideLayout_mc_108_23_110_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 109 8 ]
+        %tmp.1 = self;
+        symbol [ number %tmp.2 109 15 21 ];
+        %tmp.2 = getv function %tmp.1 :number;
+        %tmp.3 = "canvas";
+        %tmp.4 = "width";
+        %tmp.5 = invoke %tmp.1 %tmp.2(%tmp.3, %tmp.4);
+        %tmp.6 = 2.0;
+        %tmp.7 = div %tmp.5 %tmp.6;
+        ret %tmp.7;
+_workspace_garmin_RideDashboard_source_RideLayout_mc_108_23_110_4_stop:
+    }
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 112; @symbol_functiondef = [x,112,13,14]; @symbol_param<0> = [designX,112,15,22]; ]
     function x(designX) {
-_workspace_garmin_RideDashboard_source_RideLayout_mc_105_24_107_4_start:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 106 8 ]
+_workspace_garmin_RideDashboard_source_RideLayout_mc_112_24_114_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 113 8 ]
         %tmp.1 = lgetv %designX;
-        symbol [ designX %tmp.1 106 15 22 ];
-        symbol [ mScaleX %tmp.3 106 25 32 ];
+        symbol [ designX %tmp.1 113 15 22 ];
+        symbol [ mScaleX %tmp.3 113 25 32 ];
         %tmp.3 = getv ? :mScaleX;
         %tmp.4 = mul %tmp.1 %tmp.3;
         ret %tmp.4;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_105_24_107_4_stop:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_112_24_114_4_stop:
     }
-    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 109; @symbol_functiondef = [y,109,13,14]; @symbol_param<0> = [designY,109,15,22]; ]
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 116; @symbol_functiondef = [y,116,13,14]; @symbol_param<0> = [designY,116,15,22]; ]
     function y(designY) {
-_workspace_garmin_RideDashboard_source_RideLayout_mc_109_24_111_4_start:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 110 8 ]
+_workspace_garmin_RideDashboard_source_RideLayout_mc_116_24_118_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 117 8 ]
         %tmp.1 = lgetv %designY;
-        symbol [ designY %tmp.1 110 15 22 ];
-        symbol [ mScaleY %tmp.3 110 25 32 ];
+        symbol [ designY %tmp.1 117 15 22 ];
+        symbol [ mScaleY %tmp.3 117 25 32 ];
         %tmp.3 = getv ? :mScaleY;
         %tmp.4 = mul %tmp.1 %tmp.3;
         ret %tmp.4;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_109_24_111_4_stop:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_116_24_118_4_stop:
     }
     //! Pro poloměry a tloušťky, kde by nerovnoměrné měřítko rozbilo tvar.
-    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 114; @symbol_functiondef = [s,114,13,14]; @symbol_param<0> = [designSize,114,15,25]; ]
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 121; @symbol_functiondef = [s,121,13,14]; @symbol_param<0> = [designSize,121,15,25]; ]
     function s(designSize) {
-_workspace_garmin_RideDashboard_source_RideLayout_mc_114_27_116_4_start:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 115 8 ]
+_workspace_garmin_RideDashboard_source_RideLayout_mc_121_27_123_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 122 8 ]
         %tmp.1 = lgetv %designSize;
-        symbol [ designSize %tmp.1 115 15 25 ];
-        symbol [ mScale %tmp.3 115 28 34 ];
+        symbol [ designSize %tmp.1 122 15 25 ];
+        symbol [ mScale %tmp.3 122 28 34 ];
         %tmp.3 = getv ? :mScale;
         %tmp.4 = mul %tmp.1 %tmp.3;
         ret %tmp.4;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_114_27_116_4_stop:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_121_27_123_4_stop:
     }
-    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 120; @position = 8; @symbol_vardef = [mTextFonts,120,8,18]; ]
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 127; @position = 8; @symbol_vardef = [mTextFonts,127,8,18]; ]
     var mTextFonts = null;
-    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 121; @position = 8; @symbol_vardef = [mNumberFonts,121,8,20]; ]
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 128; @position = 8; @symbol_vardef = [mNumberFonts,128,8,20]; ]
     var mNumberFonts = null;
-    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 123; @symbol_functiondef = [textFonts,123,13,22]; @symbol_return<0> = [Lang,123,28,32]; @symbol_return<1> = [Array,123,33,38]; ]
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 130; @symbol_functiondef = [textFonts,130,13,22]; @symbol_return<0> = [Lang,130,28,32]; @symbol_return<1> = [Array,130,33,38]; ]
     function textFonts() as Lang.Array {
-_workspace_garmin_RideDashboard_source_RideLayout_mc_123_39_134_4_start:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 124 8 ]
-_workspace_garmin_RideDashboard_source_RideLayout_mc_124_8_132_8_if_stmt:
-        symbol [ mTextFonts %tmp.2 124 12 22 ];
+_workspace_garmin_RideDashboard_source_RideLayout_mc_130_39_141_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 131 8 ]
+_workspace_garmin_RideDashboard_source_RideLayout_mc_131_8_139_8_if_stmt:
+        symbol [ mTextFonts %tmp.2 131 12 22 ];
         %tmp.2 = getv ? :mTextFonts;
         %tmp.3 = null;
         %tmp.4 = eq %tmp.2 %tmp.3;
-        bf %tmp.4 @_workspace_garmin_RideDashboard_source_RideLayout_mc_124_8_132_8_if_end;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_124_8_132_8_if_true:
-_workspace_garmin_RideDashboard_source_RideLayout_mc_124_32_132_8_start:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 125 12 ]
+        bf %tmp.4 @_workspace_garmin_RideDashboard_source_RideLayout_mc_131_8_139_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLayout_mc_131_8_139_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_131_32_139_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 132 12 ]
         %tmp.5 = newa 5;
-        symbol [ Graphics %tmp.6 126 16 24 ];
+        symbol [ Graphics %tmp.6 133 16 24 ];
         %tmp.6 = getm $.Toybox.Graphics;
-        symbol [ FONT_XTINY %tmp.7 126 25 35 ];
+        symbol [ FONT_XTINY %tmp.7 133 25 35 ];
         %tmp.7 = getv %tmp.6 :FONT_XTINY;
         %tmp.8 = dup %tmp.5;
         %tmp.9 = aputv %tmp.8 0 %tmp.7;
-        symbol [ Graphics %tmp.10 127 16 24 ];
+        symbol [ Graphics %tmp.10 134 16 24 ];
         %tmp.10 = getm $.Toybox.Graphics;
-        symbol [ FONT_TINY %tmp.11 127 25 34 ];
+        symbol [ FONT_TINY %tmp.11 134 25 34 ];
         %tmp.11 = getv %tmp.10 :FONT_TINY;
         %tmp.12 = dup %tmp.9;
         %tmp.13 = aputv %tmp.12 1 %tmp.11;
-        symbol [ Graphics %tmp.14 128 16 24 ];
+        symbol [ Graphics %tmp.14 135 16 24 ];
         %tmp.14 = getm $.Toybox.Graphics;
-        symbol [ FONT_SMALL %tmp.15 128 25 35 ];
+        symbol [ FONT_SMALL %tmp.15 135 25 35 ];
         %tmp.15 = getv %tmp.14 :FONT_SMALL;
         %tmp.16 = dup %tmp.13;
         %tmp.17 = aputv %tmp.16 2 %tmp.15;
-        symbol [ Graphics %tmp.18 129 16 24 ];
+        symbol [ Graphics %tmp.18 136 16 24 ];
         %tmp.18 = getm $.Toybox.Graphics;
-        symbol [ FONT_MEDIUM %tmp.19 129 25 36 ];
+        symbol [ FONT_MEDIUM %tmp.19 136 25 36 ];
         %tmp.19 = getv %tmp.18 :FONT_MEDIUM;
         %tmp.20 = dup %tmp.17;
         %tmp.21 = aputv %tmp.20 3 %tmp.19;
-        symbol [ Graphics %tmp.22 130 16 24 ];
+        symbol [ Graphics %tmp.22 137 16 24 ];
         %tmp.22 = getm $.Toybox.Graphics;
-        symbol [ FONT_LARGE %tmp.23 130 25 35 ];
+        symbol [ FONT_LARGE %tmp.23 137 25 35 ];
         %tmp.23 = getv %tmp.22 :FONT_LARGE;
         %tmp.24 = dup %tmp.21;
         %tmp.25 = aputv %tmp.24 4 %tmp.23;
-        symbol [ mTextFonts ? 125 12 22 ];
+        symbol [ mTextFonts ? 132 12 22 ];
         putv self :mTextFonts %tmp.25;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_124_32_132_8_stop:
-        goto @_workspace_garmin_RideDashboard_source_RideLayout_mc_124_8_132_8_if_end;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_124_8_132_8_if_end:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 133 8 ]
-        symbol [ mTextFonts %tmp.27 133 15 25 ];
+_workspace_garmin_RideDashboard_source_RideLayout_mc_131_32_139_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLayout_mc_131_8_139_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLayout_mc_131_8_139_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 140 8 ]
+        symbol [ mTextFonts %tmp.27 140 15 25 ];
         %tmp.27 = getv ? :mTextFonts;
         %tmp.28 = as %tmp.27 Lang.Array;
-        symbol [ Lang %tmp.28 133 29 33 ];
-        symbol [ Array %tmp.28 133 34 39 ];
+        symbol [ Lang %tmp.28 140 29 33 ];
+        symbol [ Array %tmp.28 140 34 39 ];
         ret %tmp.28;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_123_39_134_4_stop:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_130_39_141_4_stop:
     }
     //! Číslicové fonty jsou vyšší a užší - pro tachometr a hodnoty v buňkách.
-    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 137; @symbol_functiondef = [numberFonts,137,13,24]; @symbol_return<0> = [Lang,137,30,34]; @symbol_return<1> = [Array,137,35,40]; ]
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 144; @symbol_functiondef = [numberFonts,144,13,24]; @symbol_return<0> = [Lang,144,30,34]; @symbol_return<1> = [Array,144,35,40]; ]
     function numberFonts() as Lang.Array {
-_workspace_garmin_RideDashboard_source_RideLayout_mc_137_41_149_4_start:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 138 8 ]
-_workspace_garmin_RideDashboard_source_RideLayout_mc_138_8_147_8_if_stmt:
-        symbol [ mNumberFonts %tmp.2 138 12 24 ];
+_workspace_garmin_RideDashboard_source_RideLayout_mc_144_41_156_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 145 8 ]
+_workspace_garmin_RideDashboard_source_RideLayout_mc_145_8_154_8_if_stmt:
+        symbol [ mNumberFonts %tmp.2 145 12 24 ];
         %tmp.2 = getv ? :mNumberFonts;
         %tmp.3 = null;
         %tmp.4 = eq %tmp.2 %tmp.3;
-        bf %tmp.4 @_workspace_garmin_RideDashboard_source_RideLayout_mc_138_8_147_8_if_end;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_138_8_147_8_if_true:
-_workspace_garmin_RideDashboard_source_RideLayout_mc_138_34_147_8_start:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 139 12 ]
+        bf %tmp.4 @_workspace_garmin_RideDashboard_source_RideLayout_mc_145_8_154_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLayout_mc_145_8_154_8_if_true:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_145_34_154_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 146 12 ]
         %tmp.5 = newa 6;
-        symbol [ Graphics %tmp.6 140 16 24 ];
+        symbol [ Graphics %tmp.6 147 16 24 ];
         %tmp.6 = getm $.Toybox.Graphics;
-        symbol [ FONT_XTINY %tmp.7 140 25 35 ];
+        symbol [ FONT_XTINY %tmp.7 147 25 35 ];
         %tmp.7 = getv %tmp.6 :FONT_XTINY;
         %tmp.8 = dup %tmp.5;
         %tmp.9 = aputv %tmp.8 0 %tmp.7;
-        symbol [ Graphics %tmp.10 141 16 24 ];
+        symbol [ Graphics %tmp.10 148 16 24 ];
         %tmp.10 = getm $.Toybox.Graphics;
-        symbol [ FONT_TINY %tmp.11 141 25 34 ];
+        symbol [ FONT_TINY %tmp.11 148 25 34 ];
         %tmp.11 = getv %tmp.10 :FONT_TINY;
         %tmp.12 = dup %tmp.9;
         %tmp.13 = aputv %tmp.12 1 %tmp.11;
-        symbol [ Graphics %tmp.14 142 16 24 ];
+        symbol [ Graphics %tmp.14 149 16 24 ];
         %tmp.14 = getm $.Toybox.Graphics;
-        symbol [ FONT_NUMBER_MILD %tmp.15 142 25 41 ];
+        symbol [ FONT_NUMBER_MILD %tmp.15 149 25 41 ];
         %tmp.15 = getv %tmp.14 :FONT_NUMBER_MILD;
         %tmp.16 = dup %tmp.13;
         %tmp.17 = aputv %tmp.16 2 %tmp.15;
-        symbol [ Graphics %tmp.18 143 16 24 ];
+        symbol [ Graphics %tmp.18 150 16 24 ];
         %tmp.18 = getm $.Toybox.Graphics;
-        symbol [ FONT_NUMBER_MEDIUM %tmp.19 143 25 43 ];
+        symbol [ FONT_NUMBER_MEDIUM %tmp.19 150 25 43 ];
         %tmp.19 = getv %tmp.18 :FONT_NUMBER_MEDIUM;
         %tmp.20 = dup %tmp.17;
         %tmp.21 = aputv %tmp.20 3 %tmp.19;
-        symbol [ Graphics %tmp.22 144 16 24 ];
+        symbol [ Graphics %tmp.22 151 16 24 ];
         %tmp.22 = getm $.Toybox.Graphics;
-        symbol [ FONT_NUMBER_HOT %tmp.23 144 25 40 ];
+        symbol [ FONT_NUMBER_HOT %tmp.23 151 25 40 ];
         %tmp.23 = getv %tmp.22 :FONT_NUMBER_HOT;
         %tmp.24 = dup %tmp.21;
         %tmp.25 = aputv %tmp.24 4 %tmp.23;
-        symbol [ Graphics %tmp.26 145 16 24 ];
+        symbol [ Graphics %tmp.26 152 16 24 ];
         %tmp.26 = getm $.Toybox.Graphics;
-        symbol [ FONT_NUMBER_THAI_HOT %tmp.27 145 25 45 ];
+        symbol [ FONT_NUMBER_THAI_HOT %tmp.27 152 25 45 ];
         %tmp.27 = getv %tmp.26 :FONT_NUMBER_THAI_HOT;
         %tmp.28 = dup %tmp.25;
         %tmp.29 = aputv %tmp.28 5 %tmp.27;
-        symbol [ mNumberFonts ? 139 12 24 ];
+        symbol [ mNumberFonts ? 146 12 24 ];
         putv self :mNumberFonts %tmp.29;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_138_34_147_8_stop:
-        goto @_workspace_garmin_RideDashboard_source_RideLayout_mc_138_8_147_8_if_end;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_138_8_147_8_if_end:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 148 8 ]
-        symbol [ mNumberFonts %tmp.31 148 15 27 ];
+_workspace_garmin_RideDashboard_source_RideLayout_mc_145_34_154_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLayout_mc_145_8_154_8_if_end;
+_workspace_garmin_RideDashboard_source_RideLayout_mc_145_8_154_8_if_end:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 155 8 ]
+        symbol [ mNumberFonts %tmp.31 155 15 27 ];
         %tmp.31 = getv ? :mNumberFonts;
         %tmp.32 = as %tmp.31 Lang.Array;
-        symbol [ Lang %tmp.32 148 31 35 ];
-        symbol [ Array %tmp.32 148 36 41 ];
+        symbol [ Lang %tmp.32 155 31 35 ];
+        symbol [ Array %tmp.32 155 36 41 ];
         ret %tmp.32;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_137_41_149_4_stop:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_144_41_156_4_stop:
     }
-    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 151; @symbol_functiondef = [pick,151,13,17]; @symbol_param<0> = [dc,151,18,20]; @symbol_param<1> = [candidates,151,22,32]; @symbol_param<1>_type<0> = [Lang,151,36,40]; @symbol_param<1>_type<1> = [Array,151,41,46]; @symbol_param<2> = [designSize,151,48,58]; ]
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 158; @symbol_functiondef = [pick,158,13,17]; @symbol_param<0> = [dc,158,18,20]; @symbol_param<1> = [candidates,158,22,32]; @symbol_param<1>_type<0> = [Lang,158,36,40]; @symbol_param<1>_type<1> = [Array,158,41,46]; @symbol_param<2> = [designSize,158,48,58]; ]
     function pick(dc, candidates as Lang.Array, designSize) {
-_workspace_garmin_RideDashboard_source_RideLayout_mc_151_60_161_4_start:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 152 8 ]
-        [ "_workspace_garmin_RideDashboard_source_RideLayout_mc_151_60_161_4_start" "_workspace_garmin_RideDashboard_source_RideLayout_mc_151_60_161_4_stop" ]
+_workspace_garmin_RideDashboard_source_RideLayout_mc_158_60_168_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 159 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLayout_mc_158_60_168_4_start" "_workspace_garmin_RideDashboard_source_RideLayout_mc_158_60_168_4_stop" ]
         %target.1 = local;
-        symbol [ target %target.1 152 12 18 ];
+        symbol [ target %target.1 159 12 18 ];
         %tmp.1 = lgetv %designSize;
-        symbol [ designSize %tmp.1 152 21 31 ];
-        symbol [ mScale %tmp.3 152 34 40 ];
+        symbol [ designSize %tmp.1 159 21 31 ];
+        symbol [ mScale %tmp.3 159 34 40 ];
         %tmp.3 = getv ? :mScale;
         %tmp.4 = mul %tmp.1 %tmp.3;
-        symbol [ FONT_HEIGHT_RATIO %tmp.6 152 43 60 ];
+        symbol [ FONT_HEIGHT_RATIO %tmp.6 159 43 60 ];
         %tmp.6 = getv ? :FONT_HEIGHT_RATIO;
         %tmp.7 = mul %tmp.4 %tmp.6;
         lputv %target.1 %tmp.7;
-        symbol [ target %target.1 152 12 18 ];
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 153 8 ]
-        [ "_workspace_garmin_RideDashboard_source_RideLayout_mc_151_60_161_4_start" "_workspace_garmin_RideDashboard_source_RideLayout_mc_151_60_161_4_stop" ]
+        symbol [ target %target.1 159 12 18 ];
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 160 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLayout_mc_158_60_168_4_start" "_workspace_garmin_RideDashboard_source_RideLayout_mc_158_60_168_4_stop" ]
         %best.2 = local;
-        symbol [ best %best.2 153 12 16 ];
+        symbol [ best %best.2 160 12 16 ];
         %tmp.8 = lgetv %candidates;
-        symbol [ candidates %tmp.8 153 19 29 ];
+        symbol [ candidates %tmp.8 160 19 29 ];
         %tmp.9 = 0;
         %tmp.10 = agetv %tmp.8 %tmp.9;
         lputv %best.2 %tmp.10;
-        symbol [ best %best.2 153 12 16 ];
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 154 8 ]
-        for @_workspace_garmin_RideDashboard_source_RideLayout_mc_154_8_159_8_for_test @_workspace_garmin_RideDashboard_source_RideLayout_mc_154_8_159_8_for_incr @_workspace_garmin_RideDashboard_source_RideLayout_mc_154_8_159_8_for_end;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_154_8_159_8_for_init:
-        [ "_workspace_garmin_RideDashboard_source_RideLayout_mc_154_8_159_8_for_begin" "_workspace_garmin_RideDashboard_source_RideLayout_mc_154_8_159_8_for_end" ]
+        symbol [ best %best.2 160 12 16 ];
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 161 8 ]
+        for @_workspace_garmin_RideDashboard_source_RideLayout_mc_161_8_166_8_for_test @_workspace_garmin_RideDashboard_source_RideLayout_mc_161_8_166_8_for_incr @_workspace_garmin_RideDashboard_source_RideLayout_mc_161_8_166_8_for_end;
+_workspace_garmin_RideDashboard_source_RideLayout_mc_161_8_166_8_for_init:
+        [ "_workspace_garmin_RideDashboard_source_RideLayout_mc_161_8_166_8_for_begin" "_workspace_garmin_RideDashboard_source_RideLayout_mc_161_8_166_8_for_end" ]
         %i.3 = local;
-        symbol [ i %i.3 154 17 18 ];
+        symbol [ i %i.3 161 17 18 ];
         %tmp.11 = 0;
         lputv %i.3 %tmp.11;
-        symbol [ i %i.3 154 17 18 ];
-_workspace_garmin_RideDashboard_source_RideLayout_mc_154_8_159_8_for_test:
+        symbol [ i %i.3 161 17 18 ];
+_workspace_garmin_RideDashboard_source_RideLayout_mc_161_8_166_8_for_test:
         %tmp.12 = lgetv %i.3;
-        symbol [ i %tmp.12 154 24 25 ];
+        symbol [ i %tmp.12 161 24 25 ];
         %tmp.13 = lgetv %candidates;
-        symbol [ candidates %tmp.13 154 28 38 ];
-        symbol [ size %tmp.14 154 39 43 ];
+        symbol [ candidates %tmp.13 161 28 38 ];
+        symbol [ size %tmp.14 161 39 43 ];
         %tmp.14 = getv function %tmp.13 :size;
         %tmp.15 = invoke %tmp.13 %tmp.14();
         %tmp.16 = lt %tmp.12 %tmp.15;
-        bf %tmp.16 @_workspace_garmin_RideDashboard_source_RideLayout_mc_154_8_159_8_for_end;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_154_8_159_8_for_begin:
-_workspace_garmin_RideDashboard_source_RideLayout_mc_154_55_159_8_start:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 155 12 ]
-        [ "_workspace_garmin_RideDashboard_source_RideLayout_mc_154_55_159_8_start" "_workspace_garmin_RideDashboard_source_RideLayout_mc_154_55_159_8_stop" ]
+        bf %tmp.16 @_workspace_garmin_RideDashboard_source_RideLayout_mc_161_8_166_8_for_end;
+_workspace_garmin_RideDashboard_source_RideLayout_mc_161_8_166_8_for_begin:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_161_55_166_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 162 12 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLayout_mc_161_55_166_8_start" "_workspace_garmin_RideDashboard_source_RideLayout_mc_161_55_166_8_stop" ]
         %candidate.4 = local;
-        symbol [ candidate %candidate.4 155 16 25 ];
+        symbol [ candidate %candidate.4 162 16 25 ];
         %tmp.17 = lgetv %candidates;
-        symbol [ candidates %tmp.17 155 28 38 ];
+        symbol [ candidates %tmp.17 162 28 38 ];
         %tmp.18 = lgetv %i.3;
-        symbol [ i %tmp.18 155 39 40 ];
+        symbol [ i %tmp.18 162 39 40 ];
         %tmp.19 = agetv %tmp.17 %tmp.18;
         lputv %candidate.4 %tmp.19;
-        symbol [ candidate %candidate.4 155 16 25 ];
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 156 12 ]
-_workspace_garmin_RideDashboard_source_RideLayout_mc_156_12_158_12_if_stmt:
+        symbol [ candidate %candidate.4 162 16 25 ];
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 163 12 ]
+_workspace_garmin_RideDashboard_source_RideLayout_mc_163_12_165_12_if_stmt:
         %tmp.20 = lgetv %dc;
-        symbol [ dc %tmp.20 156 16 18 ];
-        symbol [ getFontHeight %tmp.21 156 19 32 ];
+        symbol [ dc %tmp.20 163 16 18 ];
+        symbol [ getFontHeight %tmp.21 163 19 32 ];
         %tmp.21 = getv function %tmp.20 :getFontHeight;
         %tmp.22 = lgetv %candidate.4;
-        symbol [ candidate %tmp.22 156 33 42 ];
+        symbol [ candidate %tmp.22 163 33 42 ];
         %tmp.23 = invoke %tmp.20 %tmp.21(%tmp.22);
         %tmp.24 = lgetv %target.1;
-        symbol [ target %tmp.24 156 47 53 ];
+        symbol [ target %tmp.24 163 47 53 ];
         %tmp.25 = lte %tmp.23 %tmp.24;
-        bf %tmp.25 @_workspace_garmin_RideDashboard_source_RideLayout_mc_156_12_158_12_if_end;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_156_12_158_12_if_true:
-_workspace_garmin_RideDashboard_source_RideLayout_mc_156_55_158_12_start:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 157 16 ]
+        bf %tmp.25 @_workspace_garmin_RideDashboard_source_RideLayout_mc_163_12_165_12_if_end;
+_workspace_garmin_RideDashboard_source_RideLayout_mc_163_12_165_12_if_true:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_163_55_165_12_start:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 164 16 ]
         %tmp.26 = lgetv %candidate.4;
-        symbol [ candidate %tmp.26 157 23 32 ];
+        symbol [ candidate %tmp.26 164 23 32 ];
         lputv %best.2 %tmp.26;
-        symbol [ best %best.2 157 16 20 ];
-_workspace_garmin_RideDashboard_source_RideLayout_mc_156_55_158_12_stop:
-        goto @_workspace_garmin_RideDashboard_source_RideLayout_mc_156_12_158_12_if_end;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_156_12_158_12_if_end:
-_workspace_garmin_RideDashboard_source_RideLayout_mc_154_55_159_8_stop:
-_workspace_garmin_RideDashboard_source_RideLayout_mc_154_8_159_8_for_incr:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 154 ]
+        symbol [ best %best.2 164 16 20 ];
+_workspace_garmin_RideDashboard_source_RideLayout_mc_163_55_165_12_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLayout_mc_163_12_165_12_if_end;
+_workspace_garmin_RideDashboard_source_RideLayout_mc_163_12_165_12_if_end:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_161_55_166_8_stop:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_161_8_166_8_for_incr:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 161 ]
         %tmp.27 = lgetv %i.3;
-        symbol [ i %tmp.27 154 47 48 ];
+        symbol [ i %tmp.27 161 47 48 ];
         %tmp.28 = 1;
         %tmp.29 = add %tmp.27 %tmp.28;
         lputv %i.3 %tmp.29;
-        symbol [ i %i.3 154 47 48 ];
-        goto @_workspace_garmin_RideDashboard_source_RideLayout_mc_154_8_159_8_for_test;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_154_8_159_8_for_end:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 160 8 ]
+        symbol [ i %i.3 161 47 48 ];
+        goto @_workspace_garmin_RideDashboard_source_RideLayout_mc_161_8_166_8_for_test;
+_workspace_garmin_RideDashboard_source_RideLayout_mc_161_8_166_8_for_end:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 167 8 ]
         %tmp.30 = lgetv %best.2;
-        symbol [ best %tmp.30 160 15 19 ];
+        symbol [ best %tmp.30 167 15 19 ];
         ret %tmp.30;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_151_60_161_4_stop:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_158_60_168_4_stop:
     }
     //! Největší z `candidates`, do kterého se text vejde na `maxWidth` pixelů.
     //!
@@ -814,219 +832,219 @@ _workspace_garmin_RideDashboard_source_RideLayout_mc_151_60_161_4_stop:
     //! je na Edge 1050 vysoký 21 pixelů - textFont() proto vrací něco výrazně
     //! většího, než si rozvržení představuje, a sousední údaje se překrývají.
     //! Pod XTINY se ale zmenšit nedá; tam už si musí pomoct samo rozvržení.
-    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 169; @symbol_functiondef = [shrink,169,13,19]; @symbol_param<0> = [dc,169,20,22]; @symbol_param<1> = [candidates,169,24,34]; @symbol_param<1>_type<0> = [Lang,169,38,42]; @symbol_param<1>_type<1> = [Array,169,43,48]; @symbol_param<2> = [font,169,50,54]; @symbol_param<3> = [text,169,56,60]; @symbol_param<4> = [maxWidth,169,62,70]; ]
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 176; @symbol_functiondef = [shrink,176,13,19]; @symbol_param<0> = [dc,176,20,22]; @symbol_param<1> = [candidates,176,24,34]; @symbol_param<1>_type<0> = [Lang,176,38,42]; @symbol_param<1>_type<1> = [Array,176,43,48]; @symbol_param<2> = [font,176,50,54]; @symbol_param<3> = [text,176,56,60]; @symbol_param<4> = [maxWidth,176,62,70]; ]
     function shrink(dc, candidates as Lang.Array, font, text, maxWidth) {
-_workspace_garmin_RideDashboard_source_RideLayout_mc_169_72_181_4_start:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 170 8 ]
-        [ "_workspace_garmin_RideDashboard_source_RideLayout_mc_169_72_181_4_start" "_workspace_garmin_RideDashboard_source_RideLayout_mc_169_72_181_4_stop" ]
+_workspace_garmin_RideDashboard_source_RideLayout_mc_176_72_188_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 177 8 ]
+        [ "_workspace_garmin_RideDashboard_source_RideLayout_mc_176_72_188_4_start" "_workspace_garmin_RideDashboard_source_RideLayout_mc_176_72_188_4_stop" ]
         %index.1 = local;
-        symbol [ index %index.1 170 12 17 ];
+        symbol [ index %index.1 177 12 17 ];
         %tmp.1 = 0;
         lputv %index.1 %tmp.1;
-        symbol [ index %index.1 170 12 17 ];
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 171 8 ]
-        for @_workspace_garmin_RideDashboard_source_RideLayout_mc_171_8_175_8_for_test @_workspace_garmin_RideDashboard_source_RideLayout_mc_171_8_175_8_for_incr @_workspace_garmin_RideDashboard_source_RideLayout_mc_171_8_175_8_for_end;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_171_8_175_8_for_init:
-        [ "_workspace_garmin_RideDashboard_source_RideLayout_mc_171_8_175_8_for_begin" "_workspace_garmin_RideDashboard_source_RideLayout_mc_171_8_175_8_for_end" ]
+        symbol [ index %index.1 177 12 17 ];
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 178 8 ]
+        for @_workspace_garmin_RideDashboard_source_RideLayout_mc_178_8_182_8_for_test @_workspace_garmin_RideDashboard_source_RideLayout_mc_178_8_182_8_for_incr @_workspace_garmin_RideDashboard_source_RideLayout_mc_178_8_182_8_for_end;
+_workspace_garmin_RideDashboard_source_RideLayout_mc_178_8_182_8_for_init:
+        [ "_workspace_garmin_RideDashboard_source_RideLayout_mc_178_8_182_8_for_begin" "_workspace_garmin_RideDashboard_source_RideLayout_mc_178_8_182_8_for_end" ]
         %i.2 = local;
-        symbol [ i %i.2 171 17 18 ];
+        symbol [ i %i.2 178 17 18 ];
         %tmp.2 = 0;
         lputv %i.2 %tmp.2;
-        symbol [ i %i.2 171 17 18 ];
-_workspace_garmin_RideDashboard_source_RideLayout_mc_171_8_175_8_for_test:
+        symbol [ i %i.2 178 17 18 ];
+_workspace_garmin_RideDashboard_source_RideLayout_mc_178_8_182_8_for_test:
         %tmp.3 = lgetv %i.2;
-        symbol [ i %tmp.3 171 24 25 ];
+        symbol [ i %tmp.3 178 24 25 ];
         %tmp.4 = lgetv %candidates;
-        symbol [ candidates %tmp.4 171 28 38 ];
-        symbol [ size %tmp.5 171 39 43 ];
+        symbol [ candidates %tmp.4 178 28 38 ];
+        symbol [ size %tmp.5 178 39 43 ];
         %tmp.5 = getv function %tmp.4 :size;
         %tmp.6 = invoke %tmp.4 %tmp.5();
         %tmp.7 = lt %tmp.3 %tmp.6;
-        bf %tmp.7 @_workspace_garmin_RideDashboard_source_RideLayout_mc_171_8_175_8_for_end;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_171_8_175_8_for_begin:
-_workspace_garmin_RideDashboard_source_RideLayout_mc_171_55_175_8_start:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 172 12 ]
-_workspace_garmin_RideDashboard_source_RideLayout_mc_172_12_174_12_if_stmt:
+        bf %tmp.7 @_workspace_garmin_RideDashboard_source_RideLayout_mc_178_8_182_8_for_end;
+_workspace_garmin_RideDashboard_source_RideLayout_mc_178_8_182_8_for_begin:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_178_55_182_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 179 12 ]
+_workspace_garmin_RideDashboard_source_RideLayout_mc_179_12_181_12_if_stmt:
         %tmp.8 = lgetv %candidates;
-        symbol [ candidates %tmp.8 172 16 26 ];
+        symbol [ candidates %tmp.8 179 16 26 ];
         %tmp.9 = lgetv %i.2;
-        symbol [ i %tmp.9 172 27 28 ];
+        symbol [ i %tmp.9 179 27 28 ];
         %tmp.10 = agetv %tmp.8 %tmp.9;
         %tmp.11 = lgetv %font;
-        symbol [ font %tmp.11 172 33 37 ];
+        symbol [ font %tmp.11 179 33 37 ];
         %tmp.12 = eq %tmp.10 %tmp.11;
-        bf %tmp.12 @_workspace_garmin_RideDashboard_source_RideLayout_mc_172_12_174_12_if_end;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_172_12_174_12_if_true:
-_workspace_garmin_RideDashboard_source_RideLayout_mc_172_39_174_12_start:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 173 16 ]
+        bf %tmp.12 @_workspace_garmin_RideDashboard_source_RideLayout_mc_179_12_181_12_if_end;
+_workspace_garmin_RideDashboard_source_RideLayout_mc_179_12_181_12_if_true:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_179_39_181_12_start:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 180 16 ]
         %tmp.13 = lgetv %i.2;
-        symbol [ i %tmp.13 173 24 25 ];
+        symbol [ i %tmp.13 180 24 25 ];
         lputv %index.1 %tmp.13;
-        symbol [ index %index.1 173 16 21 ];
-_workspace_garmin_RideDashboard_source_RideLayout_mc_172_39_174_12_stop:
-        goto @_workspace_garmin_RideDashboard_source_RideLayout_mc_172_12_174_12_if_end;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_172_12_174_12_if_end:
-_workspace_garmin_RideDashboard_source_RideLayout_mc_171_55_175_8_stop:
-_workspace_garmin_RideDashboard_source_RideLayout_mc_171_8_175_8_for_incr:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 171 ]
+        symbol [ index %index.1 180 16 21 ];
+_workspace_garmin_RideDashboard_source_RideLayout_mc_179_39_181_12_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLayout_mc_179_12_181_12_if_end;
+_workspace_garmin_RideDashboard_source_RideLayout_mc_179_12_181_12_if_end:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_178_55_182_8_stop:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_178_8_182_8_for_incr:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 178 ]
         %tmp.14 = lgetv %i.2;
-        symbol [ i %tmp.14 171 47 48 ];
+        symbol [ i %tmp.14 178 47 48 ];
         %tmp.15 = 1;
         %tmp.16 = add %tmp.14 %tmp.15;
         lputv %i.2 %tmp.16;
-        symbol [ i %i.2 171 47 48 ];
-        goto @_workspace_garmin_RideDashboard_source_RideLayout_mc_171_8_175_8_for_test;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_171_8_175_8_for_end:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 176 8 ]
-        while @_workspace_garmin_RideDashboard_source_RideLayout_mc_176_8_179_8_while_test @_workspace_garmin_RideDashboard_source_RideLayout_mc_176_8_179_8_while_end;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_176_8_179_8_while_test:
-_workspace_garmin_RideDashboard_source_RideLayout_mc_176_15_176_66_begin:
+        symbol [ i %i.2 178 47 48 ];
+        goto @_workspace_garmin_RideDashboard_source_RideLayout_mc_178_8_182_8_for_test;
+_workspace_garmin_RideDashboard_source_RideLayout_mc_178_8_182_8_for_end:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 183 8 ]
+        while @_workspace_garmin_RideDashboard_source_RideLayout_mc_183_8_186_8_while_test @_workspace_garmin_RideDashboard_source_RideLayout_mc_183_8_186_8_while_end;
+_workspace_garmin_RideDashboard_source_RideLayout_mc_183_8_186_8_while_test:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_183_15_183_66_begin:
         %tmp.17 = lgetv %index.1;
-        symbol [ index %tmp.17 176 15 20 ];
+        symbol [ index %tmp.17 183 15 20 ];
         %tmp.18 = 0;
         %tmp.19 = gt %tmp.17 %tmp.18;
         %tmp.20 = dup %tmp.19;
-        bf %tmp.20 @_workspace_garmin_RideDashboard_source_RideLayout_mc_176_28_176_66_end;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_176_28_176_66_true:
+        bf %tmp.20 @_workspace_garmin_RideDashboard_source_RideLayout_mc_183_28_183_66_end;
+_workspace_garmin_RideDashboard_source_RideLayout_mc_183_28_183_66_true:
         %tmp.21 = lgetv %dc;
-        symbol [ dc %tmp.21 176 28 30 ];
-        symbol [ getTextWidthInPixels %tmp.22 176 31 51 ];
+        symbol [ dc %tmp.21 183 28 30 ];
+        symbol [ getTextWidthInPixels %tmp.22 183 31 51 ];
         %tmp.22 = getv function %tmp.21 :getTextWidthInPixels;
         %tmp.23 = lgetv %text;
-        symbol [ text %tmp.23 176 52 56 ];
+        symbol [ text %tmp.23 183 52 56 ];
         %tmp.24 = lgetv %font;
-        symbol [ font %tmp.24 176 58 62 ];
+        symbol [ font %tmp.24 183 58 62 ];
         %tmp.25 = invoke %tmp.21 %tmp.22(%tmp.23, %tmp.24);
         %tmp.26 = lgetv %maxWidth;
-        symbol [ maxWidth %tmp.26 176 66 74 ];
+        symbol [ maxWidth %tmp.26 183 66 74 ];
         %tmp.27 = gt %tmp.25 %tmp.26;
         %tmp.28 = and %tmp.19 %tmp.27;
         push %tmp.28;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_176_28_176_66_end:
-        %tmp.29 = phi [%tmp.20 @_workspace_garmin_RideDashboard_source_RideLayout_mc_176_15_176_66_begin] [%tmp.28 @_workspace_garmin_RideDashboard_source_RideLayout_mc_176_28_176_66_true] [%tmp.29 @_workspace_garmin_RideDashboard_source_RideLayout_mc_176_28_176_66_end];
-        bf %tmp.29 @_workspace_garmin_RideDashboard_source_RideLayout_mc_176_8_179_8_while_end;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_176_8_179_8_while_begin:
-_workspace_garmin_RideDashboard_source_RideLayout_mc_176_76_179_8_start:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 177 12 ]
+_workspace_garmin_RideDashboard_source_RideLayout_mc_183_28_183_66_end:
+        %tmp.29 = phi [%tmp.20 @_workspace_garmin_RideDashboard_source_RideLayout_mc_183_15_183_66_begin] [%tmp.28 @_workspace_garmin_RideDashboard_source_RideLayout_mc_183_28_183_66_true] [%tmp.29 @_workspace_garmin_RideDashboard_source_RideLayout_mc_183_28_183_66_end];
+        bf %tmp.29 @_workspace_garmin_RideDashboard_source_RideLayout_mc_183_8_186_8_while_end;
+_workspace_garmin_RideDashboard_source_RideLayout_mc_183_8_186_8_while_begin:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_183_76_186_8_start:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 184 12 ]
         %tmp.30 = lgetv %index.1;
-        symbol [ index %tmp.30 177 12 17 ];
+        symbol [ index %tmp.30 184 12 17 ];
         %tmp.31 = 1;
         %tmp.32 = sub %tmp.30 %tmp.31;
         lputv %index.1 %tmp.32;
-        symbol [ index %index.1 177 12 17 ];
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 178 12 ]
+        symbol [ index %index.1 184 12 17 ];
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 185 12 ]
         %tmp.33 = lgetv %candidates;
-        symbol [ candidates %tmp.33 178 19 29 ];
+        symbol [ candidates %tmp.33 185 19 29 ];
         %tmp.34 = lgetv %index.1;
-        symbol [ index %tmp.34 178 30 35 ];
+        symbol [ index %tmp.34 185 30 35 ];
         %tmp.35 = agetv %tmp.33 %tmp.34;
         lputv %font %tmp.35;
-        symbol [ font %font 178 12 16 ];
-_workspace_garmin_RideDashboard_source_RideLayout_mc_176_76_179_8_stop:
-        goto @_workspace_garmin_RideDashboard_source_RideLayout_mc_176_8_179_8_while_test;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_176_8_179_8_while_end:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 180 8 ]
+        symbol [ font %font 185 12 16 ];
+_workspace_garmin_RideDashboard_source_RideLayout_mc_183_76_186_8_stop:
+        goto @_workspace_garmin_RideDashboard_source_RideLayout_mc_183_8_186_8_while_test;
+_workspace_garmin_RideDashboard_source_RideLayout_mc_183_8_186_8_while_end:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 187 8 ]
         %tmp.36 = lgetv %font;
-        symbol [ font %tmp.36 180 15 19 ];
+        symbol [ font %tmp.36 187 15 19 ];
         ret %tmp.36;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_169_72_181_4_stop:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_176_72_188_4_stop:
     }
-    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 183; @symbol_functiondef = [fitFont,183,13,20]; @symbol_param<0> = [dc,183,21,23]; @symbol_param<1> = [text,183,25,29]; @symbol_param<2> = [maxWidth,183,31,39]; @symbol_param<3> = [designSize,183,41,51]; ]
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 190; @symbol_functiondef = [fitFont,190,13,20]; @symbol_param<0> = [dc,190,21,23]; @symbol_param<1> = [text,190,25,29]; @symbol_param<2> = [maxWidth,190,31,39]; @symbol_param<3> = [designSize,190,41,51]; ]
     function fitFont(dc, text, maxWidth, designSize) {
-_workspace_garmin_RideDashboard_source_RideLayout_mc_183_53_185_4_start:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 184 8 ]
+_workspace_garmin_RideDashboard_source_RideLayout_mc_190_53_192_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 191 8 ]
         %tmp.1 = self;
-        symbol [ shrink %tmp.2 184 15 21 ];
+        symbol [ shrink %tmp.2 191 15 21 ];
         %tmp.2 = getv function %tmp.1 :shrink;
         %tmp.3 = lgetv %dc;
-        symbol [ dc %tmp.3 184 22 24 ];
+        symbol [ dc %tmp.3 191 22 24 ];
         %tmp.4 = self;
-        symbol [ textFonts %tmp.5 184 26 35 ];
+        symbol [ textFonts %tmp.5 191 26 35 ];
         %tmp.5 = getv function %tmp.4 :textFonts;
         %tmp.6 = invoke %tmp.4 %tmp.5();
         %tmp.7 = self;
-        symbol [ textFont %tmp.8 184 39 47 ];
+        symbol [ textFont %tmp.8 191 39 47 ];
         %tmp.8 = getv function %tmp.7 :textFont;
         %tmp.9 = lgetv %dc;
-        symbol [ dc %tmp.9 184 48 50 ];
+        symbol [ dc %tmp.9 191 48 50 ];
         %tmp.10 = lgetv %designSize;
-        symbol [ designSize %tmp.10 184 52 62 ];
+        symbol [ designSize %tmp.10 191 52 62 ];
         %tmp.11 = invoke %tmp.7 %tmp.8(%tmp.9, %tmp.10);
         %tmp.12 = lgetv %text;
-        symbol [ text %tmp.12 184 65 69 ];
+        symbol [ text %tmp.12 191 65 69 ];
         %tmp.13 = lgetv %maxWidth;
-        symbol [ maxWidth %tmp.13 184 71 79 ];
+        symbol [ maxWidth %tmp.13 191 71 79 ];
         %tmp.14 = invoke %tmp.1 %tmp.2(%tmp.3, %tmp.6, %tmp.11, %tmp.12, %tmp.13);
         ret %tmp.14;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_183_53_185_4_stop:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_190_53_192_4_stop:
     }
-    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 187; @symbol_functiondef = [fitNumberFont,187,13,26]; @symbol_param<0> = [dc,187,27,29]; @symbol_param<1> = [text,187,31,35]; @symbol_param<2> = [maxWidth,187,37,45]; @symbol_param<3> = [designSize,187,47,57]; ]
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 194; @symbol_functiondef = [fitNumberFont,194,13,26]; @symbol_param<0> = [dc,194,27,29]; @symbol_param<1> = [text,194,31,35]; @symbol_param<2> = [maxWidth,194,37,45]; @symbol_param<3> = [designSize,194,47,57]; ]
     function fitNumberFont(dc, text, maxWidth, designSize) {
-_workspace_garmin_RideDashboard_source_RideLayout_mc_187_59_189_4_start:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 188 8 ]
+_workspace_garmin_RideDashboard_source_RideLayout_mc_194_59_196_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 195 8 ]
         %tmp.1 = self;
-        symbol [ shrink %tmp.2 188 15 21 ];
+        symbol [ shrink %tmp.2 195 15 21 ];
         %tmp.2 = getv function %tmp.1 :shrink;
         %tmp.3 = lgetv %dc;
-        symbol [ dc %tmp.3 188 22 24 ];
+        symbol [ dc %tmp.3 195 22 24 ];
         %tmp.4 = self;
-        symbol [ numberFonts %tmp.5 188 26 37 ];
+        symbol [ numberFonts %tmp.5 195 26 37 ];
         %tmp.5 = getv function %tmp.4 :numberFonts;
         %tmp.6 = invoke %tmp.4 %tmp.5();
         %tmp.7 = self;
-        symbol [ numberFont %tmp.8 188 41 51 ];
+        symbol [ numberFont %tmp.8 195 41 51 ];
         %tmp.8 = getv function %tmp.7 :numberFont;
         %tmp.9 = lgetv %dc;
-        symbol [ dc %tmp.9 188 52 54 ];
+        symbol [ dc %tmp.9 195 52 54 ];
         %tmp.10 = lgetv %designSize;
-        symbol [ designSize %tmp.10 188 56 66 ];
+        symbol [ designSize %tmp.10 195 56 66 ];
         %tmp.11 = invoke %tmp.7 %tmp.8(%tmp.9, %tmp.10);
         %tmp.12 = lgetv %text;
-        symbol [ text %tmp.12 188 69 73 ];
+        symbol [ text %tmp.12 195 69 73 ];
         %tmp.13 = lgetv %maxWidth;
-        symbol [ maxWidth %tmp.13 188 75 83 ];
+        symbol [ maxWidth %tmp.13 195 75 83 ];
         %tmp.14 = invoke %tmp.1 %tmp.2(%tmp.3, %tmp.6, %tmp.11, %tmp.12, %tmp.13);
         ret %tmp.14;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_187_59_189_4_stop:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_194_59_196_4_stop:
     }
     //! Nejbližší menší systémový font pro text dané návrhové velikosti.
-    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 192; @symbol_functiondef = [textFont,192,13,21]; @symbol_param<0> = [dc,192,22,24]; @symbol_param<1> = [designSize,192,26,36]; ]
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 199; @symbol_functiondef = [textFont,199,13,21]; @symbol_param<0> = [dc,199,22,24]; @symbol_param<1> = [designSize,199,26,36]; ]
     function textFont(dc, designSize) {
-_workspace_garmin_RideDashboard_source_RideLayout_mc_192_38_194_4_start:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 193 8 ]
+_workspace_garmin_RideDashboard_source_RideLayout_mc_199_38_201_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 200 8 ]
         %tmp.1 = self;
-        symbol [ pick %tmp.2 193 15 19 ];
+        symbol [ pick %tmp.2 200 15 19 ];
         %tmp.2 = getv function %tmp.1 :pick;
         %tmp.3 = lgetv %dc;
-        symbol [ dc %tmp.3 193 20 22 ];
+        symbol [ dc %tmp.3 200 20 22 ];
         %tmp.4 = self;
-        symbol [ textFonts %tmp.5 193 24 33 ];
+        symbol [ textFonts %tmp.5 200 24 33 ];
         %tmp.5 = getv function %tmp.4 :textFonts;
         %tmp.6 = invoke %tmp.4 %tmp.5();
         %tmp.7 = lgetv %designSize;
-        symbol [ designSize %tmp.7 193 37 47 ];
+        symbol [ designSize %tmp.7 200 37 47 ];
         %tmp.8 = invoke %tmp.1 %tmp.2(%tmp.3, %tmp.6, %tmp.7);
         ret %tmp.8;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_192_38_194_4_stop:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_199_38_201_4_stop:
     }
-    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 196; @symbol_functiondef = [numberFont,196,13,23]; @symbol_param<0> = [dc,196,24,26]; @symbol_param<1> = [designSize,196,28,38]; ]
+    [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 203; @symbol_functiondef = [numberFont,203,13,23]; @symbol_param<0> = [dc,203,24,26]; @symbol_param<1> = [designSize,203,28,38]; ]
     function numberFont(dc, designSize) {
-_workspace_garmin_RideDashboard_source_RideLayout_mc_196_40_198_4_start:
-[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 197 8 ]
+_workspace_garmin_RideDashboard_source_RideLayout_mc_203_40_205_4_start:
+[ "/workspace/garmin/RideDashboard/source/RideLayout.mc" 204 8 ]
         %tmp.1 = self;
-        symbol [ pick %tmp.2 197 15 19 ];
+        symbol [ pick %tmp.2 204 15 19 ];
         %tmp.2 = getv function %tmp.1 :pick;
         %tmp.3 = lgetv %dc;
-        symbol [ dc %tmp.3 197 20 22 ];
+        symbol [ dc %tmp.3 204 20 22 ];
         %tmp.4 = self;
-        symbol [ numberFonts %tmp.5 197 24 35 ];
+        symbol [ numberFonts %tmp.5 204 24 35 ];
         %tmp.5 = getv function %tmp.4 :numberFonts;
         %tmp.6 = invoke %tmp.4 %tmp.5();
         %tmp.7 = lgetv %designSize;
-        symbol [ designSize %tmp.7 197 39 49 ];
+        symbol [ designSize %tmp.7 204 39 49 ];
         %tmp.8 = invoke %tmp.1 %tmp.2(%tmp.3, %tmp.6, %tmp.7);
         ret %tmp.8;
-_workspace_garmin_RideDashboard_source_RideLayout_mc_196_40_198_4_stop:
+_workspace_garmin_RideDashboard_source_RideLayout_mc_203_40_205_4_stop:
     }
 }
 [ @file = "/workspace/garmin/RideDashboard/source/RideLayout.mc"; @line = 1; ]

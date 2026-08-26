@@ -107,7 +107,7 @@
   }, {
     "key" : "layoutStyle",
     "valueType" : "number",
-    "defaultValue" : 0,
+    "defaultValue" : 1,
     "configTitle" : "SettingStyle",
     "configPrompt" : null,
     "configType" : "list",

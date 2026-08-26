@@ -26,15 +26,15 @@
         "danger": "#FF5A5F",
         "cold": "#6AB7FF"
     },
-    "clock": { "y": 4, "height": 42 },
+    "clock": { "y": 4, "height": 42, "size": 30 },
     "cadence": {
         "cx": 240, "cy": 254, "radius": 188, "pen": 16,
         "max": 200, "ticks": [0, 50, 100, 150, 200],
-        "labelY": 106, "unitY": 134
+        "labelY": 106, "unitY": 134, "labelSize": 32, "unitSize": 13
     },
-    "speed": { "cy": 196, "unitY": 258 },
+    "speed": { "cy": 196, "unitY": 258, "size": 106, "decimalSize": 46, "unitSize": 20 },
     "speedStats": { "y": 288, "height": 50, "gap": 8, "margin": 8 },
-    "divider": { "y": 348 },
+    "divider": { "y": 348, "margin": 8 },
     "middle": {
         "top": 354, "bottom": 738,
         "sideWidth": 112, "margin": 6, "gap": 6

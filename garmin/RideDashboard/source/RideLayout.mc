@@ -102,6 +102,13 @@ module RideLayout {
         ];
     }
 
+    //! Vodorovný střed návrhového plátna. Kreslení ho potřebuje pořád a pevná
+    //! 240 platila jen pro plátno z Edge 1050 - na kompaktním rozvržení
+    //! (246x322) by všechno na střed odsunula k pravému okraji.
+    function centerX() {
+        return number("canvas", "width") / 2.0;
+    }
+
     function x(designX) {
         return designX * mScaleX;
     }
