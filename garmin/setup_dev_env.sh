@@ -110,8 +110,12 @@ if [ -n "${GARMIN_USERNAME:-}" ] && [ -n "${GARMIN_PASSWORD:-}" ]; then
     export PATH="$CIQ_HOME/bin:$PATH"
     connect-iq-sdk-manager agreement accept
     connect-iq-sdk-manager login
-    connect-iq-sdk-manager device download \
-        --manifest "$(dirname "$0")/QMailDashboard/manifest.xml" --include-fonts
+    # Každý projekt má svůj seznam zařízení, takže se stahují oba manifesty -
+    # jinak by chyběly Edge pro palubovku.
+    for manifest in "$(dirname "$0")"/*/manifest.xml; do
+        log "Zařízení podle $(basename "$(dirname "$manifest")")"
+        connect-iq-sdk-manager device download --manifest "$manifest" --include-fonts
+    done
     log "Stažená zařízení: $(ls "$HOME/.Garmin/ConnectIQ/Devices" 2>/dev/null | tr '\n' ' ')"
 else
     cat <<'EOF'
@@ -125,6 +129,7 @@ else
         source ~/connectiq/env.sh
         connect-iq-sdk-manager agreement accept
         connect-iq-sdk-manager login
+        connect-iq-sdk-manager device download --manifest garmin/RideDashboard/manifest.xml --include-fonts
         connect-iq-sdk-manager device download --manifest garmin/QMailDashboard/manifest.xml --include-fonts
 
     Bez nich jde psát a verzovat kód, ale `monkeyc -d <zařízení>` ani simulátor

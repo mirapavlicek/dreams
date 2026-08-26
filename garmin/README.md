@@ -302,6 +302,9 @@ Skript stáhne Connect IQ SDK pro Linux, doplní knihovny, které simulátor
 potřebuje (je slinkovaný proti `webkit2gtk-4.0`, který v Ubuntu 24.04 chybí),
 vygeneruje podepisovací klíč a nainstaluje headless
 [connect-iq-sdk-manager](https://github.com/lindell/connect-iq-sdk-manager-cli).
+Když jsou v prostředí `GARMIN_USERNAME` a `GARMIN_PASSWORD`, stáhne rovnou
+i zařízení z obou manifestů včetně fontů. Přihlášení běží bez obrazovky, takže
+účet nesmí mít dvoufázové ověření.
 
 ### Device packy vyžadují Garmin účet
 
@@ -315,6 +318,7 @@ export GARMIN_USERNAME="..."       # účet z developer.garmin.com
 export GARMIN_PASSWORD="..."
 connect-iq-sdk-manager agreement accept
 connect-iq-sdk-manager login
+connect-iq-sdk-manager device download --manifest garmin/RideDashboard/manifest.xml --include-fonts
 connect-iq-sdk-manager device download --manifest garmin/QMailDashboard/manifest.xml --include-fonts
 python3 garmin/tools/sync_devices.py    # srovná manifest se staženým
 ```
