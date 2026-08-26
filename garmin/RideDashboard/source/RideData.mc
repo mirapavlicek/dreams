@@ -110,7 +110,7 @@ module RideData {
     }
 
     //! Kolo, které zrovna mluví. Jinak null a všechno se odhaduje.
-    function lev() {
+    function lev() as RideLev or Null {
         if (mLev == null || !mLev.connected()) {
             return null;
         }
@@ -304,17 +304,32 @@ module RideData {
         return bike == null ? null : bike.assistLevel();
     }
 
-    //! Popisek k baterii kola: měřená hodnota se doplní stupněm asistence,
+    //! Režim asistence tak, jak mu říká výrobce - Giant hlásí ECO, ACTIVE nebo
+    //! SPORT, u neznámé značky zbude jen číslo stupně.
+    function assistModeText() as Lang.String or Null {
+        var bike = lev();
+        if (bike == null) {
+            return null;
+        }
+        var name = bike.assistModeName();
+        if (name != null) {
+            return name;
+        }
+        var level = bike.assistLevel();
+        if (level == null || level == 0) {
+            return null;
+        }
+        return "ASIST " + level.toString();
+    }
+
+    //! Popisek k baterii kola: měřená hodnota se doplní režimem asistence,
     //! odhad se přizná.
     function assistBatteryLabel() as Lang.String {
         if (!assistMeasured()) {
             return "E-BIKE · ODHAD";
         }
-        var level = assistLevel();
-        if (level == null || level == 0) {
-            return "E-BIKE";
-        }
-        return "E-BIKE · ASIST " + level.toString();
+        var mode = assistModeText();
+        return mode == null ? "E-BIKE" : "E-BIKE · " + mode;
     }
 
     //! Jednotka pod dojezdem - u odhadu je poctivé to napsat.
@@ -329,9 +344,9 @@ module RideData {
         if (source == ASSIST_ESTIMATED) {
             return "odhad";
         }
-        var level = assistLevel();
-        if (level != null && level > 0) {
-            return "asistence " + level.toString();
+        var mode = assistModeText();
+        if (mode != null) {
+            return mode;
         }
         return source == ASSIST_FROM_BIKE ? "přímo z kola" : "ze stavu baterie";
     }

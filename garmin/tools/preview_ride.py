@@ -46,7 +46,9 @@ DEMO = {
     # Odkud je dojezd: "bike" = stránka 2 profilu ANT+ LEV, "battery" =
     # dopočet ze stavu baterie kola, "estimate" = jen odhad z ujetých km.
     "assistSource": "bike",
-    "assistLevel": 2,
+    # Režim asistence tak, jak mu říká výrobce kola (Giant: ECO, BASIC,
+    # ACTIVE, AUTO, SPORT, POWER); u neznámé značky "ASIST 3".
+    "assistMode": "ACTIVE",
     "distanceToDestination": 12.4,
     "eta": "15:04",
     "distance": 37.8,
@@ -75,16 +77,16 @@ def assist_range_unit(data: dict) -> str:
 def assist_battery_label(data: dict) -> str:
     if not assist_measured(data):
         return "E-BIKE · ODHAD"
-    level = data.get("assistLevel")
-    return f"E-BIKE · ASIST {level}" if level else "E-BIKE"
+    mode = data.get("assistMode")
+    return f"E-BIKE · {mode}" if mode else "E-BIKE"
 
 
 def assist_note(data: dict) -> str:
     if not assist_measured(data):
         return "odhad"
-    level = data.get("assistLevel")
-    if level:
-        return f"asistence {level}"
+    mode = data.get("assistMode")
+    if mode:
+        return mode
     return "přímo z kola" if data["assistSource"] == "bike" else "ze stavu baterie"
 
 
@@ -881,7 +883,7 @@ def main() -> int:
 
     data = dict(DEMO)
     if args.estimate:
-        data.update({"assistSource": "estimate", "assistLevel": None})
+        data.update({"assistSource": "estimate", "assistMode": None})
     if args.json:
         data.update(json.loads(pathlib.Path(args.json).read_text(encoding="utf-8")))
 

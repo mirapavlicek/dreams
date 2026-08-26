@@ -1,4 +1,5 @@
 using Toybox.Ant;
+using Toybox.Application;
 using Toybox.Lang;
 using Toybox.System;
 
@@ -22,6 +23,13 @@ class RideLev extends Ant.GenericChannel {
     //: Po takhle dlouhém tichu považujeme hodnoty za neplatné.
     const STALE_MS = 6000;
 
+    //: Výrobci ze společné stránky 80. Stupně asistence 0-7 mají u každého
+    //: jiná jména, na displeji kola svítí ta, ne čísla.
+    const MANUFACTURER_GIANT = 108;
+    const MANUFACTURER_SPECIALIZED = 63;
+    const MANUFACTURER_MAHLE = 299;
+    const MANUFACTURER_YAMAHA = 304;
+
     var mAssign as Ant.ChannelAssignment or Null = null;
     var mSearching as Lang.Boolean = true;
     var mLastMessage as Lang.Number or Null = null;
@@ -34,6 +42,8 @@ class RideLev extends Ant.GenericChannel {
     var mAssistLevel as Lang.Number or Null = null;
     var mAssistPercent as Lang.Number or Null = null;
     var mSpeedKmh as Lang.Float or Null = null;
+    var mManufacturer as Lang.Number or Null = null;
+    var mTotalAssistModes as Lang.Number or Null = null;
 
     //! @param deviceNumber ANT+ ID kola, nula hledá první, které se ozve.
     function initialize(deviceNumber as Lang.Number) {
@@ -66,7 +76,10 @@ class RideLev extends Ant.GenericChannel {
         var payload = message.getPayload();
 
         if (Ant.MSG_ID_BROADCAST_DATA == message.messageId) {
-            mSearching = false;
+            if (mSearching) {
+                mSearching = false;
+                rememberDeviceNumber();
+            }
             mLastMessage = System.getTimer();
             parse(payload);
             return;
@@ -121,7 +134,31 @@ class RideLev extends Ant.GenericChannel {
             var alternate = (payload[4] & 0xFF) | ((payload[5] & 0x0F) << 8);
             mConsumption = alternate == 0 ? null : alternate / 10.0;
             mSpeedKmh = speedFrom(payload);
+
+        } else if (page == 5) {
+            mTotalAssistModes = (payload[2] >> 3) & 0x07;
+
+        } else if (page == 80) {
+            // Společná stránka s výrobcem; podle něj pojmenujeme režimy.
+            mManufacturer = (payload[4] & 0xFF) | ((payload[5] & 0xFF) << 8);
         }
+    }
+
+    //! Po spárování si ANT+ ID kola uložíme, aby se příště kanál nechytil
+    //! cizího kola, které jede kolem.
+    function rememberDeviceNumber() as Void {
+        if (!(Application has :Properties)) {
+            return;
+        }
+        var found = GenericChannel.getDeviceConfig().deviceNumber;
+        if (found == null || found == 0) {
+            return;
+        }
+        var stored = Application.Properties.getValue("levDeviceNumber");
+        if (stored instanceof Lang.Number && stored == found) {
+            return;
+        }
+        Application.Properties.setValue("levDeviceNumber", found);
     }
 
     //! Rychlost kola sedí na stejném místě ve stránkách 1, 2, 3 i 34.
@@ -181,5 +218,42 @@ class RideLev extends Ant.GenericChannel {
 
     function speedKmh() as Lang.Float or Null {
         return connected() ? mSpeedKmh : null;
+    }
+
+    function manufacturer() as Lang.Number or Null {
+        return connected() ? mManufacturer : null;
+    }
+
+    //! Jak se stupeň asistence jmenuje na displeji kola. Profil posílá jen
+    //! číslo 0-7, jména jsou věc výrobce - Giant má šest režimů plus vypnuto,
+    //! Specialized a Mahle po třech, takže se sousední stupně opakují.
+    function assistModeName() as Lang.String or Null {
+        var level = assistLevel();
+        if (level == null) {
+            return null;
+        }
+        var names = assistModeNames();
+        if (names == null || level >= names.size()) {
+            return null;
+        }
+        return names[level];
+    }
+
+    function assistModeNames() as Lang.Array<Lang.String> or Null {
+        if (mManufacturer == MANUFACTURER_GIANT) {
+            return ["VYPNUTO", "ECO", "BASIC", "ACTIVE", "AUTO", "SPORT", "POWER", "POWER"];
+        }
+        if (mManufacturer == MANUFACTURER_SPECIALIZED || mManufacturer == MANUFACTURER_MAHLE) {
+            return ["VYPNUTO", "ECO", "ECO", "TRAIL", "TRAIL", "TURBO", "TURBO", "TURBO"];
+        }
+        if (mManufacturer == MANUFACTURER_YAMAHA) {
+            return ["VYPNUTO", "ECO+", "ECO", "STD", "HIGH", "HIGH", "EXPW", "EXPW"];
+        }
+        return null;
+    }
+
+    //! Kolik stupňů asistence kolo hlásí (stránka 5).
+    function totalAssistModes() as Lang.Number or Null {
+        return connected() ? mTotalAssistModes : null;
     }
 }

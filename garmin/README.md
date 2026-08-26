@@ -90,9 +90,21 @@ type 20 (frekvence 57, perioda 8192 = 4 Hz) a datové stránky si rozebere sám.
 | 4 | spotřeba ve Wh/km, kilometry od posledního nabití |
 | 34 | náhrada stránky 2 — místo dojezdu posílá spotřebu |
 
-Kanál je jen poslouchající (`CHANNEL_TYPE_RX_ONLY`), takže kolu nic neposílá
-a nemluví do toho, co si s ním řeší přístroj. Na jednom kole ale může viset jen
-jedna aplikace — když je kanál zabraný, `RideData` zůstane u odhadu.
+Kanál je jen poslouchající (`CHANNEL_TYPE_RX_ONLY`) — Giant RideControl jiný typ
+kanálu nepřijme a zároveň tím kolu nic neposíláme.
+
+Ze společné stránky 80 se přečte i **výrobce**, takže stupeň asistence 0–7 jde
+pojmenovat tak, jak svítí na displeji kola:
+
+| Výrobce (ID) | Režimy pro stupně 0–7 |
+|---|---|
+| Giant (108) | VYPNUTO, ECO, BASIC, ACTIVE, AUTO, SPORT, POWER |
+| Specialized (63), Mahle (299) | VYPNUTO, ECO, TRAIL, TURBO |
+| Yamaha (304) | VYPNUTO, ECO+, ECO, STD, HIGH, EXPW |
+
+Po prvním spárování se ANT+ ID kola uloží do nastavení, aby se kanál příště
+nechytil cizího kola, které jede kolem. Vynulováním pole se aplikace spáruje
+znovu.
 
 Dojezd se bere v tomto pořadí:
 
@@ -105,12 +117,18 @@ Dojezd se bere v tomto pořadí:
 
 Odhad se v palubovce přizná: v přístrojovém štítu jednotkou `km · odhad`
 a popiskem `E-BIKE · ODHAD`, v panelech poznámkou pod hodnotou. Měřený dojezd
-naopak ukazuje i stupeň asistence (`E-BIKE · ASIST 2`).
+naopak ukazuje i režim asistence (`E-BIKE · ACTIVE`).
 
 ![Dojezd jako odhad, když kolo LEV neumí](docs/preview/ride-cockpit-estimate.png)
 
-LEV umí Specialized, Fazua, Giant nebo Mahle. Bosch a Shimano posílají data
-po svém, tam zůstane odhad.
+LEV umí Giant (RideControl), Specialized, Fazua, Mahle nebo Yamaha. Bosch
+a Shimano posílají data po svém, tam zůstane odhad.
+
+**Pozor na nativní spárování:** na jednom kole může viset jen jeden posluchač.
+Když je e-bike připojený přes systémové menu *Senzory* nebo ho drží jiná
+Connect IQ aplikace, náš kanál data nedostane a dojezd spadne na odhad — kolo
+je pak potřeba ze *Senzorů* odpojit. Data se objeví do zhruba patnácti vteřin
+od chvíle, kdy je Edge blízko ovladače kola.
 
 Rozvržení je popsané v `RideDashboard/resources/json/layout.json` v pixelech
 návrhového plátna 480×800; při kreslení se přepočítá na skutečný displej, takže
