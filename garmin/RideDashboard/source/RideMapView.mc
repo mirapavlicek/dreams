@@ -84,15 +84,15 @@ class RideMapView extends WatchUi.MapTrackView {
 
     //! V režimu procházení patří obrazovka mapě - palubovku schováme, ať se dá
     //! posouvat a zoomovat jako v nativní mapě.
+    //!
+    //! Přepíná se **jen režim**. Sáhnout kolem toho na `setScreenVisibleArea()`
+    //! shodí aplikaci na "Unexpected Type Error" - a to v obou směrech, protože
+    //! přepnutí režimu nedoběhne hned a mapa si mezitím plochu řídí sama.
+    //! Zaostření se proto nastavuje jen v konstruktoru a v `onShow()`; přes
+    //! procházení projde nedotčené, takže se po návratu mapa sama vrátí do okna
+    //! mezi překryvy.
     function setBrowsing(browsing as Lang.Boolean) as Void {
-        if (browsing) {
-            var settings = System.getDeviceSettings();
-            setScreenVisibleArea(0, 0, settings.screenWidth - 1, settings.screenHeight - 1);
-            setMapMode(WatchUi.MAP_MODE_BROWSE);
-        } else {
-            applyWindow();
-            setMapMode(WatchUi.MAP_MODE_PREVIEW);
-        }
+        setMapMode(browsing ? WatchUi.MAP_MODE_BROWSE : WatchUi.MAP_MODE_PREVIEW);
         WatchUi.requestUpdate();
     }
 
