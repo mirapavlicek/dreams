@@ -19,6 +19,21 @@ module RideMaps {
         mBroken = true;
     }
 
+    //! Proč se místo mapy kreslí drobečková stopa. Na přístroji je to jediné
+    //! vodítko - ručně nahraná aplikace nemá kam vypsat log.
+    function reason() as Lang.String or Null {
+        if (mBroken) {
+            return "mapa se neotevřela";
+        }
+        if (!(WatchUi has :MapTrackView)) {
+            return "přístroj mapy neumí";
+        }
+        if (!RideData.mapEnabled()) {
+            return "mapa vypnutá v nastavení";
+        }
+        return null;
+    }
+
     function wanted() as Lang.Boolean {
         return available() && mWanted && RideData.mapEnabled();
     }
@@ -74,14 +89,17 @@ class RideView extends WatchUi.View {
     function onOpenMap() as Void {
         mMapTimer = null;
         if (!RideMaps.wanted()) {
+            RideData.setMapNote(RideMaps.reason());
             return;
         }
         try {
             var view = new RideMapView();
             WatchUi.pushView(view, new RideMapDelegate(view), WatchUi.SLIDE_IMMEDIATE);
+            RideData.setMapNote(null);
         } catch (exception) {
             RideMaps.setWanted(false);
             RideMaps.setBroken();
+            RideData.setMapNote("mapa se neotevřela");
             WatchUi.requestUpdate();
         }
     }

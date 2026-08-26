@@ -534,7 +534,7 @@ module RideChrome {
         if (track.size() >= 2) {
             drawTrack(dc, track, x, y, width, height);
         } else {
-            label(dc, x + width / 2.0, y + height / 2.0, "čekám na GPS", 13, "textDim");
+            labelIn(dc, x + width / 2.0, y + height / 2.0, width - 8, emptyNote(), 13, "textDim");
         }
 
         label(dc, x + width - 16, y + 18, "S", 13, "textDim");
@@ -542,6 +542,13 @@ module RideChrome {
         dc.setPenWidth(2);
         dc.drawLine(RideLayout.x(x + width - 16), RideLayout.y(y + 24),
             RideLayout.x(x + width - 16), RideLayout.y(y + 34));
+    }
+
+    //! Co napsat doprostřed, když ještě není co kreslit. Když je známo, proč
+    //! místo mapy koukáme na stopu, je to užitečnější než "čekám na GPS".
+    function emptyNote() as Lang.String {
+        var note = RideData.mapNote();
+        return note == null ? "čekám na GPS" : note;
     }
 
     function drawTrack(dc, track as Lang.Array, x, y, width, height) as Void {

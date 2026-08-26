@@ -45,7 +45,8 @@ module RideCockpit {
         if (track.size() >= 2) {
             RideChrome.drawTrack(dc, track, 0, top, width, height);
         } else {
-            RideChrome.label(dc, width / 2.0, top + height / 2.0, "čekám na GPS", 13, "textDim");
+            RideChrome.label(dc, width / 2.0, top + height / 2.0, RideChrome.emptyNote(), 13,
+                "textDim");
         }
     }
 
@@ -540,7 +541,8 @@ module RideCockpit {
         if (track.size() >= 2) {
             RideChrome.drawTrack(dc, track, x, y, width, height);
         } else {
-            RideChrome.label(dc, x + width / 2.0, y + height / 2.0, "čekám na GPS", 11, "textDim");
+            RideChrome.labelIn(dc, x + width / 2.0, y + height / 2.0, width - 8,
+                RideChrome.emptyNote(), 11, "textDim");
         }
 
         RideChrome.label(dc, x + width / 2.0, y + 13, "CELÁ TRASA", 10, "textDim");

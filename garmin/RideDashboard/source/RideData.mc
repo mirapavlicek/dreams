@@ -203,6 +203,18 @@ module RideData {
         return mUseMap;
     }
 
+    //: Proč místo mapy koukáš na drobečkovou stopu. Nastavuje to aplikace,
+    //: datové pole mapu nemá vůbec a nechává tu null.
+    var mMapNote as Lang.String or Null = null;
+
+    function setMapNote(note as Lang.String or Null) as Void {
+        mMapNote = note;
+    }
+
+    function mapNote() as Lang.String or Null {
+        return mMapNote;
+    }
+
     //! Styl přístrojového štítu (mapa přes celou obrazovku) místo panelů.
     function cockpitStyle() as Lang.Boolean {
         return mCockpitStyle;
