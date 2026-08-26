@@ -234,8 +234,11 @@ u šipek převýšení směr stejně říká sama šipka.
 
 ## Nahrání do přístroje
 
-Hotové buildy pro všechny jednotky jsou ve `dist/RideDashboard/`, i s přehledem
-v `PREHLED.txt`. Do přístroje se dostanou ručně:
+Hotové buildy pro všechny jednotky jsou ve `dist/RideDashboard/` i s přehledem
+v `PREHLED.txt` a kontrolními součty v `SHA256SUMS.txt`. Ke stažení po jednom
+(nebo všechny v jednom zipu) jsou taky ve
+[vydáních](https://github.com/mirapavlicek/dreams/releases). Do přístroje se
+dostanou ručně:
 
 1. připoj Edge USB kabelem, přihlásí se jako MTP zařízení,
 2. zkopíruj `.prg` **pro svůj model** do složky `GARMIN/APPS`,
