@@ -2,16 +2,16 @@
 
 Dvě aplikace a společné vývojové prostředí:
 
-- **[RideDashboard](#ridedashboard--palubovka-pro-edge-1050)** — palubovka pro
-  cyklopočítač Edge 1050 (480×800) ve stylu přístrojového štítu auta: mapa
-  přístroje pod celou obrazovkou, nad ní tachometr, kadence, dojezd e-biku,
-  převýšení a počasí.
+- **[RideDashboard](#ridedashboard--palubovka-pro-edge)** — palubovka pro
+  cyklopočítače Edge ve stylu přístrojového štítu auta: mapa přístroje pod celou
+  obrazovkou, nad ní tachometr, kadence, dojezd e-biku, převýšení a počasí.
+  Přeložená pro celou řadu od Edge 830 výš.
 - **[QMailDashboard](#qmaildashboard--stav-schránky-na-hodinkách)** — stav
   poštovní schránky jako hustota pravděpodobnosti `|ψ|²` podle knihovny `qmail`.
 
 ---
 
-# RideDashboard — palubovka pro Edge 1050
+# RideDashboard — palubovka pro Edge
 
 Dva styly, přepínají se v nastavení aplikace.
 
@@ -183,29 +183,81 @@ Menu v přístroji tam není pro parádu: aplikace nahraná ručně (sideload) s
 v Garmin Connect ani v Garmin Expressu neobjeví, takže při testování je to
 jediná cesta, jak se k nastavení dostat.
 
+## Které jednotky palubovka umí
+
+Celá řada Edge od **830** výš. Starší modely (Explore, 820, 520, 130) mají API
+3.1 a míň, kde chybí i mapové view, takže v manifestu nejsou.
+
+| Přístroj | Displej | API | Rozvržení |
+|---|---|---|---|
+| Edge 1050 | 480×800 | 6.0 | plné |
+| Edge 850, 550 | 420×600 | 6.0 | plné |
+| Edge 1040 / Solar | 282×470 | 6.0 | plné |
+| Edge 1030 Plus, 1030, 1030 Bontrager | 282×470 | 3.3 | plné |
+| Edge 840 / Solar, 540 / Solar | 246×322 | 6.0 | kompaktní |
+| Edge 830, 530 | 246×322 | 3.3 | kompaktní |
+| Edge Explore 2 | 240×400 | 5.1 | kompaktní |
+| Edge MTB | 240×320 | 6.0 | kompaktní |
+
+![Palubovka na různých jednotkách Edge](docs/device/prehled.png)
+
+Zleva Edge 1050, 1040, Explore 2, 830 a MTB — všechny snímky ze simulátoru
+v měřítku 1:1, takže jsou vidět skutečné poměry.
+
+### Dvě rozvržení, protože font má dno
+
+Rozvržení je popsané v `resources/json/layout.json` v pixelech návrhového
+plátna a při kreslení se přepočítá na skutečný displej. Jedno plátno na
+všechno ale nestačí: **nejmenší systémový font Garminu se zmenšit nedá.**
+Na Edge 1050 je `FONT_XTINY` vysoký 21 pixelů, na Edge 830 třináct — poměrově
+k displeji je tedy na malé jednotce skoro dvakrát větší. Popisky, které se na
+1050 pohodlně vejdou do čtvrtiny šířky, na 830 přetečou do sousedního sloupce.
+
+Proto jsou plátna dvě a `monkey.jungle` je přiřazuje podle zařízení:
+
+- `resources/json/layout.json` — plátno 480×800 pro jednotky od 282 pixelů šířky,
+- `resources-compact/json/layout.json` — plátno 246×322 pro úzké displeje.
+  Vynechává, co se na ně čitelně nevejde: kompasovou pásku, pilulky s průměrem
+  a maximem a přehledovou stopu v rohu mapy (klíč `features`).
+
+Rozhoduje šířka, ne úhlopříčka. Edge Explore 2 je svisle vysoký, ale 240 pixelů
+na šířku ho staví vedle Edge 830, ne vedle 1050.
+
+Zbytek si kreslení dopočítá samo: řádky se skládají podle **změřených šířek
+a výšek písma**, ne podle pevných souřadnic. Když se popiska nevejde ani
+nejmenším fontem, sáhne se po kratší variantě (`E-BIKE · ODHAD` → `ODHAD`,
+`NASTOUPÁNO` → `STOUPÁNÍ`, `km · odhad` → `km`) a v krajním případě se vynechá —
+u šipek převýšení směr stejně říká sama šipka.
+
 ## Nahrání do přístroje
+
+Hotové buildy pro všechny jednotky jsou ve `dist/RideDashboard/`, i s přehledem
+v `PREHLED.txt`. Do přístroje se dostanou ručně:
+
+1. připoj Edge USB kabelem, přihlásí se jako MTP zařízení,
+2. zkopíruj `.prg` **pro svůj model** do složky `GARMIN/APPS`,
+3. odpoj přístroj — aplikace se objeví mezi Connect IQ aplikacemi.
+
+Po odpojení soubor ze složky zmizí, to je v pořádku: firmware si ho přesune do
+vlastního úložiště. Nahrávej vždy build přeložený pro **to zařízení, na kterém
+se bude spouštět** — Edge cizí build tiše zahodí a napíše to jen do
+`GARMIN/APPS/LOGS`.
+
+Přeložit znovu (potřebuje Garmin developer účet kvůli device packům):
 
 ```bash
 export GARMIN_USERNAME="..."       # účet z developer.garmin.com
 export GARMIN_PASSWORD="..."
-./garmin/setup_dev_env.sh          # stáhne i device packy pro zařízení z manifestu
-./garmin/build.sh edge1050 RideDashboard
+./garmin/setup_dev_env.sh          # SDK, device packy pro zařízení z manifestu
+./garmin/build_all.sh              # všechny jednotky naráz do garmin/dist
+./garmin/build.sh edge1050 RideDashboard   # nebo jen jednu
 ```
 
-Vznikne `RideDashboard/bin/RideDashboard-edge1050.prg`. Ten se do přístroje
-dostane ručně:
+Buildy v `dist` jsou podepsané klíčem z `~/connectiq/keys`, který si
+`setup_dev_env.sh` vygeneruje. Pro ruční nahrání to stačí; do Connect IQ Store
+by bylo potřeba mít vlastní stálý klíč a ten samý používat i pro aktualizace.
 
-1. připoj Edge USB kabelem, přihlásí se jako MTP zařízení,
-2. zkopíruj `.prg` do složky `GARMIN/APPS`,
-3. odpoj přístroj — aplikace se objeví mezi Connect IQ aplikacemi.
-
-Po odpojení soubor ze složky zmizí, to je v pořádku: firmware si ho přesune do
-vlastního úložiště. Překládej vždy pro **to zařízení, na kterém se bude
-spouštět** — Edge cizí build tiše zahodí a napíše to jen do `GARMIN/APPS/LOGS`.
-
-Rozvržení je popsané v `RideDashboard/resources/json/layout.json` v pixelech
-návrhového plátna 480×800; při kreslení se přepočítá na skutečný displej, takže
-stejná čísla platí i pro menší jednotky Edge.
+## Ladění rozvržení
 
 ```bash
 python3 garmin/tools/preview_ride.py --cockpit --map    # přístrojový štít
@@ -218,6 +270,19 @@ python3 garmin/tools/preview_ride.py --cockpit --map --estimate  # kolo bez LEV
 
 V náhledu s `--map` je kartografie jen ilustrace toho, co na přístroji vykreslí
 `MapTrackView` — renderer žádné mapové podklady nemá.
+
+Náhled v Pythonu kreslí písmem DejaVu, takže **na překryvy se spolehnout nedá** —
+to se pozná až se skutečnými Garmin fonty. Na to je simulátor:
+
+```bash
+export DISPLAY=:1                                  # na headless stroji Xvfb
+garmin/tools/sim_shot.sh edge830 RideDashboard /tmp/edge830.png
+garmin/tools/sim_sweep.sh                          # všechny jednotky z manifestu
+python3 garmin/tools/crop_screen.py edge830 /tmp/edge830.png docs/device/edge830.png
+```
+
+`sim_sweep.sh` projde manifest, každou jednotku spustí a uloží snímek do
+`/tmp/sim-sweep`; `crop_screen.py` z okna simulátoru vyřízne samotný displej.
 
 ---
 
@@ -264,7 +329,11 @@ garmin/
     source/DashboardView.mc          # kreslení prstence a středu
     source/GlanceView.mc             # kompaktní řádek
   RideDashboard/
+    manifest.xml                     # řada Edge od 830 výš, oprávnění
+    monkey.jungle                    # přiřazení rozvržení a ikon k zařízením
     resources/json/layout.json       # rozvržení palubovky v pixelech 480x800
+    resources-compact/json/          # totéž na plátně 246x322 pro úzké displeje
+    resources-icon{35,36,40,56,68}/  # launcher ikona ve velikostech, co Edge chtějí
     resources/settings/              # elektrokolo, dojezd, počasí, mapa, styl
     source/RideApp.mc                # vstupní bod + odběr GPS pozic
     source/RideLayout.mc             # škálování návrhu na displej, výběr fontů
@@ -276,15 +345,23 @@ garmin/
     source/RideCockpit.mc            # kreslení stylu přístrojového štítu
     source/RideView.mc               # obrazovka s drobečkovou stopou
     source/RideMapView.mc            # obrazovka s mapou z paměti přístroje
+  dist/RideDashboard/                # hotové .prg k nahrání + PREHLED.txt
+  docs/device/                       # snímky ze simulátoru 1:1
   tools/preview.py                   # náhled qmail dashboardu do PNG
   tools/preview_ride.py              # náhled palubovky do PNG
   tools/qmail_server.py              # servíruje reálná data z .eml složky
-  tools/make_icon.py                 # launcher ikona z barev tématu
+  tools/make_icon.py                 # launcher ikona qmailu z barev tématu
+  tools/make_ride_icon.py            # launcher ikony palubovky ve všech velikostech
   tools/sync_devices.py              # srovná manifest se staženými zařízeními
   tools/stub_device.py               # náhradní definice zařízení pro překlad
+  tools/sim_shot.sh                  # snímek aplikace ze simulátoru
+  tools/sim_sweep.sh                 # totéž pro všechna zařízení z manifestu
+  tools/crop_screen.py               # vyřízne z okna simulátoru samotný displej
   setup_dev_env.sh                   # instalace SDK, závislostí a klíče
   check.sh                           # překlad bez Garmin účtu (syntaxe a typy)
-  build.sh / run_simulator.sh        # překlad a spuštění v simulátoru
+  build.sh                           # překlad pro jedno zařízení
+  build_all.sh                       # překlad pro celý manifest do dist
+  run_simulator.sh                   # překlad a spuštění v simulátoru
 ```
 
 Konfigurační JSON (`theme.json`, `layout.json`) čte jak hodinková aplikace
@@ -344,6 +421,7 @@ všechno, co odmítne překladač.
 ```bash
 ./garmin/build.sh fenix847mm                       # -> QMailDashboard/bin/*.prg
 ./garmin/build.sh edge1050 RideDashboard
+./garmin/build_all.sh RideDashboard                # celý manifest -> garmin/dist
 ./garmin/run_simulator.sh edge1050 RideDashboard   # překlad + simulátor
 ```
 
