@@ -293,6 +293,32 @@ module RideData {
         return current.currentPower;
     }
 
+    function heartRate() as Lang.Number or Null {
+        var current = info();
+        if (current == null || !(current.currentHeartRate instanceof Lang.Number)) {
+            return null;
+        }
+        return current.currentHeartRate;
+    }
+
+    //! Zařazený převod z elektronického řazení (Di2, eTap). Přístroj ho zná
+    //! ze spárovaného snímače, takže ho stačí jen ukázat.
+    function gearText() as Lang.String or Null {
+        var current = info();
+        if (current == null) {
+            return null;
+        }
+        var front = current.frontDerailleurIndex;
+        var rear = current.rearDerailleurIndex;
+        if (!(rear instanceof Lang.Number)) {
+            return null;
+        }
+        if (front instanceof Lang.Number) {
+            return front.toString() + "-" + rear.toString();
+        }
+        return rear.toString();
+    }
+
     function cadence() {
         var current = info();
         if (current == null || !(current.currentCadence instanceof Lang.Number)) {

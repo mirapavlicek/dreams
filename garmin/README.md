@@ -252,9 +252,18 @@ nechává pro sebe.
 
 **Obejít se to dá.** Kolo se dá vedle e-bike senzoru spárovat ještě jako
 **snímač výkonu a rychlosti s kadencí** - kolidují jen dvě spojení na profilu
-LEV, tohle vedle sebe běží bez problému. Výkon už Garmin sdílí, takže ho
-palubovka ukáže i tehdy, když si dojezd drží přístroj: uvolněný sloupec po
-e-biku zabere **VÝKON**.
+LEV, tohle vedle sebe běží bez problému. Výkon už Garmin sdílí.
+
+Místo po dojezdu e-biku proto nezůstane prázdné. Vezme se první hodnota, kterou
+přístroj opravdu má:
+
+| Kde | Pořadí |
+|---|---|
+| velký sloupec | dojezd e-biku → **výkon** → **tep** → vynechat |
+| stavový řádek | baterie kola → **převod** (Di2, eTap) → tep → vynechat |
+
+Je to tentýž princip jako u zbytku palubovky: přístroj hodnoty má, my je jen
+ukazujeme přehledněji.
 
 ## Nastavení
 

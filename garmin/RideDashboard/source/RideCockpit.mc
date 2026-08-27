@@ -442,13 +442,16 @@ module RideCockpit {
             units = [RideData.assistRangeUnit(), units[0], units[1]];
             colors = ["ok", colors[0], colors[1]];
 
-        } else if (RideData.power() != null) {
-            // Dojezd kola si drží přístroj, ale výkon ze spárovaného snímače
-            // Garmin sdílí - uvolněný sloupec tak nezůstane prázdný.
-            titles = ["VÝKON", titles[0], titles[1]];
-            values = [RideData.power().toString(), values[0], values[1]];
-            units = ["W", units[0], units[1]];
-            colors = ["warn", colors[0], colors[1]];
+        } else {
+            // Dojezd kola si drží přístroj. Uvolněný sloupec ale nemusí zůstat
+            // prázdný - vezme se první hodnota, kterou přístroj opravdu má.
+            var spare = spareColumn();
+            if (spare != null) {
+                titles = [spare[0], titles[0], titles[1]];
+                values = [spare[1], values[0], values[1]];
+                units = [spare[2], units[0], units[1]];
+                colors = [spare[3], colors[0], colors[1]];
+            }
         }
         var width = (canvasWidth - 2 * margin) / titles.size();
 
@@ -485,6 +488,21 @@ module RideCockpit {
         }
     }
 
+    //! Čím zaplnit sloupec po dojezdu e-biku: výkon, tep, nebo nic.
+    //! Palubovka jen lépe ukazuje, co přístroj sám má - nemá smysl nechávat
+    //! místo prázdné, když nějaká hodnota k dispozici je.
+    function spareColumn() as Lang.Array or Null {
+        var power = RideData.power();
+        if (power != null) {
+            return ["VÝKON", power.toString(), "W", "warn"];
+        }
+        var pulse = RideData.heartRate();
+        if (pulse != null) {
+            return ["TEP", pulse.toString(), "tep/min", "danger"];
+        }
+        return null;
+    }
+
     //! Jednotka do zbylého místa vedle hodnoty jako [font, text].
     //!
     //! Přívažek za jednotkou ("km · odhad", "km · 15:04") je hezký, dokud se
@@ -504,7 +522,10 @@ module RideCockpit {
         var labelY = rows[3];
         var temperature = RideData.temperature();
         var ebike = !RideData.ebikeNative();
-        var width = (canvasWidth - 2 * margin) / (ebike ? 4.0 : 3.0);
+        // Kolik sloupců bude, se musí vědět dřív, než se počítá jejich šířka -
+        // jinak by první vyšel jinak široký než zbytek.
+        var spare = ebike ? null : spareStatus();
+        var width = (canvasWidth - 2 * margin) / (ebike || spare != null ? 4.0 : 3.0);
         var slot = margin;
 
         // Popisky dostanou dvě varianty: na čtvrtinu úzkého displeje se
@@ -515,6 +536,9 @@ module RideCockpit {
             value(dc, [slot, y, labelY, width], battery.toString() + " %",
                 [RideData.assistBatteryLabel(), RideData.assistShortLabel()],
                 battery > 30 ? "ok" : "danger");
+            slot += width;
+        } else if (spare != null) {
+            value(dc, [slot, y, labelY, width], spare[1], [spare[0]], spare[2]);
             slot += width;
         }
 
@@ -531,6 +555,20 @@ module RideCockpit {
         value(dc, [weatherX + 20, y, labelY, width - 20],
             temperature == null ? "--" : temperature.toString() + " °C",
             [RideChrome.weatherLabel()], "text");
+    }
+
+    //! Čím zaplnit místo po baterii kola ve stavovém řádku.
+    function spareStatus() as Lang.Array or Null {
+        var gear = RideData.gearText();
+        if (gear != null) {
+            return ["PŘEVOD", gear, "accent"];
+        }
+        var pulse = RideData.heartRate();
+        if (pulse != null && RideData.power() != null) {
+            // Tep se nahoře neukázal, protože tam je výkon.
+            return ["TEP", pulse.toString(), "danger"];
+        }
+        return null;
     }
 
     //! @param box [x, y hodnoty, y popisky, šířka sloupce] v návrhových pixelech
