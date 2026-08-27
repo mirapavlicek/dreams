@@ -238,8 +238,23 @@ Nastavení kanálu odpovídá tomu, co Garmin radí na svém fóru: síť `NETWO
 (ne `NETWORK_PUBLIC`, jinak se hledání pere s nativním), `searchThreshold` nula
 a obousměrný slave kvůli ovládací stránce.
 
-Připojení kola jako **snímače výkonu nebo rychlosti a kadence** naopak nevadí,
-kolidují jen dvě spojení na profilu LEV.
+### Co Garmin ze svého sdílí a co ne
+
+Palubovka si od přístroje bere skoro všechno: rychlost, kadenci, výkon, tep,
+vzdálenost, převýšení i teplotu čte z `Activity.Info`, tedy z toho, co má
+přístroj nativně spárované. Vlastní kanál otevírá **jen kvůli elektrokolu**.
+
+Právě e-bike je totiž jediná výjimka: Connect IQ na něj nemá vůbec nic.
+`Activity.Info` má padesát polí a ani jedno není o kole, `Toybox.AntPlus` profil
+LEV neobsahuje a v celém API se slovo e-bike vyskytuje jedinkrát - jako
+`SPORT_E_BIKING`, tedy typ sportu pro nahrávání. Data z e-biku si přístroj
+nechává pro sebe.
+
+**Obejít se to dá.** Kolo se dá vedle e-bike senzoru spárovat ještě jako
+**snímač výkonu a rychlosti s kadencí** - kolidují jen dvě spojení na profilu
+LEV, tohle vedle sebe běží bez problému. Výkon už Garmin sdílí, takže ho
+palubovka ukáže i tehdy, když si dojezd drží přístroj: uvolněný sloupec po
+e-biku zabere **VÝKON**.
 
 ## Nastavení
 

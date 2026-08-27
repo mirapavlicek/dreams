@@ -441,6 +441,14 @@ module RideCockpit {
             values = [RideData.assistRangeKm().format("%.0f"), values[0], values[1]];
             units = [RideData.assistRangeUnit(), units[0], units[1]];
             colors = ["ok", colors[0], colors[1]];
+
+        } else if (RideData.power() != null) {
+            // Dojezd kola si drží přístroj, ale výkon ze spárovaného snímače
+            // Garmin sdílí - uvolněný sloupec tak nezůstane prázdný.
+            titles = ["VÝKON", titles[0], titles[1]];
+            values = [RideData.power().toString(), values[0], values[1]];
+            units = ["W", units[0], units[1]];
+            colors = ["warn", colors[0], colors[1]];
         }
         var width = (canvasWidth - 2 * margin) / titles.size();
 

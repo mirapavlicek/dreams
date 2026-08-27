@@ -181,7 +181,9 @@ class RideBikeView extends WatchUi.View {
         var charged = bike == null ? null : bike.distanceOnChargeKm();
         var modes = bike == null ? null : bike.totalAssistModes();
 
+        var power = RideData.power();
         return [
+            ["výkon (snímač)", power == null ? "--" : power.toString() + " W"],
             ["spotřeba", consumption == null ? "--" : consumption.format("%.1f") + " Wh/km"],
             ["od nabití", charged == null ? "--" : charged.format("%.1f") + " km"],
             ["stupňů asistence", modes == null ? "--" : modes.toString()],

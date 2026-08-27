@@ -279,6 +279,20 @@ module RideData {
         return current == null ? 0.0 : speedKmh(current.maxSpeed);
     }
 
+    //! Výkon z nativně spárovaného snímače.
+    //!
+    //! Tudy jde z elektrokola dostat data i tehdy, když si LEV kanál drží
+    //! přístroj: kolo se dá vedle e-bike senzoru spárovat **ještě jako snímač
+    //! výkonu a rychlosti s kadencí**, a ta data už Garmin sdílí přes
+    //! Activity.Info. Kolidují jen dvě spojení na profilu LEV.
+    function power() as Lang.Number or Null {
+        var current = info();
+        if (current == null || !(current.currentPower instanceof Lang.Number)) {
+            return null;
+        }
+        return current.currentPower;
+    }
+
     function cadence() {
         var current = info();
         if (current == null || !(current.currentCadence instanceof Lang.Number)) {
