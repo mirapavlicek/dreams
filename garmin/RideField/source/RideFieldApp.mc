@@ -15,11 +15,13 @@ class RideFieldApp extends Application.AppBase {
     }
 
     function onStart(state) {
-        RideData.initialize();
+        // Kanál kola tenhle pruh neotevírá: ukazuje rychlost, kadenci a hodiny,
+        // a na ANT+ LEV smí viset jediný posluchač. Drží ho spodní pruh, kde
+        // se dojezd a baterie opravdu kreslí.
+        RideData.reloadSettings();
     }
 
     function onStop(state) {
-        RideData.closeSensors();
     }
 
     function getInitialView() {
@@ -28,7 +30,6 @@ class RideFieldApp extends Application.AppBase {
 
     function onSettingsChanged() {
         RideData.reloadSettings();
-        RideData.openSensors();
         WatchUi.requestUpdate();
     }
 }

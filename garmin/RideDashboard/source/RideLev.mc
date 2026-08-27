@@ -34,6 +34,11 @@ class RideLev extends Ant.GenericChannel {
     //: Po takhle dlouhém tichu považujeme hodnoty za neplatné.
     const STALE_MS = 6000;
 
+    //: Když se kolo do téhle doby vůbec neozve, nejspíš ho drží někdo jiný.
+    //: Na ANT+ LEV kanálu smí viset jediný posluchač, takže nativní spárování
+    //: v menu Senzory nás nepustí. Nemá pak smysl dál obsazovat rádio.
+    const SEARCH_MS = 30000;
+
     //: Výrobci ze společné stránky 80 (číselník je stejný jako v FIT). Stupně
     //: asistence 0-7 mají u každého jiná jména a na displeji kola svítí ta,
     //: ne čísla.
@@ -47,6 +52,7 @@ class RideLev extends Ant.GenericChannel {
     var mAssign as Ant.ChannelAssignment or Null = null;
     var mSearching as Lang.Boolean = true;
     var mLastMessage as Lang.Number or Null = null;
+    var mOpenedAt as Lang.Number or Null = null;
 
     var mSoc as Lang.Number or Null = null;
     var mBatteryWarning as Lang.Boolean = false;
@@ -89,7 +95,21 @@ class RideLev extends Ant.GenericChannel {
 
     function open() as Lang.Boolean {
         mSearching = true;
+        mOpenedAt = System.getTimer();
         return GenericChannel.open();
+    }
+
+    //! Hledáme marně tak dlouho, že to nejspíš nemá cenu?
+    function searchExpired() as Lang.Boolean {
+        if (mLastMessage != null) {
+            return false;
+        }
+        var started = mOpenedAt;
+        if (started == null) {
+            return false;
+        }
+        var age = System.getTimer() - started;
+        return age > 0 && age > SEARCH_MS;
     }
 
     function shutdown() as Void {

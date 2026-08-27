@@ -1,8 +1,11 @@
 using Toybox.Activity;
 using Toybox.WatchUi;
 
-//! Pruh s údaji o trase. Senzory kola neotevírá - ty drží první pole, a na
-//! jednom ANT+ kanálu může viset jen jeden posluchač.
+//! Pruh s údaji o trase, dojezdem e-biku a stavem baterie.
+//!
+//! Kanál kola drží tenhle pruh, protože se v něm data z kola opravdu kreslí -
+//! na ANT+ LEV smí viset jediný posluchač. Horní pruh (../RideField) ukazuje
+//! rychlost a kadenci, kolo k tomu nepotřebuje.
 class RideTrip extends WatchUi.DataField {
 
     function initialize() {
@@ -10,6 +13,7 @@ class RideTrip extends WatchUi.DataField {
     }
 
     function compute(info as Activity.Info) as Void {
+        RideData.poll();
     }
 
     function onUpdate(dc) as Void {

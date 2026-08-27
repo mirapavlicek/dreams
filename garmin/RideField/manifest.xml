@@ -22,6 +22,9 @@
             <iq:product id="edgemtb"/>
         </iq:products>
         <iq:permissions>
+            <!-- Kanál kola drží ../RideTrip, kde se dojezd kreslí; oprávnění
+                 tu zůstávají jen proto, že se sdílený kód s obsluhou senzorů
+                 bez nich nepřeloží. -->
             <iq:uses-permission id="Ant"/>
             <iq:uses-permission id="BluetoothLowEnergy"/>
         </iq:permissions>

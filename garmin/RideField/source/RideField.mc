@@ -21,7 +21,6 @@ class RideField extends WatchUi.DataField {
     //! Volá přístroj jednou za vteřinu s aktuálním stavem aktivity.
     function compute(info as Activity.Info) as Void {
         RideData.onActivityLocation(info.currentLocation);
-        RideData.poll();
     }
 
     function onUpdate(dc) as Void {

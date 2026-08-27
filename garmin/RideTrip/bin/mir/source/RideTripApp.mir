@@ -29,47 +29,61 @@ _workspace_garmin_RideTrip_source_RideTripApp_mc_11_26_13_4_stop:
     }
     [ @file = "/workspace/garmin/RideTrip/source/RideTripApp.mc"; @line = 15; @symbol_functiondef = [onStart,15,13,20]; @symbol_param<0> = [state,15,21,26]; ]
     function onStart(state) {
-_workspace_garmin_RideTrip_source_RideTripApp_mc_15_28_17_4_start:
-[ "/workspace/garmin/RideTrip/source/RideTripApp.mc" 16 8 ]
-        symbol [ RideData %tmp.2 16 8 16 ];
+_workspace_garmin_RideTrip_source_RideTripApp_mc_15_28_19_4_start:
+[ "/workspace/garmin/RideTrip/source/RideTripApp.mc" 18 8 ]
+        symbol [ RideData %tmp.2 18 8 16 ];
         %tmp.2 = getv ? :RideData;
-        symbol [ reloadSettings %tmp.3 16 17 31 ];
-        %tmp.3 = getv function %tmp.2 :reloadSettings;
+        symbol [ initialize %tmp.3 18 17 27 ];
+        %tmp.3 = getv function %tmp.2 :initialize;
         invoke %tmp.2 %tmp.3();
-_workspace_garmin_RideTrip_source_RideTripApp_mc_15_28_17_4_stop:
+_workspace_garmin_RideTrip_source_RideTripApp_mc_15_28_19_4_stop:
     }
-    [ @file = "/workspace/garmin/RideTrip/source/RideTripApp.mc"; @line = 19; @symbol_functiondef = [onStop,19,13,19]; @symbol_param<0> = [state,19,20,25]; ]
+    [ @file = "/workspace/garmin/RideTrip/source/RideTripApp.mc"; @line = 21; @symbol_functiondef = [onStop,21,13,19]; @symbol_param<0> = [state,21,20,25]; ]
     function onStop(state) {
+_workspace_garmin_RideTrip_source_RideTripApp_mc_21_27_23_4_start:
+[ "/workspace/garmin/RideTrip/source/RideTripApp.mc" 22 8 ]
+        symbol [ RideData %tmp.2 22 8 16 ];
+        %tmp.2 = getv ? :RideData;
+        symbol [ closeSensors %tmp.3 22 17 29 ];
+        %tmp.3 = getv function %tmp.2 :closeSensors;
+        invoke %tmp.2 %tmp.3();
+_workspace_garmin_RideTrip_source_RideTripApp_mc_21_27_23_4_stop:
     }
-    [ @file = "/workspace/garmin/RideTrip/source/RideTripApp.mc"; @line = 22; @symbol_functiondef = [getInitialView,22,13,27]; ]
+    [ @file = "/workspace/garmin/RideTrip/source/RideTripApp.mc"; @line = 25; @symbol_functiondef = [getInitialView,25,13,27]; ]
     function getInitialView() {
-_workspace_garmin_RideTrip_source_RideTripApp_mc_22_30_24_4_start:
-[ "/workspace/garmin/RideTrip/source/RideTripApp.mc" 23 8 ]
+_workspace_garmin_RideTrip_source_RideTripApp_mc_25_30_27_4_start:
+[ "/workspace/garmin/RideTrip/source/RideTripApp.mc" 26 8 ]
         %tmp.1 = newa 1;
-        symbol [ RideTrip %tmp.5 23 20 28 ];
+        symbol [ RideTrip %tmp.5 26 20 28 ];
         %tmp.5 = getv ? :RideTrip;
         %tmp.2 = newc %tmp.5 ();
         %tmp.6 = dup %tmp.1;
         %tmp.7 = aputv %tmp.6 0 %tmp.2;
         ret %tmp.7;
-_workspace_garmin_RideTrip_source_RideTripApp_mc_22_30_24_4_stop:
+_workspace_garmin_RideTrip_source_RideTripApp_mc_25_30_27_4_stop:
     }
-    [ @file = "/workspace/garmin/RideTrip/source/RideTripApp.mc"; @line = 26; @symbol_functiondef = [onSettingsChanged,26,13,30]; ]
+    [ @file = "/workspace/garmin/RideTrip/source/RideTripApp.mc"; @line = 29; @symbol_functiondef = [onSettingsChanged,29,13,30]; ]
     function onSettingsChanged() {
-_workspace_garmin_RideTrip_source_RideTripApp_mc_26_33_29_4_start:
-[ "/workspace/garmin/RideTrip/source/RideTripApp.mc" 27 8 ]
-        symbol [ RideData %tmp.2 27 8 16 ];
+_workspace_garmin_RideTrip_source_RideTripApp_mc_29_33_33_4_start:
+[ "/workspace/garmin/RideTrip/source/RideTripApp.mc" 30 8 ]
+        symbol [ RideData %tmp.2 30 8 16 ];
         %tmp.2 = getv ? :RideData;
-        symbol [ reloadSettings %tmp.3 27 17 31 ];
+        symbol [ reloadSettings %tmp.3 30 17 31 ];
         %tmp.3 = getv function %tmp.2 :reloadSettings;
         invoke %tmp.2 %tmp.3();
-[ "/workspace/garmin/RideTrip/source/RideTripApp.mc" 28 8 ]
-        symbol [ WatchUi %tmp.4 28 8 15 ];
-        %tmp.4 = getm $.Toybox.WatchUi;
-        symbol [ requestUpdate %tmp.5 28 16 29 ];
-        %tmp.5 = getv function %tmp.4 :requestUpdate;
-        invoke %tmp.4 %tmp.5();
-_workspace_garmin_RideTrip_source_RideTripApp_mc_26_33_29_4_stop:
+[ "/workspace/garmin/RideTrip/source/RideTripApp.mc" 31 8 ]
+        symbol [ RideData %tmp.5 31 8 16 ];
+        %tmp.5 = getv ? :RideData;
+        symbol [ openSensors %tmp.6 31 17 28 ];
+        %tmp.6 = getv function %tmp.5 :openSensors;
+        invoke %tmp.5 %tmp.6();
+[ "/workspace/garmin/RideTrip/source/RideTripApp.mc" 32 8 ]
+        symbol [ WatchUi %tmp.7 32 8 15 ];
+        %tmp.7 = getm $.Toybox.WatchUi;
+        symbol [ requestUpdate %tmp.8 32 16 29 ];
+        %tmp.8 = getv function %tmp.7 :requestUpdate;
+        invoke %tmp.7 %tmp.8();
+_workspace_garmin_RideTrip_source_RideTripApp_mc_29_33_33_4_stop:
     }
 }
 [ @file = "/workspace/garmin/RideTrip/source/RideTripApp.mc"; @line = 1; ]

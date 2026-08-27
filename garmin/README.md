@@ -203,11 +203,43 @@ ve stylu přístrojového štítu zbydou dva široké sloupce místo tří a ve 
 s panely se kompas roztáhne přes obě levé buňky. Vlastní Bosch data pak čti na
 nativní datové obrazovce přístroje.
 
-**Pozor na nativní spárování:** na jednom kole může viset jen jeden posluchač.
-Když je e-bike připojený přes systémové menu *Senzory* nebo ho drží jiná
-Connect IQ aplikace, náš kanál data nedostane a dojezd spadne na odhad — kolo
-je pak potřeba ze *Senzorů* odpojit. Data se objeví do zhruba patnácti vteřin
-od chvíle, kdy je Edge blízko ovladače kola.
+### Na LEV kanálu smí viset jediný posluchač
+
+Tohle je ta nejčastější příčina, proč palubovka kolo „nenajde", a není to chyba
+v kódu. Když je e-bike připojený přes systémové menu *Senzory*, drží kanál
+přístroj a Connect IQ se k němu nedostane. Poznáš to snadno: **Garminův chytrý
+dojezd čísla má, naše pole ne.**
+
+Potvrzují to nezávisle dva další projekty pro Edge —
+[E-Bike Edge MultiField](https://github.com/maca88/E-Bike-Edge-MultiField)
+(„In case your Garmin device supports EBike connection via `Sensors` menu, it
+must be disconnected from there") i příručka k datovému poli *Edge 1 Ebike*
+(„to pair the ebike with the datafield your ebike must not be connected as ebike
+sensor"). Ze stejného důvodu se **dvě LEV datová pole nedají mít na jedné
+obrazovce**.
+
+Je to tedy buď - anebo:
+
+| Kdo drží kolo | Co z toho plyne |
+|---|---|
+| přístroj (*Senzory*) | funguje Garminův chytrý dojezd a nativní e-bike pole; naše pole dojezd nekreslí |
+| naše pole | kolo musí být ze *Senzorů* odpojené; dojezd, spotřebu a asistenci čteme sami |
+
+Palubovka si to pozná sama: když se kolo do třiceti vteřin neozve, hledání
+vzdá, kanál zavře (marné hledání jen obsazuje rádio) a e-bike sloupec vynechá,
+místo aby ukazovala vymyšlený odhad. Konzole to napíše natvrdo: *drží ho
+Senzory?*
+
+Kanál drží **spodní pruh** (`RideTrip`), protože se dojezd a baterie kreslí
+tam. Horní pruh ho neotevírá a konzoli nepouštěj zároveň s poli - přetahovaly
+by se.
+
+Nastavení kanálu odpovídá tomu, co Garmin radí na svém fóru: síť `NETWORK_PLUS`
+(ne `NETWORK_PUBLIC`, jinak se hledání pere s nativním), `searchThreshold` nula
+a obousměrný slave kvůli ovládací stránce.
+
+Připojení kola jako **snímače výkonu nebo rychlosti a kadence** naopak nevadí,
+kolidují jen dvě spojení na profilu LEV.
 
 ## Nastavení
 

@@ -76,8 +76,17 @@ class RideBikeView extends WatchUi.View {
     //! Hlavička: název a stav spojení s kolem.
     function drawHeader(dc, width, y, font, labelHeight) as Lang.Float {
         var bike = RideData.lev();
-        var state = bike == null ? "kolo se neozývá" : "spojeno";
-        var color = bike == null ? "textDim" : "ok";
+        var state = "hledám kolo";
+        var color = "textDim";
+        if (bike != null) {
+            state = "spojeno";
+            color = "ok";
+        } else if (RideData.ebikeUnreachable()) {
+            // Nejčastější příčina: kolo je spárované v menu Senzory a na LEV
+            // kanálu smí viset jediný posluchač.
+            state = "drží ho Senzory?";
+            color = "warn";
+        }
 
         dc.setColor(RideLayout.color("textDim"), Graphics.COLOR_TRANSPARENT);
         dc.drawText(RideLayout.s(6), y, font, "ELEKTROKOLO", Graphics.TEXT_JUSTIFY_LEFT);
@@ -93,7 +102,8 @@ class RideBikeView extends WatchUi.View {
         var connected = RideData.lev() != null;
         var mode = RideData.assistModeLabel();
         if (mode == null) {
-            mode = connected ? "ASIST ?" : "ČEKÁM NA KOLO";
+            mode = connected ? "ASIST ?" :
+                (RideData.ebikeUnreachable() ? "KOLO NEDOSTUPNÉ" : "ČEKÁM NA KOLO");
         }
         var room = height * 0.28;
         var font = RideLayout.fitBox(dc, RideLayout.numberFonts(), mode, width - RideLayout.s(12),
@@ -178,7 +188,9 @@ class RideBikeView extends WatchUi.View {
             ["výrobce", RideBike.manufacturer()],
             ["ANT+ ID", RideData.mLevDeviceNumber == 0
                 ? "hledá první kolo" : RideData.mLevDeviceNumber.toString()],
-            ["ovládání", RideData.mControlLev ? "nahoru/dolů mění asistenci" : "vypnuté"]
+            ["ovládání", RideData.mControlLev ? "nahoru/dolů mění asistenci" : "vypnuté"],
+            ["pozn.", RideData.ebikeUnreachable()
+                ? "odpoj kolo v menu Senzory" : "na LEV smí jen jeden posluchač"]
         ];
     }
 }

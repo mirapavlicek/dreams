@@ -60,6 +60,7 @@ module RideData {
         var source = Application.Properties.getValue("ebikeSource");
         if (source instanceof Lang.Number && source != mEbikeSource) {
             mEbikeSource = source;
+            mEbikeUnreachable = false;
             closeSensors();
         }
         var range = Application.Properties.getValue("assistFullRangeKm");
@@ -124,13 +125,30 @@ module RideData {
         closeBle();
     }
 
+    //: Kolo se neozvalo a hledání jsme vzdali - viz RideLev.SEARCH_MS.
+    var mEbikeUnreachable as Lang.Boolean = false;
+
     //! Řeší si dojezd elektrokola přístroj sám? Pak do toho palubovka nemluví.
+    //!
+    //! Platí to i tehdy, když se kolo neozvalo: na ANT+ LEV kanálu smí viset
+    //! jediný posluchač, takže nativní spárování v menu Senzory nás nepustí.
+    //! Palubovka pak radši uhne a místo vlastního odhadu nechá prostor
+    //! nativním polím přístroje, která data mají.
     function ebikeNative() as Lang.Boolean {
-        return mEbikeSource == EBIKE_NATIVE;
+        return mEbikeSource == EBIKE_NATIVE || mEbikeUnreachable;
+    }
+
+    //! Kolo je mimo dosah, nebo ho drží někdo jiný?
+    function ebikeUnreachable() as Lang.Boolean {
+        return mEbikeUnreachable;
     }
 
     function openLev() as Void {
-        if (ebikeNative() || !mUseLev || mLev != null || !(Toybox has :Ant)) {
+        if (mEbikeSource == EBIKE_NATIVE || !mUseLev || mLev != null) {
+            return;
+        }
+        if (!(Toybox has :Ant)) {
+            mEbikeUnreachable = true;
             return;
         }
         try {
@@ -138,7 +156,10 @@ module RideData {
             sensor.open();
             mLev = sensor;
         } catch (exception) {
+            // Kanál se nepodařilo zabrat. Nejčastěji ho drží nativní spárování
+            // kola v menu Senzory - na ANT+ LEV smí viset jediný posluchač.
             mLev = null;
+            mEbikeUnreachable = true;
         }
     }
 
@@ -187,6 +208,11 @@ module RideData {
     function poll() as Void {
         if (mBle != null) {
             mBle.poll();
+        }
+        // Marné hledání jen obsazuje rádio a zdržuje i nativní párování.
+        if (mLev != null && mLev.searchExpired()) {
+            closeLev();
+            mEbikeUnreachable = true;
         }
     }
 

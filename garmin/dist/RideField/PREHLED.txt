@@ -1,5 +1,5 @@
 RideField - který soubor do kterého přístroje
-vytvořeno: 2026-08-26 21:40
+vytvořeno: 2026-08-27 04:36
 
 SOUBOR                             PŘÍSTROJ                 DISPLEJ    ROZVRŽENÍ
 RideField-edge1030.prg             Edge® 1030                 282x470    plné

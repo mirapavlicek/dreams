@@ -23,9 +23,6 @@
             <iq:product id="edgemtb"/>
         </iq:products>
         <iq:permissions>
-            <!-- Kanály kola tohle pole neotevírá, drží je RideField - na jednom
-                 ANT+ kanálu smí viset jen jeden posluchač. Oprávnění tu jsou
-                 proto, že sdílený kód s obsluhou senzorů se bez nich nepřeloží. -->
             <iq:uses-permission id="Ant"/>
             <iq:uses-permission id="BluetoothLowEnergy"/>
         </iq:permissions>

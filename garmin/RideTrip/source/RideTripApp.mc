@@ -13,10 +13,13 @@ class RideTripApp extends Application.AppBase {
     }
 
     function onStart(state) {
-        RideData.reloadSettings();
+        // Dojezd a baterie kola se kreslí tady, takže tenhle pruh drží ANT+
+        // kanál - na LEV smí viset jediný posluchač.
+        RideData.initialize();
     }
 
     function onStop(state) {
+        RideData.closeSensors();
     }
 
     function getInitialView() {
@@ -25,6 +28,7 @@ class RideTripApp extends Application.AppBase {
 
     function onSettingsChanged() {
         RideData.reloadSettings();
+        RideData.openSensors();
         WatchUi.requestUpdate();
     }
 }
